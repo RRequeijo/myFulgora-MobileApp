@@ -1,6 +1,7 @@
 package com.example.myfulgora.ui.screens.tabs.profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,10 +24,12 @@ import com.example.myfulgora.ui.theme.White
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavController
 
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel(),
+    navController: NavController,
     onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -137,7 +140,11 @@ fun ProfileScreen(
                             painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
                             contentDescription = null,
                             tint = Color.Gray,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    navController.navigate("documentation")
+                                }
                         )
                     }
                 }

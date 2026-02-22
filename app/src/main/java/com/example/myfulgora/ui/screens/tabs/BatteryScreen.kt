@@ -50,7 +50,7 @@ fun BatteryScreen(
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
-            val screenW = maxWidth
+            val screenW = this.maxWidth
             val iconSize = screenW * Dimens.IconScaleRatio
             val paddingSide = screenW * Dimens.SideMarginRatio
 

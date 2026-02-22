@@ -47,7 +47,7 @@ fun PerformanceScreen(
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
-            val screenW = maxWidth
+            val screenW = this.maxWidth
             val screenH = maxHeight
 
             // Cálculos dinâmicos

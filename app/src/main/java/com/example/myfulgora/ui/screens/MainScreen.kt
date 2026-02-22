@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.platform.LocalContext
+import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
 import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
 
 // Classe auxiliar atualizada para aceitar Painter ou ImageVector
@@ -218,14 +219,15 @@ fun MainScreen() {
                         }
                     }
                 ) { innerPadding ->
-                    NavHost(navController = navController, startDestination = "settings", modifier = Modifier.padding(innerPadding)) {
+                    NavHost(navController = navController, startDestination = "documentation", modifier = Modifier.padding(innerPadding)) {
                         composable("map") { MapScreen() }
-                        composable("profile") { ProfileScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
+                        composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("battery") { BatteryScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("home") { HomeScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("social") { SocialScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("performance") { PerformanceScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
+                        composable("documentation") { DocumentationScreen() }
                     }
                 }
             }
