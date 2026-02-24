@@ -25,6 +25,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
+import androidx.compose.runtime.*
+import androidx.compose.ui.window.Dialog
+
+private enum class SupportDialogType {
+    Assistance,
+    DealershipContact
+}
 
 @Composable
 fun ProfileScreen(
@@ -35,23 +42,29 @@ fun ProfileScreen(
     val state by viewModel.uiState.collectAsState()
     val currentUser = UserManager.currentUser
 
-    val userName = currentUser?.profile?.name ?: "Unknown Rider"
-    val userEmail = currentUser?.profile?.email ?: "No Email"
+    // Valores seguros (Fallback)
     val bikeName = currentUser?.bike?.name ?: "No Motorcycle"
     val bikeVin = currentUser?.bike?.vin ?: "---"
     val isConnected = currentUser?.bike?.isConnected ?: false
 
+    // Estados do Popup
+    var showDialog by remember { mutableStateOf(false) }
+    var campoAEditar by remember { mutableStateOf("") }
+    var valorTemporario by remember { mutableStateOf("") }
+    var showSupportDialog by remember { mutableStateOf(false) }
+    var supportDialogType by remember { mutableStateOf<SupportDialogType?>(null) }
+
     FulgoraBackground {
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize()
-        )
-        {
+        ) {
             val screenW = this.maxWidth
             val iconSize = screenW * Dimens.IconScaleRatio
             val paddingSide = screenW * Dimens.SideMarginRatio
 
             val scrollState = rememberScrollState()
 
+            // 1. O CONTEÚDO PRINCIPAL (Scrollable)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -78,7 +91,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingLarge))
 
-                // --- 3. DADOS PESSOAIS ---
+                // --- DADOS PESSOAIS ---
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -92,12 +105,12 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.width(Dimens.PaddingMedium))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = state.name, // 👈 Substitui "John Doe"
+                            text = state.name,
                             color = White,
                             fontSize = 24.sp
                         )
                         Text(
-                            text = state.email, // 👈 Substitui "johndoe@gmail..."
+                            text = state.email,
                             color = Color.Gray.copy(alpha = 0.7f),
                             fontSize = 20.sp
                         )
@@ -106,7 +119,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
 
-                // --- 4. DADOS DA MOTA ---
+                // --- DADOS DA MOTA ---
                 FulgoraInfoCard {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -114,18 +127,18 @@ fun ProfileScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = bikeName, // 👈 Usa o nome da mota
+                                text = bikeName,
                                 color = Color.White,
                                 fontSize = 20.sp,
                                 style = MaterialTheme.typography.titleLarge
                             )
                             Text(
-                                text = if (isConnected) "Connected" else "Offline", // 👈 Dinâmico
+                                text = if (isConnected) "Connected" else "Offline",
                                 color = if (isConnected) GreenFresh else Color.Red.copy(alpha = 0.8f),
                                 fontSize = 12.sp
                             )
                             Text(
-                                text = "VIN: $bikeVin", // 👈 Usa o VIN da mota
+                                text = "VIN: $bikeVin",
                                 color = Color.Gray.copy(alpha = 0.7f),
                                 fontSize = 12.sp
                             )
@@ -151,7 +164,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Adicionar/Remover Mota
+                // --- Add/Remove Motorcycle ---
                 FulgoraInfoCard {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -174,22 +187,24 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
 
-                // Account Settings
+                // --- Account Settings ---
                 FulgoraInfoCard {
-                    // 👇 Envolver tudo numa Column resolve erros de layout no Card
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "Account",
-                            color = GreenFresh,
-                            fontSize = 18.sp
-                        )
+                        Text("Account", color = GreenFresh, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
+
                         val accountItems = listOf("Edit Name", "Edit Email", "Change Password")
+
                         accountItems.forEachIndexed { index, item ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
+                                    .clickable {
+                                        campoAEditar = item
+                                        valorTemporario = ""
+                                        showDialog = true
+                                    }
+                                    .padding(vertical = 12.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -210,7 +225,7 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
 
-                // Support
+                // --- Support ---
                 FulgoraInfoCard {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -224,6 +239,20 @@ fun ProfileScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .let { base ->
+                                        if (item == "Assistance" || item == "Dealership Contact") {
+                                            base.clickable {
+                                                supportDialogType = when (item) {
+                                                    "Assistance" -> SupportDialogType.Assistance
+                                                    "Dealership Contact" -> SupportDialogType.DealershipContact
+                                                    else -> null
+                                                }
+                                                showSupportDialog = supportDialogType != null
+                                            }
+                                        } else {
+                                            base
+                                        }
+                                    }
                                     .padding(vertical = 8.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
@@ -244,7 +273,164 @@ fun ProfileScreen(
                 }
 
                 Spacer(modifier = Modifier.height(Dimens.ScrollBottomPadding))
+            } // Fim da Column principal
+            
+            if (showDialog) {
+                Dialog(onDismissRequest = { showDialog = false }) {
+                    FulgoraInfoCard {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = campoAEditar,
+                                color = GreenFresh,
+                                fontSize = 20.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            TextField(
+                                value = valorTemporario,
+                                onValueChange = { valorTemporario = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                placeholder = {
+                                    Text(
+                                        text = when(campoAEditar) {
+                                            "Edit Name" -> "Enter new name..."
+                                            "Edit Email" -> "Enter new email..."
+                                            else -> "Type here..."
+                                        },
+                                        color = Color.Gray
+                                    )
+                                },
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedContainerColor = Color(0xFF2A2A2A),
+                                    unfocusedContainerColor = Color(0xFF2A2A2A),
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(onClick = { showDialog = false }) {
+                                    Text("Cancel", color = Color.Gray)
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Button(
+                                    onClick = {
+                                        viewModel.atualizarDado(campoAEditar, valorTemporario)
+                                        showDialog = false
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = GreenFresh)
+                                ) {
+                                    Text("Save", color = Color.Black)
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        }
-    }
+            if (showSupportDialog && supportDialogType != null) {
+                Dialog(
+                    onDismissRequest = {
+                        showSupportDialog = false
+                        supportDialogType = null
+                    }
+                ) {
+                    FulgoraInfoCard {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            when (supportDialogType) {
+                                SupportDialogType.Assistance -> {
+                                    Text(
+                                        text = "Assistance",
+                                        color = GreenFresh,
+                                        fontSize = 20.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "Need help with your Fulgora? You can reach our assistance team through the following contacts:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = "Phone: +351 912 345 678",
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "Email: assistance@fulgora.pt",
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontSize = 14.sp
+                                    )
+                                }
+
+                                SupportDialogType.DealershipContact -> {
+                                    Text(
+                                        text = "Fulgora Mobility, Lda.",
+                                        color = GreenFresh,
+                                        fontSize = 20.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = "Phone: +351 912 345 678",
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "Email: dealer@fulgora.pt",
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontSize = 14.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "Address:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "Rua da Mobilidade 123\n4000-000 Porto, Portugal",
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontSize = 14.sp
+                                    )
+                                }
+
+                                null -> {}
+                            }
+
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(
+                                    onClick = {
+                                        showSupportDialog = false
+                                        supportDialogType = null
+                                    }
+                                ) {
+                                    Text("Close", color = Color.Gray)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } // Fim do BoxWithConstraints
+    } // Fim do FulgoraBackground
 }
