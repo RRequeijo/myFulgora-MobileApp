@@ -28,7 +28,8 @@ class ProfileViewModel : ViewModel() {
                 email = currentUser.profile.email,
                 bikeName = currentUser.bike.name,
                 bikeVin = currentUser.bike.vin,
-                isBikeConnected = currentUser.bike.isConnected
+                isBikeConnected = currentUser.bike.isConnected,
+                photoUri = currentUser.profile.photoUri
             )
         } else {
             // Se por algum motivo for null, mantém os dados de "A carregar..."
@@ -46,5 +47,10 @@ class ProfileViewModel : ViewModel() {
         }
         // Recarregar o State para a UI perceber que mudou
         carregarDadosDoUtilizador()
+    }
+
+    fun atualizarFoto(uri: String) {
+        UserManager.currentUser?.profile?.photoUri = uri
+        carregarDadosDoUtilizador() // Recarrega o ecrã
     }
 }

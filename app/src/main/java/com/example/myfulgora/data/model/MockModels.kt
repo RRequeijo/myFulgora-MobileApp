@@ -18,7 +18,8 @@ data class MockUser(
 // 3. O Perfil Pessoal
 data class MockProfile(
     @SerializedName("name") var name: String,
-    @SerializedName("email") var email: String
+    @SerializedName("email") var email: String,
+    var photoUri: String? = null
 )
 
 // 4. A Mota

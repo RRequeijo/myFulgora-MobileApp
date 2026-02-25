@@ -99,6 +99,9 @@ dependencies {
 
     // Jetpack DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // Carregamento de imagens (Coil)
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }
 
 protobuf {

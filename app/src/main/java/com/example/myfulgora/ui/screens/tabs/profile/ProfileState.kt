@@ -6,5 +6,6 @@ data class ProfileState(
     val email: String = "...",
     val bikeName: String = "Nenhuma mota associada",
     val bikeVin: String = "---",
-    val isBikeConnected: Boolean = false
+    val isBikeConnected: Boolean = false,
+    val photoUri: String? = null
 )
