@@ -235,6 +235,8 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
 
+                // ACCOUNT
+
                 FulgoraInfoCard {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text("Account", color = GreenFresh, fontSize = 18.sp)
