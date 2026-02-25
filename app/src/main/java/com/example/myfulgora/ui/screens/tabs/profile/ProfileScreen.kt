@@ -51,13 +51,13 @@ fun ProfileScreen(
     onMenuClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
-    val currentUser = UserManager.currentUser
     val context = LocalContext.current
+    val currentBike = UserManager.getCurrentBike()
 
     // Valores seguros (Fallback)
-    val bikeName = currentUser?.bike?.name ?: "No Motorcycle"
-    val bikeVin = currentUser?.bike?.vin ?: "---"
-    val isConnected = currentUser?.bike?.isConnected ?: false
+    val bikeName = currentBike?.name ?: "No Motorcycle"
+    val bikeVin = currentBike?.vin ?: "---"
+    val isConnected = currentBike?.isConnected ?: false
 
     // Estados do Popup
     var showDialog by remember { mutableStateOf(false) }
@@ -179,10 +179,57 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // --- Add/Remove Motorcycle (GARAGEM) ---
                 FulgoraInfoCard {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "Add/Remove Motorcycle", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                        Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = !state.isSyncing) { // 👈 Só clica se não estiver a carregar
+                                viewModel.sincronizarNovaMota()
+                            }
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Sync New Motorcycle",
+                                color = Color.White.copy(alpha = 0.8f),
+                                fontSize = 14.sp
+                            )
+                            // Se tiver motas, diz quantas tem na garagem
+                            if (state.totalBikes > 0) {
+                                Text(
+                                    text = "${state.totalBikes} bikes in garage",
+                                    color = Color.Gray,
+                                    fontSize = 12.sp
+                                )
+                            }
+                            // Mensagem de sucesso bonita a verde
+                            if (state.showSyncSuccess) {
+                                Text(
+                                    text = "Sync successful! New bike added.",
+                                    color = GreenFresh,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+
+                        // Mostra a rodinha a girar ou a seta normal
+                        if (state.isSyncing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = GreenFresh,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
+                                contentDescription = null,
+                                tint = Color.Gray,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
 

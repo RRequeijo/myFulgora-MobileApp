@@ -12,7 +12,7 @@ data class MockUser(
     @SerializedName("username") val username: String,
     @SerializedName("password") val pass: String, // Só para testarmos o login localmente
     @SerializedName("profile") val profile: MockProfile,
-    @SerializedName("bike") val bike: MockBike // 👈 Como disseste, há SEMPRE uma mota, não é nullable (?)
+    @SerializedName("bikes") val bikes: MutableList<MockBike>
 )
 
 // 3. O Perfil Pessoal

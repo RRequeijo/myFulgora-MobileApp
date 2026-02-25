@@ -1,56 +1,74 @@
 package com.example.myfulgora.ui.screens.tabs.profile
 
 import androidx.lifecycle.ViewModel
-import com.example.myfulgora.data.auth.UserManager // Importante!
+import androidx.lifecycle.viewModelScope
+import com.example.myfulgora.data.auth.UserManager
+import com.example.myfulgora.data.model.MockBike
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
 
-    // A nossa "caixa" com o estado inicial
     private val _uiState = MutableStateFlow(ProfileState())
     val uiState: StateFlow<ProfileState> = _uiState.asStateFlow()
 
     init {
-        // Assim que este ViewModel nasce, vai carregar os dados
         carregarDadosDoUtilizador()
     }
 
     private fun carregarDadosDoUtilizador() {
-        // Vai buscar o user que fez login e está guardado na memória
         val currentUser = UserManager.currentUser
+        val currentBike = UserManager.getCurrentBike()
 
         if (currentUser != null) {
-            // Se encontrou alguém, atualiza o ProfileState com os dados reais do JSON!
             _uiState.value = ProfileState(
                 name = currentUser.profile.name,
                 email = currentUser.profile.email,
-                bikeName = currentUser.bike.name,
-                bikeVin = currentUser.bike.vin,
-                isBikeConnected = currentUser.bike.isConnected,
-                photoUri = currentUser.profile.photoUri
+                bikeName = currentBike?.name ?: "No Motorcycle",
+                bikeVin = currentBike?.vin ?: "---",
+                isBikeConnected = currentBike?.isConnected ?: false,
+                photoUri = currentUser.profile.photoUri,
+                totalBikes = currentUser.bikes.size
             )
-        } else {
-            // Se por algum motivo for null, mantém os dados de "A carregar..."
-            // (Ou podes pôr valores de erro aqui)
         }
     }
 
     fun atualizarDado(tipo: String, novoValor: String) {
         when (tipo) {
-            "Edit Name" -> UserManager.updateProfile(newName = novoValor, newEmail = null)
-            "Edit Email" -> UserManager.updateProfile(newName = null, newEmail = novoValor)
-            "Change Password" -> {
-                // Num mock simples, podemos ignorar a password ou criar uma função similar
-            }
+            "Edit Name" -> UserManager.updateProfile(newName = novoValor)
+            "Edit Email" -> UserManager.updateProfile(newEmail = novoValor)
         }
-        // Recarregar o State para a UI perceber que mudou
         carregarDadosDoUtilizador()
     }
 
     fun atualizarFoto(uri: String) {
-        UserManager.currentUser?.profile?.photoUri = uri
-        carregarDadosDoUtilizador() // Recarrega o ecrã
+        UserManager.updateProfile(newPhotoUri = uri)
+        carregarDadosDoUtilizador()
+    }
+
+    fun sincronizarNovaMota() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSyncing = true)
+            
+            delay(2000)
+
+            val novaMota = MockBike(
+                vin = "V-FG-NEW-${System.currentTimeMillis().toString().takeLast(4)}",
+                name = "Fulgora Supermoto (New)",
+                batteryLevel = 100,
+                isConnected = true,
+                isLocked = false
+            )
+            UserManager.addBikeFromDatabase(novaMota)
+
+            carregarDadosDoUtilizador()
+            _uiState.value = _uiState.value.copy(isSyncing = false, showSyncSuccess = true)
+
+            delay(3000)
+            _uiState.value = _uiState.value.copy(showSyncSuccess = false)
+        }
     }
 }

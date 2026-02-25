@@ -7,13 +7,22 @@
         "name": "Admin",
         "email": "admin@fulgora.pt"
       },
-      "bike": {
-        "vin": "V-FG-2024-X1-001",
-        "name": "Fulgora X1 Carbon",
-        "batteryLevel": 95,
-        "isConnected": true,
-        "isLocked": false
-      }
+      "bikes": [
+        {
+          "vin": "V-FG-2024-X1-001",
+          "name": "Fulgora X1 Carbon",
+          "batteryLevel": 95,
+          "isConnected": true,
+          "isLocked": false
+        },
+        {
+          "vin": "V-FG-2024-X1-002",
+          "name": "Fulgora X1 Track Edition",
+          "batteryLevel": 42,
+          "isConnected": true,
+          "isLocked": true
+        }
+      ]
     },
     {
       "username": "joao",
@@ -22,13 +31,15 @@
         "name": "João Piloto",
         "email": "joao@gmail.com"
       },
-      "bike": {
-        "vin": "V-FG-2023-CT-404",
-        "name": "Fulgora City Standard",
-        "batteryLevel": 15,
-        "isConnected": true,
-        "isLocked": true
-      }
+      "bikes": [
+        {
+          "vin": "V-FG-2023-CT-404",
+          "name": "Fulgora City Standard",
+          "batteryLevel": 15,
+          "isConnected": true,
+          "isLocked": true
+        }
+      ]
     },
     {
       "username": "mec",
@@ -37,13 +48,15 @@
         "name": "Oficina Central",
         "email": "suporte@fulgora.pt"
       },
-      "bike": {
-        "vin": "V-FG-2020-PT-999",
-        "name": "Fulgora Prototype V0",
-        "batteryLevel": 0,
-        "isConnected": false,
-        "isLocked": false
-      }
+      "bikes": [
+        {
+          "vin": "V-FG-2020-PT-999",
+          "name": "Fulgora Prototype V0",
+          "batteryLevel": 0,
+          "isConnected": false,
+          "isLocked": false
+        }
+      ]
     }
   ]
 }
