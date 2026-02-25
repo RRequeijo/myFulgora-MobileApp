@@ -45,6 +45,13 @@ object UserManager {
         return false // Falhou o login
     }
 
+    fun updateProfile(newName: String?, newEmail: String?) {
+        currentUser?.let { user ->
+            if (newName != null) user.profile.name = newName
+            if (newEmail != null) user.profile.email = newEmail
+        }
+    }
+
     // 4. Limpa os dados ao sair
     fun logout() {
         currentUser = null

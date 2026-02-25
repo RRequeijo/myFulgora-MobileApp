@@ -2,10 +2,10 @@
   "users": [
     {
       "username": "admin",
-      "password": "123",
+      "password": "admin",
       "profile": {
-        "name": "Carlos Faria",
-        "email": "carlos.faria@fulgora.pt"
+        "name": "Admin",
+        "email": "admin@fulgora.pt"
       },
       "bike": {
         "vin": "V-FG-2024-X1-001",

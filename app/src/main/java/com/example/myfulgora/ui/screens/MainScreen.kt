@@ -219,7 +219,7 @@ fun MainScreen() {
                         }
                     }
                 ) { innerPadding ->
-                    NavHost(navController = navController, startDestination = "documentation", modifier = Modifier.padding(innerPadding)) {
+                    NavHost(navController = navController, startDestination = "profile", modifier = Modifier.padding(innerPadding)) {
                         composable("map") { MapScreen() }
                         composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("battery") { BatteryScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }) }

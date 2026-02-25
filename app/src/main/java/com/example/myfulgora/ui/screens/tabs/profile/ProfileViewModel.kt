@@ -35,4 +35,16 @@ class ProfileViewModel : ViewModel() {
             // (Ou podes pôr valores de erro aqui)
         }
     }
+
+    fun atualizarDado(tipo: String, novoValor: String) {
+        when (tipo) {
+            "Edit Name" -> UserManager.updateProfile(newName = novoValor, newEmail = null)
+            "Edit Email" -> UserManager.updateProfile(newName = null, newEmail = novoValor)
+            "Change Password" -> {
+                // Num mock simples, podemos ignorar a password ou criar uma função similar
+            }
+        }
+        // Recarregar o State para a UI perceber que mudou
+        carregarDadosDoUtilizador()
+    }
 }
