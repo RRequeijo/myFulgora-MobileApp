@@ -37,6 +37,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 
 private enum class SupportDialogType {
@@ -310,34 +311,166 @@ fun ProfileScreen(
             }
 
             // Support Dialog
-            if (showSupportDialog) {
-                Dialog(onDismissRequest = { showSupportDialog = false }) {
+            if (showSupportDialog && supportDialogType != null) {
+                Dialog(
+                    onDismissRequest = {
+                        showSupportDialog = false
+                        supportDialogType = null
+                    }
+                ) {
                     FulgoraInfoCard {
-                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
                             when (supportDialogType) {
                                 SupportDialogType.Assistance -> {
-                                    Text("Assistance", color = GreenFresh, fontSize = 20.sp)
+                                    Text(
+                                        text = "Assistance",
+                                        color = GreenFresh,
+                                        fontSize = 20.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "Need help with your Fulgora? You can reach our assistance team through the following contacts:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
                                     Spacer(modifier = Modifier.height(16.dp))
-                                    Text("Need help with your bike?\nOur technical team is available 24/7.", color = Color.White, fontSize = 14.sp)
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                    Button(
-                                        onClick = { val intent = Intent(Intent.ACTION_DIAL).apply { data = Uri.parse("tel:+351912345678") }; context.startActivity(intent) },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        colors = ButtonDefaults.buttonColors(containerColor = GreenFresh)
-                                    ) { Text("Call Support", color = Color.Black) }
+
+                                    // 👇 TELEFONE CLICÁVEL
+                                    Text(
+                                        text = "Phone:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "+351 912 345 678",
+                                        color = White,
+                                        textDecoration = TextDecoration.Underline,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp,
+                                        modifier = Modifier
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+351912345678"))
+                                                context.startActivity(intent)
+                                            }
+                                    )
+
+                                    // 👇 EMAIL CLICÁVEL
+                                    Text(
+                                        text = "Email:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "dealer@fulgora.pt",
+                                        color = White,
+                                        textDecoration = TextDecoration.Underline,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp,
+                                        modifier = Modifier
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:dealer@fulgora.pt"))
+                                                context.startActivity(intent)
+                                            }
+                                    )
                                 }
+
                                 SupportDialogType.DealershipContact -> {
-                                    Text("Dealership Contact", color = GreenFresh, fontSize = 20.sp)
+                                    Text(
+                                        text = "Fulgora Mobility, Lda.",
+                                        color = GreenFresh,
+                                        fontSize = 20.sp
+                                    )
                                     Spacer(modifier = Modifier.height(16.dp))
-                                    Text("Fulgora Motors HQ", color = Color.White, fontSize = 16.sp, textDecoration = TextDecoration.Underline)
+
+                                    // 👇 TELEFONE CLICÁVEL
+                                    Text(
+                                        text = "Phone:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "+351 912 345 678",
+                                        color = White,
+                                        textDecoration = TextDecoration.Underline,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp,
+                                        modifier = Modifier
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+351912345678"))
+                                                context.startActivity(intent)
+                                            }
+                                    )
+
+                                    // 👇 EMAIL CLICÁVEL
+                                    Text(
+                                        text = "Email:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = "dealer@fulgora.pt",
+                                        color = White,
+                                        textDecoration = TextDecoration.Underline,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp,
+                                        modifier = Modifier
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:dealer@fulgora.pt"))
+                                                context.startActivity(intent)
+                                            }
+                                    )
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    Text("Phone: +351 210 000 000", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                                    Text("Email: contact@fulgora.com", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                                    Text("Address: Av. da Liberdade, Lisboa", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                    Button(onClick = { showSupportDialog = false }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = GreenFresh)) { Text("Close", color = Color.Black) }
+                                    Text(
+                                        text = "Address:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
+
+                                    // 👇 MORADA CLICÁVEL (Abre o Google Maps)
+                                    Text(
+                                        text = "Rua da Mobilidade 123\n4000-000 Porto, Portugal",
+                                        color = White,
+                                        textDecoration = TextDecoration.Underline,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp,
+                                        modifier = Modifier
+                                            .padding(vertical = 4.dp)
+                                            .clickable {
+                                                val uri = "geo:0,0?q=Rua da Mobilidade 123, 4000-000 Porto, Portugal"
+                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                                                intent.setPackage("com.google.android.apps.maps")
+                                                if (intent.resolveActivity(context.packageManager) != null) {
+                                                    context.startActivity(intent)
+                                                }
+                                            }
+                                    )
                                 }
-                                else -> {}
+
+                                null -> {}
+                            }
+
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(
+                                    onClick = {
+                                        showSupportDialog = false
+                                        supportDialogType = null
+                                    }
+                                ) {
+                                    Text("Close", color = Color.Gray)
+                                }
                             }
                         }
                     }

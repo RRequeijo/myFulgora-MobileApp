@@ -1,6 +1,8 @@
 package com.example.myfulgora.data.model
 
 data class BikeState(
+    val bikeName: String = "Fulgora",
+    val totalBikes: Int = 1,
     val speed: Int = 0,
     val batteryPercentage: Int = 0,
     val consumption: Double = 0.0,

@@ -53,18 +53,13 @@ class ProfileViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSyncing = true)
             
+            // Simulação de ligação ao servidor para sincronizar
             delay(2000)
 
-            val novaMota = MockBike(
-                vin = "V-FG-NEW-${System.currentTimeMillis().toString().takeLast(4)}",
-                name = "Fulgora Supermoto (New)",
-                batteryLevel = 100,
-                isConnected = true,
-                isLocked = false
-            )
-            UserManager.addBikeFromDatabase(novaMota)
-
+            // Atualizamos apenas o estado local com o que já existe no UserManager
+            // (Para evitar o bug de criar motas infinitas a cada clique)
             carregarDadosDoUtilizador()
+
             _uiState.value = _uiState.value.copy(isSyncing = false, showSyncSuccess = true)
 
             delay(3000)

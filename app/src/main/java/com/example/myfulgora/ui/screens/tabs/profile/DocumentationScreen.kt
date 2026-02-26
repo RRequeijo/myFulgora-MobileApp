@@ -141,7 +141,7 @@ fun DocumentationScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Histórico de Manutenção / Livro de Revisões",
+                            text = "Histórico de Manutenção",
                             color = Color.White.copy(alpha = 0.8f),
                             fontSize = 14.sp
                         )

@@ -1,17 +1,12 @@
 package com.example.myfulgora.ui.screens.tabs
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -41,6 +36,7 @@ import kotlinx.coroutines.launch
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.platform.LocalContext
+import com.example.myfulgora.ui.screens.tabs.home.HomeScreen
 import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
 import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
 
@@ -223,7 +219,11 @@ fun MainScreen() {
                         composable("map") { MapScreen() }
                         composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("battery") { BatteryScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }) }
-                        composable("home") { HomeScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }) }
+                        composable("home") {
+                            HomeScreen(
+                                state = currentBikeState,
+                                onMenuClick = { scope.launch { drawerState.open() } })
+                        }
                         composable("social") { SocialScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("performance") { PerformanceScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
                         composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
