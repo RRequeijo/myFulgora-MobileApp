@@ -5,16 +5,23 @@ import com.example.myfulgora.data.model.MockBike
 import com.example.myfulgora.data.model.MockDatabase
 import com.example.myfulgora.data.model.MockUser
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.io.InputStreamReader
-
 
 object UserManager {
     var currentUser: MockUser? = null
         private set
 
-    // NOVO: Guarda o índice da mota ativa (0 = 1ª mota, 1 = 2ª mota, etc.)
-    var activeBikeIndex: Int = 0
-        private set
+    // 1. TORNAR O ÍNDICE REATIVO com um StateFlow
+    private val _activeBikeIndex = MutableStateFlow(0)
+    val activeBikeIndexFlow = _activeBikeIndex.asStateFlow()
+
+    var activeBikeIndex: Int
+        get() = _activeBikeIndex.value
+        private set(value) {
+            _activeBikeIndex.value = value
+        }
 
     private fun loadMockUsers(context: Context): List<MockUser> {
         return try {
@@ -35,7 +42,7 @@ object UserManager {
 
         if (matchedUser != null) {
             currentUser = matchedUser
-            activeBikeIndex = 0 // Sempre que faz login, a mota ativa é a primeira
+            _activeBikeIndex.value = 0
             return true
         }
         return false
@@ -49,24 +56,17 @@ object UserManager {
         }
     }
 
-    // --- MAGIA DA GARAGEM ---
-
-    // Função segura para obter a mota que estamos a ver neste momento
     fun getCurrentBike(): MockBike? {
         val user = currentUser ?: return null
         if (user.bikes.isEmpty()) return null
-
-        // Prevenção de segurança caso o índice fique desajustado
-        if (activeBikeIndex >= user.bikes.size) activeBikeIndex = 0
-
+        if (activeBikeIndex >= user.bikes.size) _activeBikeIndex.value = 0
         return user.bikes[activeBikeIndex]
     }
 
-    // Estas duas funções vão ser usadas no teu ecrã Home para as setinhas! ⬅️ ➡️
     fun nextBike() {
         currentUser?.let { user ->
             if (user.bikes.isNotEmpty()) {
-                activeBikeIndex = (activeBikeIndex + 1) % user.bikes.size
+                _activeBikeIndex.value = (activeBikeIndex + 1) % user.bikes.size
             }
         }
     }
@@ -74,18 +74,29 @@ object UserManager {
     fun previousBike() {
         currentUser?.let { user ->
             if (user.bikes.isNotEmpty()) {
-                activeBikeIndex = if (activeBikeIndex - 1 < 0) user.bikes.size - 1 else activeBikeIndex - 1
+                _activeBikeIndex.value = if (activeBikeIndex - 1 < 0) user.bikes.size - 1 else activeBikeIndex - 1
             }
         }
     }
 
-    // Função para simular a adição de uma mota nova vinda do servidor
-    fun addBikeFromDatabase(newBike: MockBike) {
-        currentUser?.bikes?.add(newBike)
+    // 2. CORRIGIR O BUG DA SINCRONIZAÇÃO
+    fun syncBikesFromDatabase(context: Context) {
+        val users = loadMockUsers(context)
+        val freshUser = users.find { it.username == currentUser?.username }
+        if (freshUser != null) {
+            // Limpa a lista atual e adiciona a lista 'fresca' do JSON, resolvendo o bug de duplicação
+            currentUser?.bikes?.clear()
+            currentUser?.bikes?.addAll(freshUser.bikes)
+            
+            // Garante que o índice não fica fora dos limites após a sincronização
+            if (activeBikeIndex >= (currentUser?.bikes?.size ?: 0)) {
+                _activeBikeIndex.value = 0
+            }
+        }
     }
 
     fun logout() {
         currentUser = null
-        activeBikeIndex = 0
+        _activeBikeIndex.value = 0
     }
 }

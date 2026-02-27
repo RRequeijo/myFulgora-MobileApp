@@ -28,7 +28,21 @@ data class MockBike(
     @SerializedName("vin") val vin: String,
     @SerializedName("name") val name: String,
     @SerializedName("batteryLevel") val batteryLevel: Int,
+    @SerializedName("batteryHealth") val batteryHealth: String,
+    @SerializedName("batteryTemperature") val batteryTemperature: Double,
+    @SerializedName("batteryConsumption") val batteryConsumption: Double,
+    @SerializedName("batteryCycles") val batteryCycles: Int,
+    @SerializedName("batteryRange") val batteryRange: Double,
+    @SerializedName("chargingHours") val chargingHours: Int,
+    @SerializedName("chargingMinutes") val chargingMinutes: Int,
+    @SerializedName("isCharging") val isCharging: Boolean,
     @SerializedName("isConnected") val isConnected: Boolean,
     @SerializedName("isLocked") val isLocked: Boolean,
+    @SerializedName("drivingMode") val drivingMode: String,
+    @SerializedName("tyreFront") val tyreFront: Int,
+    @SerializedName("tyreBack") val tyreBack: Int,
+    @SerializedName("energyConsumption") val energyConsumption: Double,
+    @SerializedName("averageSpeed") val averageSpeed: Int,
+    // A nossa "gaveta" dos documentos que não vem no JSON (tem de ter o '?')
     var documents: MutableMap<String, String> = mutableMapOf()
 )

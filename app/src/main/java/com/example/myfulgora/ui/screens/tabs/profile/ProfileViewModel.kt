@@ -1,9 +1,9 @@
 package com.example.myfulgora.ui.screens.tabs.profile
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfulgora.data.auth.UserManager
-import com.example.myfulgora.data.model.MockBike
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +24,7 @@ class ProfileViewModel : ViewModel() {
         val currentBike = UserManager.getCurrentBike()
 
         if (currentUser != null) {
-            _uiState.value = ProfileState(
+            _uiState.value = _uiState.value.copy(
                 name = currentUser.profile.name,
                 email = currentUser.profile.email,
                 bikeName = currentBike?.name ?: "No Motorcycle",
@@ -49,15 +49,17 @@ class ProfileViewModel : ViewModel() {
         carregarDadosDoUtilizador()
     }
 
-    fun sincronizarNovaMota() {
+    fun sincronizarNovaMota(context: Context) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSyncing = true)
             
-            // Simulação de ligação ao servidor para sincronizar
+            // Simulação de ligação ao servidor
             delay(2000)
 
-            // Atualizamos apenas o estado local com o que já existe no UserManager
-            // (Para evitar o bug de criar motas infinitas a cada clique)
+            // Chamamos a função que sincroniza sem duplicar
+            UserManager.syncBikesFromDatabase(context)
+            
+            // Recarregamos os dados na UI
             carregarDadosDoUtilizador()
 
             _uiState.value = _uiState.value.copy(isSyncing = false, showSyncSuccess = true)

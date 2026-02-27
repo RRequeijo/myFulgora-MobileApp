@@ -11,16 +11,42 @@
         {
           "vin": "V-FG-2024-X1-001",
           "name": "Fulgora X1 Carbon",
-          "batteryLevel": 95,
+          "batteryLevel": 15,
+          "batteryHealth": "Excellent",
+          "batteryTemperature": 50.0,
+          "batteryConsumption": 10.0,
+          "batteryCycles": 56,
+          "batteryRange": 250.0,
+          "chargingHours": 2,
+          "chargingMinutes": 30,
+          "isCharging": true,
           "isConnected": true,
-          "isLocked": false
+          "isLocked": false,
+          "drivingMode": "Normal",
+          "tyreFront": 32,
+          "tyreBack": 32,
+          "energyConsumption": 2.56,
+          "averageSpeed": 42
         },
         {
           "vin": "V-FG-2024-X1-002",
-          "name": "Fulgora X1 Track Edition",
-          "batteryLevel": 42,
+          "name": "Fulgora X2 Carbon",
+          "batteryLevel": 95,
+          "batteryHealth": "Excellent",
+          "batteryTemperature": 25.0,
+          "batteryConsumption": 10.0,
+          "batteryCycles": 56,
+          "batteryRange": 250.0,
+          "chargingHours": 2,
+          "chargingMinutes": 30,
+          "isCharging": true,
           "isConnected": true,
-          "isLocked": true
+          "isLocked": false,
+          "drivingMode": "Eco",
+          "tyreFront": 32,
+          "tyreBack": 32,
+          "energyConsumption": 2.56,
+          "averageSpeed": 42
         }
       ]
     },
@@ -33,11 +59,24 @@
       },
       "bikes": [
         {
-          "vin": "V-FG-2023-CT-404",
-          "name": "Fulgora City Standard",
-          "batteryLevel": 15,
+          "vin": "V-FG-2024-X1-001",
+          "name": "Fulgora X1 Carbon",
+          "batteryLevel": 95,
+          "batteryHealth": "Excellent",
+          "batteryTemperature": 25.0,
+          "batteryConsumption": 10.0,
+          "batteryCycles": 56,
+          "batteryRange": 250.0,
+          "chargingHours": 2,
+          "chargingMinutes": 50,
+          "isCharging": true,
           "isConnected": true,
-          "isLocked": true
+          "isLocked": false,
+          "drivingMode": "Normal",
+          "tyreFront": 32,
+          "tyreBack": 32,
+          "energyConsumption": 2.56,
+          "averageSpeed": 42
         }
       ]
     },
@@ -50,11 +89,24 @@
       },
       "bikes": [
         {
-          "vin": "V-FG-2020-PT-999",
-          "name": "Fulgora Prototype V0",
-          "batteryLevel": 0,
+          "vin": "V-FG-2024-X1-001",
+          "name": "Fulgora X1 Carbon",
+          "batteryLevel": 95,
+          "batteryHealth": "Excellent",
+          "batteryTemperature": 25.0,
+          "batteryConsumption": 10.0,
+          "batteryCycles": 56,
+          "batteryRange": 250.0,
+          "chargingHours": 2,
+          "chargingMinutes": 30,
+          "isCharging": true,
           "isConnected": false,
-          "isLocked": false
+          "isLocked": false,
+          "drivingMode": "Normal",
+          "tyreFront": 32,
+          "tyreBack": 32,
+          "energyConsumption": 2.56,
+          "averageSpeed": 42
         }
       ]
     }

@@ -186,7 +186,7 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable(enabled = !state.isSyncing) { // 👈 Só clica se não estiver a carregar
-                                viewModel.sincronizarNovaMota()
+                                viewModel.sincronizarNovaMota(context)
                             }
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,

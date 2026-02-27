@@ -2,25 +2,46 @@ package com.example.myfulgora.ui.screens.tabs.home
 
 import androidx.lifecycle.ViewModel
 import com.example.myfulgora.data.auth.UserManager
+import com.example.myfulgora.data.model.BikeState // 👈 Certifica-te de que o import do BikeState está correto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
+import com.example.myfulgora.data.remote.FulgoraMqttClient
+import kotlinx.coroutines.flow.update // 👈 IMPORTANTE
+import kotlinx.coroutines.launch
 
-// O Estado que a Home vai ler
-data class HomeState(
-    val bikeName: String = "A carregar...",
-    val batteryLevel: Int = 0,
-    val isConnected: Boolean = false,
-    val totalBikes: Int = 0 
-)
 
 class HomeViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeState())
-    val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
+    // 1. Mudamos a "caixa" de HomeState para o teu BikeState global
+    private val _uiState = MutableStateFlow(BikeState())
+    val uiState: StateFlow<BikeState> = _uiState.asStateFlow()
 
     init {
         atualizarEcra()
+    }init {
+        // 1. Carrega os dados fixos primeiro (Nome da mota, etc)
+        atualizarEcra()
+
+        // 2. Fica a ouvir os dados REAIS do MQTT em tempo real! 🎧
+        viewModelScope.launch {
+            FulgoraMqttClient.bikeState.collect { mqttState ->
+                // Sempre que o MQTT recebe um JSON, a Home atualiza-se automaticamente
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        batteryPercentage = mqttState.batteryPercentage,
+                        range = mqttState.range,
+                        isOnline = mqttState.isOnline,
+                        isCharging = mqttState.isCharging,
+                        batteryCycles = mqttState.batteryCycles,
+                        batteryTemp = mqttState.batteryTemp,
+                        batteryHealth = mqttState.batteryHealth,
+                        timeLeft = mqttState.timeLeft
+                    )
+                }
+            }
+        }
     }
 
     fun atualizarEcra() {
@@ -28,11 +49,30 @@ class HomeViewModel : ViewModel() {
         val total = UserManager.currentUser?.bikes?.size ?: 0
 
         if (currentBike != null) {
-            _uiState.value = HomeState(
+            // 2. Mapeamos TODOS os dados do JSON (MockBike) para o ecrã (BikeState)
+            _uiState.value = BikeState(
+                // Identificação
                 bikeName = currentBike.name,
-                batteryLevel = currentBike.batteryLevel,
-                isConnected = currentBike.isConnected,
-                totalBikes = total
+                totalBikes = total,
+                isOnline = currentBike.isConnected,
+                isLocked = currentBike.isLocked,
+                drivingMode = currentBike.drivingMode,
+
+                // Condução e Performance
+                averageSpeed = currentBike.averageSpeed,
+                range = currentBike.batteryRange.toInt(), // Convertemos Double para Int (se quiseres km certos)
+                consumption = currentBike.energyConsumption,
+                tyreFront = currentBike.tyreFront,
+                tyreBack = currentBike.tyreBack,
+
+                // Bateria e Carregamento
+                batteryPercentage = currentBike.batteryLevel,
+                isCharging = currentBike.isCharging,
+                timeLeft = "${currentBike.chargingHours}h ${currentBike.chargingMinutes}m",
+                batteryHealth = currentBike.batteryHealth,
+                batteryTemp = currentBike.batteryTemperature,
+                batteryCycles = currentBike.batteryCycles,
+                avgConsumption = currentBike.batteryConsumption
             )
         }
     }
@@ -40,7 +80,7 @@ class HomeViewModel : ViewModel() {
     // Função para a seta da direita ➡️
     fun motaSeguinte() {
         UserManager.nextBike()
-        atualizarEcra() 
+        atualizarEcra()
     }
 
     // Função para a seta da esquerda ⬅️
