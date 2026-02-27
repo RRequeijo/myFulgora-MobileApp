@@ -1,5 +1,6 @@
 package com.example.myfulgora.data.model
 
+import android.R
 import com.google.gson.annotations.SerializedName
 
 // 1. A raiz do ficheiro JSON (A lista de utilizadores)
@@ -28,5 +29,6 @@ data class MockBike(
     @SerializedName("name") val name: String,
     @SerializedName("batteryLevel") val batteryLevel: Int,
     @SerializedName("isConnected") val isConnected: Boolean,
-    @SerializedName("isLocked") val isLocked: Boolean
+    @SerializedName("isLocked") val isLocked: Boolean,
+    var documents: MutableMap<String, String> = mutableMapOf()
 )
