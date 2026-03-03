@@ -28,22 +28,20 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material.icons.filled.Check
 import androidx.core.os.LocaleListCompat
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.ui.res.stringResource
 import com.example.myfulgora.R
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalConfiguration
+import com.example.myfulgora.data.auth.UserManager
 
 @Composable
 fun SettingsScreen(
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onUserClick: () -> Unit = {}
 ) {
     var isMetric by remember { mutableStateOf(true) }
     var notificationsEnabled by remember { mutableStateOf(true) }
     var lowBatteryAlertEnabled by remember { mutableStateOf(true) }
+    val currentUser = UserManager.currentUser
 
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -63,8 +61,10 @@ fun SettingsScreen(
             ) {
                 // 1. TOP BAR
                 FulgoraTopBar(
+                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
-                    onMenuClick = onMenuClick
+                    onMenuClick = onMenuClick,
+                    onUserClick = onUserClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))
@@ -222,23 +222,19 @@ fun SettingsScreen(
 
 @Composable
 fun LanguageSelectorRow() {
-    // 1. Estado do Menu
     var expanded by remember { mutableStateOf(false) }
 
-    // 2. Animação da rotação da seta
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         label = "ArrowRotation"
     )
 
-    // 3. Lista de Idiomas
     val languages = mapOf(
         "English" to "en",
         "Português" to "pt",
         "Chinese" to "zh"
     )
 
-    // 4. Detetar língua atual
     val currentLocale = AppCompatDelegate.getApplicationLocales().toLanguageTags()
     val displayLanguage = when {
         currentLocale.contains("pt") -> "Português"
@@ -246,24 +242,21 @@ fun LanguageSelectorRow() {
         else -> "English"
     }
 
-    // CONTAINER PRINCIPAL (Agora é uma Coluna com animação de tamanho)
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize() // 👈 Faz a animação suave ao abrir/fechar
+            .animateContentSize()
     ) {
-
-        // --- CABEÇALHO (O que está sempre visível) ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expanded = !expanded } // Alterna entre aberto/fechado
-                .padding(vertical = 12.dp), // Padding do clique
+                .clickable { expanded = !expanded }
+                .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.settings_language), // Cria esta string se não existir, ou usa "Language"
+                text = stringResource(id = R.string.settings_language),
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 14.sp
             )
@@ -273,20 +266,17 @@ fun LanguageSelectorRow() {
                 fontSize = 12.sp
             )
 
-            // Lado Direito: Seta que roda
             Icon(
-                painter = painterResource(id = AppIcons.Actions.DropDown), // Confirma se tens este ícone
+                painter = painterResource(id = AppIcons.Actions.DropDown),
                 contentDescription = null,
                 tint = if (expanded) GreenFresh else Color.Gray,
                 modifier = Modifier
                     .size(24.dp)
-                    .rotate(rotationState) // 👈 Aplica a rotação animada
+                    .rotate(rotationState)
             )
         }
 
-        // --- CORPO (Opções que aparecem quando expanded = true) ---
         if (expanded) {
-            // Uma linha separadora subtil
             HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
 
             Column(
@@ -314,10 +304,9 @@ fun LanguageSelectorRow() {
                             fontSize = 14.sp
                         )
 
-                        // Mostra um "Visto" se estiver selecionado
                         if (isSelected) {
                             Icon(
-                                imageVector = androidx.compose.material.icons.Icons.Default.Check, // Ou usa um ícone teu
+                                imageVector = androidx.compose.material.icons.Icons.Default.Check,
                                 contentDescription = "Selected",
                                 tint = GreenFresh,
                                 modifier = Modifier.size(16.dp)
@@ -330,7 +319,6 @@ fun LanguageSelectorRow() {
     }
 }
 
-// Função Auxiliar para mudar o idioma nativamente (Android 13+)
 fun changeAppLanguage(languageCode: String) {
     val appLocale = LocaleListCompat.forLanguageTags(languageCode)
     AppCompatDelegate.setApplicationLocales(appLocale)
@@ -338,41 +326,32 @@ fun changeAppLanguage(languageCode: String) {
 
 @Composable
 fun ThemeSelectorRow() {
-    // 1. Estado de Expansão
     var expanded by remember { mutableStateOf(false) }
 
-    // 2. Animação da Seta
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         label = "ArrowRotation"
     )
 
-    // 3. Opções de Tema
-    // Mapeamos o Nome para o Código do Android
     val themeOptions = listOf(
         "System Default" to AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
         "Light Mode" to AppCompatDelegate.MODE_NIGHT_NO,
         "Dark Mode" to AppCompatDelegate.MODE_NIGHT_YES
     )
 
-    // 4. Detetar o modo atual
     val currentMode = AppCompatDelegate.getDefaultNightMode()
 
-    // Converter o código atual para texto bonito
     val displayTheme = when (currentMode) {
         AppCompatDelegate.MODE_NIGHT_NO -> "Light Mode"
         AppCompatDelegate.MODE_NIGHT_YES -> "Dark Mode"
         else -> "System Default"
     }
 
-    // CONTAINER PRINCIPAL (Coluna com animação)
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize() // 👈 A magia da animação suave
+            .animateContentSize()
     ) {
-
-        // --- CABEÇALHO (Sempre visível) ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -382,7 +361,7 @@ fun ThemeSelectorRow() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Theme", // Podes usar stringResource(R.string.settings_theme)
+                text = "Theme",
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 14.sp
             )
@@ -393,7 +372,7 @@ fun ThemeSelectorRow() {
             )
 
             Icon(
-                painter = painterResource(id = AppIcons.Actions.DropDown), // O mesmo ícone da seta
+                painter = painterResource(id = AppIcons.Actions.DropDown),
                 contentDescription = null,
                 tint = if (expanded) GreenFresh else Color.Gray,
                 modifier = Modifier
@@ -402,7 +381,6 @@ fun ThemeSelectorRow() {
             )
         }
 
-        // --- LISTA DE OPÇÕES (Visível apenas se expanded = true) ---
         if (expanded) {
             HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
 
@@ -414,7 +392,6 @@ fun ThemeSelectorRow() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                // 👇 AÇÃO DE MUDANÇA DE TEMA
                                 AppCompatDelegate.setDefaultNightMode(mode)
                                 expanded = false
                             }

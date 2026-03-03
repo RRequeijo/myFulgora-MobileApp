@@ -6,11 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Autorenew
-import androidx.compose.material.icons.rounded.Bolt
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.Thermostat
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,19 +28,21 @@ import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.CardBackgroundColor
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.example.myfulgora.R
-
-// 👇 E este para o 'delay' funcionar
+import com.example.myfulgora.data.auth.UserManager
 import kotlinx.coroutines.delay
 
 @Composable
 fun BatteryScreen(
     state: BikeState,
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onUserClick: () -> Unit = {}
 ) {
+    // Acedemos diretamente à propriedade currentUser do UserManager
+    val currentUser = UserManager.currentUser
+
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
@@ -67,8 +63,10 @@ fun BatteryScreen(
 
                 // 1. CABEÇALHO PARTILHADO
                 FulgoraTopBar(
+                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
-                    onMenuClick = onMenuClick
+                    onMenuClick = onMenuClick,
+                    onUserClick = onUserClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))
@@ -90,7 +88,6 @@ fun BatteryScreen(
                     modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // 👇 Passamos o STATE aqui
                     BigBatteryIndicator(
                         state = state,
                         modifier = Modifier.weight(0.35f).fillMaxHeight()
@@ -99,7 +96,6 @@ fun BatteryScreen(
                     Spacer(modifier = Modifier.width(Dimens.PaddingMedium))
 
                     Box(modifier = Modifier.weight(0.65f)) {
-                        // 👇 Passamos o STATE aqui também
                         BatteryInfoCard(state = state)
                     }
                 }
@@ -158,50 +154,39 @@ fun BigBatteryIndicator(
     state: BikeState,
     modifier: Modifier = Modifier
 ) {
-    // 1. ESTADO DA ANIMAÇÃO
-    // Controla qual imagem mostramos: True = Imagem 1, False = Imagem 2
     var showFrame1 by remember { mutableStateOf(true) }
 
-    // 2. O MOTOR DA ANIMAÇÃO
     LaunchedEffect(state.isCharging) {
         if (state.isCharging) {
-            // Se estiver a carregar, entra num loop infinito
             while (true) {
-                delay(800) // Tempo de espera (800ms). Ajusta se quiseres mais rápido/lento.
-                showFrame1 = !showFrame1 // Troca a imagem
+                delay(800)
+                showFrame1 = !showFrame1
             }
         } else {
-            // Se parar de carregar, reseta para a imagem principal
             showFrame1 = true
         }
     }
 
-    // 3. LÓGICA DE ESCOLHA DA IMAGEM E COR
     val currentIcon = if (state.isCharging) {
-        // MODO A CARREGAR: Alterna entre as duas imagens
         if (showFrame1) {
-            AppIcons.Battery.BigBatteryCharging // Imagem A (Ex: Cheia)
+            AppIcons.Battery.BigBatteryCharging
         } else {
-            // ⚠️ ATENÇÃO: Coloca aqui a tua segunda imagem (Ex: Vazia ou Sem Raio)
             AppIcons.Battery.BigBattery
         }
     } else {
-        // MODO NORMAL: Imagem estática
         AppIcons.Battery.BigBatteryCharging
     }
 
     val mainColor = if (state.isCharging) Color(0xFFFFD700) else GreenFresh
 
-    // 4. O UI (Quase igual ao anterior, mas usa o currentIcon)
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1.2f))
 
-        // Ícone Dinâmico
         Icon(
-            painter = painterResource(id = currentIcon), // 👈 Usa a variável dinâmica
+            painter = painterResource(id = currentIcon),
             contentDescription = "Battery Status",
             tint = mainColor,
             modifier = Modifier
@@ -235,14 +220,13 @@ fun BatteryInfoCard(
         Column(
             modifier = Modifier.padding(Dimens.SpacingSmall)
         ) {
-            // Topo
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = Dimens.PaddingMedium)
             ) {
                 Text(
-                    text = if (state.isCharging) "Charging" else "Standby", // 👈 Texto Dinâmico
+                    text = if (state.isCharging) "Charging" else "Standby",
                     color = if (state.isCharging) GreenFresh else Color.Gray,
                     fontWeight = FontWeight.Bold
                 )
@@ -263,12 +247,10 @@ fun BatteryInfoCard(
 
             Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
-            // Linha de Ícones
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Item 1
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -287,7 +269,6 @@ fun BatteryInfoCard(
                     Text("${state.batteryPercentage}%", color = Color.Gray, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
                 }
 
-                // Item 2 (Centro)
                 Column(
                     modifier = Modifier.weight(1f).aspectRatio(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -303,7 +284,6 @@ fun BatteryInfoCard(
                     Text("${state.range} km", color = Color.Gray, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
                 }
 
-                // Item 3 (Direita)
                 Column(
                     modifier = Modifier.weight(1f).aspectRatio(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,

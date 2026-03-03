@@ -34,20 +34,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfulgora.R
-import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 import com.example.myfulgora.data.model.BikeState
+import com.example.myfulgora.data.auth.UserManager
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     state: BikeState,
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onUserClick: () -> Unit = {}
 ) {
     // Isto obriga o ViewModel a buscar os dados frescos sempre que entras na Home
     LaunchedEffect(Unit) {
         viewModel.atualizarEcra()
     }
+
+    val currentUser = UserManager.currentUser
 
     // Estado local para o modo de condução
     var selectedMode by remember { mutableStateOf("Normal") }
@@ -71,8 +73,10 @@ fun HomeScreen(
 
                 // 1. TOP BAR
                 FulgoraTopBar(
+                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
-                    onMenuClick = onMenuClick
+                    onMenuClick = onMenuClick,
+                    onUserClick = onUserClick
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -121,9 +125,9 @@ fun HomeScreen(
                             Icon(
                                 painter = painterResource(id = AppIcons.Dashboard.ArrowLeft0),
                                 contentDescription = "Mota Anterior",
-                                tint = Color.White, // Coloquei a branco para dar a ideia de serem botões
+                                tint = Color.White,
                                 modifier = Modifier
-                                    .size(36.dp) // Aumentei um pouco para ser mais fácil de clicar
+                                    .size(36.dp)
                                     .clickable { viewModel.motaAnterior() }
                                     .padding(4.dp)
                             )
@@ -155,13 +159,12 @@ fun HomeScreen(
                                 style = Stroke(width = strokeWidth.toPx())
                             )
                             val sweep = (state.batteryPercentage * 360f) / 100f
-                            val ringColor = if (state.batteryPercentage <= 20) Color.Red else GreenFresh
 
                             // Progresso (Verde)
                             drawArc(
                                 color = GreenFresh,
                                 startAngle = -90f,
-                                sweepAngle = sweep, // 78% simulado
+                                sweepAngle = sweep,
                                 useCenter = false,
                                 style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
                             )
@@ -225,16 +228,14 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 👇 ALTERAR ESTAS LINHAS:
-
                         // 1. Bateria
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Battery),
-                            "${state.batteryPercentage}%", // Valor dinâmico
+                            "${state.batteryPercentage}%",
                             "",
                         )
 
-                        // 2. Consumo (Podes manter estático ou simular depois)
+                        // 2. Consumo
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Power),
                             "${state.consumption}",
@@ -244,18 +245,18 @@ fun HomeScreen(
                         // 3. Autonomia (Range)
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Bike),
-                            "${state.range}", // Valor dinâmico
+                            "${state.range}",
                             "km"
                         )
 
-                        // 4. Status (Se o telemovel está conectado com a mota ou não...)
-                        val isOnline = state.isOnline // ⚠️ Certifica-te que tens isto no BikeState
+                        // 4. Status
+                        val isOnline = state.isOnline
 
                         HomeStatItem(
                             icon = painterResource(id = AppIcons.Dashboard.Status),
                             value = if (isOnline) stringResource(id = R.string.home_status_online) else stringResource(id = R.string.home_status_offline),
                             label = "",
-                            statusColor = if (isOnline) GreenFresh else Color.Red // 👈 Define a cor da bolinha
+                            statusColor = if (isOnline) GreenFresh else Color.Red
                         )
                     }
                 }
@@ -271,10 +272,9 @@ fun HomeStatItem(
     icon: Any,
     value: String,
     label: String,
-    statusColor: Color? = null // 👈 Novo parâmetro opcional
+    statusColor: Color? = null
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        // Desenha o Ícone (aceita Vector ou Painter)
         when (icon) {
             is ImageVector -> Icon(icon, null, tint = GreenFresh, modifier = Modifier.size(24.dp))
             is Painter -> Icon(icon, null, tint = GreenFresh, modifier = Modifier.size(24.dp))
@@ -282,18 +282,15 @@ fun HomeStatItem(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Linha do Texto + Bolinha
         Row(verticalAlignment = Alignment.CenterVertically) {
-
-            // 👇 AQUI ESTÁ A BOLINHA
             if (statusColor != null) {
                 Box(
                     modifier = Modifier
-                        .size(8.dp) // Tamanho da bolinha
+                        .size(8.dp)
                         .clip(CircleShape)
                         .background(statusColor)
                 )
-                Spacer(modifier = Modifier.width(6.dp)) // Espaço entre a bolinha e o texto
+                Spacer(modifier = Modifier.width(6.dp))
             }
 
             Text(

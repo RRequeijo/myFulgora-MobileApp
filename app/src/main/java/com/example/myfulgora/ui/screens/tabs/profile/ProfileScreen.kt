@@ -105,6 +105,7 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 FulgoraTopBar(
+                    userName = state.name,
                     iconSize = iconSize,
                     onMenuClick = onMenuClick
                 )
@@ -185,7 +186,7 @@ fun ProfileScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable(enabled = !state.isSyncing) { // 👈 Só clica se não estiver a carregar
+                            .clickable(enabled = !state.isSyncing) {
                                 viewModel.sincronizarNovaMota(context)
                             }
                             .padding(vertical = 8.dp),
@@ -198,7 +199,6 @@ fun ProfileScreen(
                                 color = Color.White.copy(alpha = 0.8f),
                                 fontSize = 14.sp
                             )
-                            // Se tiver motas, diz quantas tem na garagem
                             if (state.totalBikes > 0) {
                                 Text(
                                     text = "${state.totalBikes} bikes in garage",
@@ -206,7 +206,6 @@ fun ProfileScreen(
                                     fontSize = 12.sp
                                 )
                             }
-                            // Mensagem de sucesso bonita a verde
                             if (state.showSyncSuccess) {
                                 Text(
                                     text = "Sync successful! New bike added.",
@@ -216,7 +215,6 @@ fun ProfileScreen(
                             }
                         }
 
-                        // Mostra a rodinha a girar ou a seta normal
                         if (state.isSyncing) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
@@ -340,7 +338,6 @@ fun ProfileScreen(
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
 
-                                    // 👇 TELEFONE CLICÁVEL
                                     Text(
                                         text = "Phone:",
                                         color = Color.White,
@@ -360,7 +357,6 @@ fun ProfileScreen(
                                             }
                                     )
 
-                                    // 👇 EMAIL CLICÁVEL
                                     Text(
                                         text = "Email:",
                                         color = Color.White,
@@ -389,7 +385,6 @@ fun ProfileScreen(
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
 
-                                    // 👇 TELEFONE CLICÁVEL
                                     Text(
                                         text = "Phone:",
                                         color = Color.White,
@@ -409,7 +404,6 @@ fun ProfileScreen(
                                             }
                                     )
 
-                                    // 👇 EMAIL CLICÁVEL
                                     Text(
                                         text = "Email:",
                                         color = Color.White,
@@ -435,7 +429,6 @@ fun ProfileScreen(
                                         fontSize = 14.sp
                                     )
 
-                                    // 👇 MORADA CLICÁVEL (Abre o Google Maps)
                                     Text(
                                         text = "Rua da Mobilidade 123\n4000-000 Porto, Portugal",
                                         color = White,

@@ -26,11 +26,15 @@ import com.example.myfulgora.ui.components.FulgoraTopBar
 import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
+import com.example.myfulgora.data.auth.UserManager
 
 @Composable
 fun SocialScreen(
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onUserClick: () -> Unit = {}
 ) {
+    val currentUser = UserManager.currentUser
+
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val screenW = maxWidth
@@ -49,8 +53,10 @@ fun SocialScreen(
             ) {
                 // 1. TOP BAR
                 FulgoraTopBar(
+                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
-                    onMenuClick = onMenuClick
+                    onMenuClick = onMenuClick,
+                    onUserClick = onUserClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))

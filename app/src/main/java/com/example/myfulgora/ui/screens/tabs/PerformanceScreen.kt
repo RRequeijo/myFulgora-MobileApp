@@ -39,22 +39,23 @@ import com.example.myfulgora.ui.theme.DarkWhite
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GrayLight
 import com.example.myfulgora.ui.theme.GreenFresh
+import com.example.myfulgora.data.auth.UserManager
 
 @Composable
 fun PerformanceScreen(
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onUserClick: () -> Unit = {}
 ) {
+    val currentUser = UserManager.currentUser
+
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
             val screenW = this.maxWidth
             val screenH = maxHeight
 
-            // Cálculos dinâmicos
             val iconSize = screenW * Dimens.IconScaleRatio
-            val bikeHeight = screenH * Dimens.BikeHeightRatio
             val paddingSide = screenW * Dimens.SideMarginRatio
-            val iconSizeStandard = screenW * 0.07f
 
             val scrollState = rememberScrollState()
 
@@ -68,8 +69,10 @@ fun PerformanceScreen(
 
                 // 1. HEADER
                 FulgoraTopBar(
+                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
-                    onMenuClick = onMenuClick
+                    onMenuClick = onMenuClick,
+                    onUserClick = onUserClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))
@@ -88,8 +91,6 @@ fun PerformanceScreen(
                         color = GreenFresh
                     )
                 }
-
-                Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
 
                 // 3. ZONA DA MOTO
                 Box(
@@ -121,7 +122,6 @@ fun PerformanceScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        // B. A Mota (Sozinha no meio)
                         Image(
                             painter = painterResource(id = AppIcons.Dashboard.MainBike),
                             contentDescription = "My Bike",

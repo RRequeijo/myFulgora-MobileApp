@@ -62,11 +62,13 @@ fun FulgoraBackground(
 
 @Composable
 fun FulgoraTopBar(
-    title: String = stringResource(id = R.string.topbar_title),
+    greeting: String = "Hi", // O cumprimento inicial
+    userName: String = "Rider", // O nome que vai vir do teu UserManager
     subtitle: String = stringResource(id = R.string.topbar_subtitle),
     iconSize: Dp = 24.dp,
     onNotificationClick: () -> Unit = {},
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onUserClick: () -> Unit = {} // 👈 NOVO: Ação quando clica no nome
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -74,8 +76,27 @@ fun FulgoraTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            Text(text = title, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text(text = subtitle, color = Color.Gray, fontSize = 14.sp)
+            // Colocamos o "Hi," e o "Username" lado a lado
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "$greeting, ",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = userName,
+                    color = GreenFresh, // 👈 Destaca o nome a verde (importa a cor se necessário)
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable { onUserClick() } // 👈 Torna só o nome clicável
+                )
+            }
+            Text(
+                text = subtitle,
+                color = Color.Gray,
+                fontSize = 14.sp
+            )
         }
 
         Row {

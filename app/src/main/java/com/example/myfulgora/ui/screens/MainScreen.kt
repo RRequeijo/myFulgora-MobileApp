@@ -55,7 +55,6 @@ fun MainScreen() {
     val uiState by viewModel.uiState.collectAsState()
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
-    var searchQuery by remember { mutableStateOf("") }
 
     val menuItems = listOf(
         DrawerItemData(R.string.navbar_home, AppIcons.Navbar.Home, "home"),
@@ -69,6 +68,18 @@ fun MainScreen() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    // 👇 ESTA É A FUNÇÃO QUE FAZ A NAVEGAÇÃO CORRETA (Igual à do Menu)
+    val navigateToProfile = {
+        navController.navigate("profile") {
+            // Isto evita que se criem várias cópias da mesma página no histórico
+            popUpTo(navController.graph.findStartDestination().id) { 
+                saveState = true 
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 
     val currentBikeState = when(val state = uiState) {
         is HomeUiState.Success -> state.bikeState
@@ -158,14 +169,12 @@ fun MainScreen() {
                     bottomBar = {
                         NavigationBar(containerColor = BlackBrand, contentColor = Color.Gray) {
 
-                            // 1. CRIAR UMA CLASSE DE DADOS TEMPORÁRIA (Ou meter num ficheiro à parte)
                             data class NavItem(
-                                val route: String,      // ID Interno (Fixo: "home", "battery")
-                                val labelRes: Int,      // ID da String (R.string.navbar_home)
-                                val icon: Int           // O ícone
+                                val route: String,
+                                val labelRes: Int,
+                                val icon: Int
                             )
 
-                            // 2. DEFINIR A LISTA COM DADOS FIXOS
                             val navItems = listOf(
                                 NavItem("map", R.string.navbar_map, AppIcons.Navbar.Map),
                                 NavItem("battery", R.string.navbar_battery, AppIcons.Navbar.Battery),
@@ -174,29 +183,23 @@ fun MainScreen() {
                                 NavItem("performance", R.string.navbar_performance, AppIcons.Navbar.Performance)
                             )
 
-                            // 3. PERCORRER A LISTA CORRIGIDA
                             navItems.forEach { item ->
-
-                                // Verifica se a rota atual corresponde à rota deste item
-                                // (Agora comparamos "battery" com "battery", e não "Bateria")
                                 val isSelected = currentRoute == item.route
 
                                 NavigationBarItem(
                                     icon = {
                                         Icon(
                                             painterResource(id = item.icon),
-                                            contentDescription = stringResource(id = item.labelRes), // Boa prática para acessibilidade
+                                            contentDescription = stringResource(id = item.labelRes),
                                             modifier = Modifier.size(24.dp)
                                         )
                                     },
                                     label = {
-                                        // AQUI usamos o stringResource para traduzir o texto visual
                                         Text(text = stringResource(id = item.labelRes))
                                     },
                                     selected = isSelected,
                                     alwaysShowLabel = false,
                                     onClick = {
-                                        // AQUI usamos a rota fixa ("battery") e não a traduzida
                                         navController.navigate(item.route) {
                                             popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                             launchSingleTop = true
@@ -215,19 +218,52 @@ fun MainScreen() {
                         }
                     }
                 ) { innerPadding ->
-                    NavHost(navController = navController, startDestination = "profile", modifier = Modifier.padding(innerPadding)) {
+                    NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(innerPadding)) {
                         composable("map") { MapScreen() }
-                        composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }) }
-                        composable("battery") { BatteryScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }) }
+                        composable("profile") { 
+                            ProfileScreen(
+                                navController = navController, 
+                                onMenuClick = { scope.launch { drawerState.open() } }
+                            ) 
+                        }
+                        composable("battery") { 
+                            BatteryScreen(
+                                state = currentBikeState, 
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                            ) 
+                        }
                         composable("home") {
                             HomeScreen(
                                 state = currentBikeState,
-                                onMenuClick = { scope.launch { drawerState.open() } })
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                            )
                         }
-                        composable("social") { SocialScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
-                        composable("performance") { PerformanceScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
-                        composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }) }
-                        composable("documentation") { DocumentationScreen() }
+                        composable("social") { 
+                            SocialScreen(
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                            ) 
+                        }
+                        composable("performance") { 
+                            PerformanceScreen(
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                            ) 
+                        }
+                        composable("settings") { 
+                            SettingsScreen(
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                            ) 
+                        }
+                        composable("documentation") { 
+                            DocumentationScreen(
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                            ) 
+                        }
                     }
                 }
             }

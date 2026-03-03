@@ -75,7 +75,7 @@ object FulgoraMqttClient {
                     isOnline = json.optBoolean("isOnline", currentState.isOnline),
                     isCharging = json.optBoolean("isCharging", currentState.isCharging),
                     batteryCycles = json.optInt("batteryCycles", currentState.batteryCycles),
-                    batteryTemp = tempDouble.toInt(),
+                    batteryTemp = tempDouble.toInt().toDouble(),
                     batteryHealth = json.optString("batteryHealth", currentState.batteryHealth),
                     timeLeft = json.optString("timeLeft", currentState.timeLeft)
                 )
