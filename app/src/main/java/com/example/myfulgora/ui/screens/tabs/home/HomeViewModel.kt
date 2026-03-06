@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
 import com.example.myfulgora.data.remote.FulgoraMqttClient
+import com.example.myfulgora.data.remote.GrpcClass
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -15,6 +16,10 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(BikeState())
+
+    // Instancia a nossa nova classe
+    private val grpcClient = GrpcClass()
+
     val uiState: StateFlow<BikeState> = _uiState.asStateFlow()
 
     init {
@@ -81,5 +86,28 @@ class HomeViewModel : ViewModel() {
     fun motaAnterior() {
         UserManager.previousBike()
         atualizarEcra()
+    }
+
+    // Função que tu podes chamar para pedir os dados atualizados ao Laboratório
+    fun buscarDadosDoLaboratorio() {
+        viewModelScope.launch {
+            val currentBike = UserManager.getCurrentBike()
+            if (currentBike != null) {
+                // 1. Liga para o Laboratório
+                val resposta = grpcClient.getMotaInfo(currentBike.vin)
+
+                // 2. Se o laboratório atendeu e respondeu...
+                if (resposta != null) {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            batteryPercentage = resposta.battery,
+                            totalKilometers = resposta.kilometers,
+                            latitude = resposta.latitude,
+                            longitude = resposta.longitude
+                        )
+                    }
+                }
+            }
+        }
     }
 }

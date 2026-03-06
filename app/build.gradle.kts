@@ -75,8 +75,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // --- GRPC & PROTOBUF ---
-    implementation("com.google.protobuf:protobuf-kotlin-lite:3.25.1") // Atualizado ligeiramente
+    // 👇 gRPC & Protobuf
+    implementation("com.google.protobuf:protobuf-kotlin-lite:3.24.4")
     implementation("io.grpc:grpc-okhttp:1.60.0")
     implementation("io.grpc:grpc-protobuf-lite:1.60.0")
     implementation("io.grpc:grpc-stub:1.60.0")

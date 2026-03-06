@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
             MyFulgoraTheme {
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "splash") {
 
                     // 1. Splash
                     composable("splash") {

@@ -9,7 +9,7 @@ data class BikeState(
     val drivingMode: String = "Normal",
 
     // --- 2. CONDUÇÃO E PERFORMANCE ---
-    val speed: Int = 0,
+    val totalKilometers: Int = 0,
     val averageSpeed: Int = 0,
     val range: Int = 0,
     val consumption: Double = 0.0,
@@ -33,5 +33,10 @@ data class BikeState(
     val highBeam: Boolean = false,
 
     // --- 6. MENSAGENS E ALERTAS ---
-    val warningMessage: String? = null
+    val warningMessage: String? = null,
+
+    // --- 6. LOCALIZAÇÃO ---
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0
+
 )
