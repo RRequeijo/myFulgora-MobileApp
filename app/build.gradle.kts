@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.myfulgora"
-    compileSdk = 36 // 👈 MUDADO: De 36 para 35 (Estável)
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.myfulgora"
         minSdk = 26
-        targetSdk = 36 // 👈 MUDADO: De 36 para 35 (Estável)
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -102,6 +102,10 @@ dependencies {
 
     // Carregamento de imagens (Coil)
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    //API GOOGLE MAPS
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
 }
 
 protobuf {

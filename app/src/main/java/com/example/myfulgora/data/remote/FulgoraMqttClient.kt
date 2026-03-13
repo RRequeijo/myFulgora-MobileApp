@@ -31,7 +31,7 @@ object FulgoraMqttClient {
             newState.copy(
                 isOnline = currentState.isOnline,
                 batteryPercentage = currentState.batteryPercentage,
-                speed = currentState.speed
+                //speed = currentState.speed
             )
         }
     }

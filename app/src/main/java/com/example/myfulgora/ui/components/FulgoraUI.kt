@@ -223,3 +223,31 @@ fun FulgoraDrawerItem(
         modifier = Modifier.padding(horizontal = 12.dp)
     )
 }
+
+@Composable
+fun RecentTripRow(
+    date: String,
+    route: String,
+    distance: String,
+    energy: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Lado Esquerdo: Rota e Data
+        Column {
+            Text(text = route, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(text = date, color = Color.Gray, fontSize = 12.sp)
+        }
+
+        // Lado Direito: Distância e Energia
+        Column(horizontalAlignment = Alignment.End) {
+            Text(text = distance, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(text = energy, color = GreenFresh, fontSize = 12.sp) // Coloquei a verde para dar destaque!
+        }
+    }
+}

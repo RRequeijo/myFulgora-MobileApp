@@ -10,7 +10,6 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +36,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.platform.LocalContext
 import com.example.myfulgora.ui.screens.tabs.home.HomeScreen
+import com.example.myfulgora.ui.screens.tabs.map.MapScreen
 import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
 import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
 
@@ -219,7 +219,22 @@ fun MainScreen() {
                     }
                 ) { innerPadding ->
                     NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(innerPadding)) {
-                        composable("map") { MapScreen() }
+                        composable("map") {
+                            MapScreen(
+                                onViewAllClick = {
+                                    navController.navigate("history")
+                                }
+                            )
+                        }
+
+                        // 2. O novo ecrã de Histórico
+                        composable("history") {
+                            TripHistoryScreen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
                         composable("profile") { 
                             ProfileScreen(
                                 navController = navController, 
@@ -230,38 +245,38 @@ fun MainScreen() {
                             BatteryScreen(
                                 state = currentBikeState, 
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                                onUserClick = { navigateToProfile() }
                             ) 
                         }
                         composable("home") {
                             HomeScreen(
                                 state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                                onUserClick = { navigateToProfile() }
                             )
                         }
                         composable("social") { 
                             SocialScreen(
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                                onUserClick = { navigateToProfile() }
                             ) 
                         }
                         composable("performance") { 
                             PerformanceScreen(
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                                onUserClick = { navigateToProfile() }
                             ) 
                         }
                         composable("settings") { 
                             SettingsScreen(
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
-                            ) 
+                                onUserClick = { navigateToProfile() }
+                            )
                         }
                         composable("documentation") { 
                             DocumentationScreen(
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() } // 👈 USAR FUNÇÃO CORRIGIDA
+                                onUserClick = { navigateToProfile() }
                             ) 
                         }
                     }
