@@ -17,7 +17,7 @@ import androidx.compose.material.icons.rounded.Place
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +40,9 @@ import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GrayLight
 import com.example.myfulgora.ui.theme.GreenFresh
 import com.example.myfulgora.data.auth.UserManager
+import androidx.compose.ui.platform.LocalContext
+import com.example.myfulgora.data.helpers.SettingsManager
+import kotlin.math.roundToInt
 
 @Composable
 fun PerformanceScreen(
@@ -47,6 +50,9 @@ fun PerformanceScreen(
     onUserClick: () -> Unit = {}
 ) {
     val currentUser = UserManager.currentUser
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
+    val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
 
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -162,7 +168,10 @@ fun PerformanceScreen(
                                 Text(stringResource(id = R.string.performance_next_service_due), color = GreenFresh, fontSize = Dimens.TextSizeSmall)
                                 Spacer(modifier = Modifier.height(Dimens.SpacingSmallPlus))
                                 Text(stringResource(id = R.string.performance_next_service_in), color = Color.Gray, fontSize = Dimens.TextSizeNormal)
-                                Text("320 km", color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
+                                
+                                val serviceDistance = 320
+                                val displayService = if (isMetric) "$serviceDistance km" else "${(serviceDistance * 0.621371).roundToInt()} mi"
+                                Text(displayService, color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
                             }
                             Icon(
                                 painter = painterResource(id = AppIcons.Performance.next_service),
@@ -194,7 +203,10 @@ fun PerformanceScreen(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(stringResource(id = R.string.performance_average_speed), color = DarkWhite, fontSize = Dimens.TextSizeSubTitle)
                                     Text(stringResource(id = R.string.performance_average_speed_based_on_recent_trips), color = Color.Gray, fontSize = Dimens.TextSizeNormal)
-                                    Text("42 km/h", color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeSubTitle)
+                                    
+                                    val avgSpeed = 42
+                                    val displaySpeed = if (isMetric) "$avgSpeed km/h" else "${(avgSpeed * 0.621371).roundToInt()} mph"
+                                    Text(displaySpeed, color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeSubTitle)
                                 }
                             }
                         }
@@ -227,7 +239,7 @@ fun PerformanceScreen(
                         RecentTripRow(
                             date = "Today, 14:20",
                             route = "Home - Office",
-                            distance = "12 km",
+                            distance = if (isMetric) "12 km" else "7 mi",
                             energy = "0.4 kWh"
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.1f))
@@ -235,7 +247,7 @@ fun PerformanceScreen(
                         RecentTripRow(
                             date = "Yesterday, 18:30",
                             route = "Office - Gym",
-                            distance = "5 km",
+                            distance = if (isMetric) "5 km" else "3 mi",
                             energy = "0.1 kWh"
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.1f))
@@ -243,7 +255,7 @@ fun PerformanceScreen(
                         RecentTripRow(
                             date = "12 Oct, 09:00",
                             route = "Weekend Ride",
-                            distance = "45 km",
+                            distance = if (isMetric) "45 km" else "28 mi",
                             energy = "1.2 kWh"
                         )
                     }

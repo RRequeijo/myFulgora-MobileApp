@@ -7,15 +7,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,10 +25,11 @@ import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.CardBackgroundColor
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.example.myfulgora.R
 import com.example.myfulgora.data.auth.UserManager
+import com.example.myfulgora.data.helpers.SettingsManager
+import com.example.myfulgora.data.helpers.UnitConverter
 import kotlinx.coroutines.delay
 
 @Composable
@@ -40,6 +38,10 @@ fun BatteryScreen(
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
+    val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
+
     // Acedemos diretamente à propriedade currentUser do UserManager
     val currentUser = UserManager.currentUser
 
@@ -96,7 +98,7 @@ fun BatteryScreen(
                     Spacer(modifier = Modifier.width(Dimens.PaddingMedium))
 
                     Box(modifier = Modifier.weight(0.65f)) {
-                        BatteryInfoCard(state = state)
+                        BatteryInfoCard(state = state, isMetric = isMetric)
                     }
                 }
 
@@ -130,7 +132,7 @@ fun BatteryScreen(
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryConsumption,
                             title = stringResource(id = R.string.battery_consumption),
-                            value = "${state.avgConsumption} kW/100km",
+                            value = "${state.avgConsumption} kW/100" + if(isMetric) "km" else "mi",
                             modifier = Modifier.weight(1f)
                         )
                         BatteryStatCard(
@@ -208,7 +210,8 @@ fun BigBatteryIndicator(
 
 @Composable
 fun BatteryInfoCard(
-    state: BikeState
+    state: BikeState,
+    isMetric: Boolean
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -281,7 +284,7 @@ fun BatteryInfoCard(
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("${state.range} km", color = Color.Gray, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
+                    Text(UnitConverter.formatDistance(state.range, isMetric), color = Color.Gray, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
                 }
 
                 Column(

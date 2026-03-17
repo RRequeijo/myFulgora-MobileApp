@@ -10,8 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +34,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfulgora.R
 import com.example.myfulgora.data.model.BikeState
 import com.example.myfulgora.data.auth.UserManager
+import androidx.compose.ui.platform.LocalContext
+import com.example.myfulgora.data.helpers.SettingsManager
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
@@ -48,6 +49,10 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.atualizarEcra()
     }
+
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
+    val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
 
     val currentUser = UserManager.currentUser
 
@@ -243,10 +248,13 @@ fun HomeScreen(
                         )
 
                         // 3. Autonomia (Range)
+                        val displayRange = if (isMetric) state.range else (state.range * 0.621371).roundToInt()
+                        val unitLabel = if (isMetric) "km" else "mi"
+                        
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Bike),
-                            "${state.range}",
-                            "km"
+                            "$displayRange",
+                            unitLabel
                         )
 
                         // 4. Status

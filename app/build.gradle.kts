@@ -107,6 +107,10 @@ dependencies {
     //API GOOGLE MAPS
     implementation("com.google.android.gms:play-services-maps:18.2.0")
 
+    //Preferências Locais (Para guardar se a app está em KM ou Milhas)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2") // Para ligar o ViewModel ao Compose
+
 }
 
 protobuf {

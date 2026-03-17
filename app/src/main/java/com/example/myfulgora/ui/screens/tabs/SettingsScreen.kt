@@ -32,16 +32,25 @@ import androidx.compose.ui.res.stringResource
 import com.example.myfulgora.R
 import androidx.compose.ui.draw.rotate
 import com.example.myfulgora.data.auth.UserManager
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
+import com.example.myfulgora.data.helpers.SettingsManager
 
 @Composable
 fun SettingsScreen(
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {}
 ) {
-    var isMetric by remember { mutableStateOf(true) }
+    // 1. Pega no contexto e cria o gestor
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
+    // 2. O Scope para podermos guardar os dados (suspend functions)
+    val coroutineScope = rememberCoroutineScope()
+    // 3. Lê o valor real da memória! (O collectAsState transforma o Flow num estado para o Compose ler)
+    val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
     var notificationsEnabled by remember { mutableStateOf(true) }
     var lowBatteryAlertEnabled by remember { mutableStateOf(true) }
-    val currentUser = UserManager.currentUser
+
 
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -60,6 +69,7 @@ fun SettingsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // 1. TOP BAR
+                val currentUser = UserManager.currentUser
                 FulgoraTopBar(
                     userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
@@ -111,7 +121,9 @@ fun SettingsScreen(
                             Box(
                                 modifier = Modifier
                                     .background(if (isMetric) GreenFresh else Color.Transparent)
-                                    .clickable { isMetric = true }
+                                    .clickable {
+                                        coroutineScope.launch { settingsManager.saveIsMetric(true) }
+                                    }
                                     .padding(horizontal = 12.dp, vertical = 4.dp),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -125,7 +137,9 @@ fun SettingsScreen(
                             Box(
                                 modifier = Modifier
                                     .background(if (!isMetric) GreenFresh else Color.Transparent)
-                                    .clickable { isMetric = false }
+                                    .clickable {
+                                        coroutineScope.launch { settingsManager.saveIsMetric(false) }
+                                    }
                                     .padding(horizontal = 12.dp, vertical = 4.dp),
                                 contentAlignment = Alignment.Center
                             ) {

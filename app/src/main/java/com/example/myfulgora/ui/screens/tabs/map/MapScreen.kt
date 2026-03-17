@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myfulgora.R
-import com.example.myfulgora.ui.components.FulgoraInfoCard // Garante que os imports estão corretos
+import com.example.myfulgora.ui.components.FulgoraInfoCard
 import com.example.myfulgora.ui.screens.tabs.map.MapStyles
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GrayLight
@@ -25,10 +25,10 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
-import com.example.myfulgora.ui.components.RecentTripRow // Verifica se o import está correto
+import com.example.myfulgora.ui.components.RecentTripRow
 import android.net.Uri
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material.icons.filled.Navigation
+import com.example.myfulgora.data.helpers.SettingsManager
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +37,9 @@ fun MapScreen(
         onViewAllClick: () -> Unit = {}
     ) {
         val context = LocalContext.current
+        val settingsManager = remember { SettingsManager(context) }
+        val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
+        
         val bikeLocation = LatLng(-20.310380,-40.294931)
 
         val cameraPositionState = rememberCameraPositionState {
@@ -85,7 +88,7 @@ fun MapScreen(
                         RecentTripRow(
                             date = "Today, 14:20",
                             route = "Home - Office",
-                            distance = "12 km",
+                            distance = if (isMetric) "12 km" else "7 mi",
                             energy = "0.4 kWh"
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.1f))
@@ -93,7 +96,7 @@ fun MapScreen(
                         RecentTripRow(
                             date = "Yesterday, 18:30",
                             route = "Office - Gym",
-                            distance = "5 km",
+                            distance = if (isMetric) "5 km" else "3 mi",
                             energy = "0.1 kWh"
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.1f))
@@ -101,7 +104,7 @@ fun MapScreen(
                         RecentTripRow(
                             date = "12 Oct, 09:00",
                             route = "Weekend Ride",
-                            distance = "45 km",
+                            distance = if (isMetric) "45 km" else "28 mi",
                             energy = "1.2 kWh"
                         )
                     }
@@ -168,6 +171,3 @@ fun MapScreen(
         }
     }
 }
-
-
-
