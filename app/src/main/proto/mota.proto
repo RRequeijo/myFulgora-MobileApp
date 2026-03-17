@@ -1,22 +1,80 @@
 syntax = "proto3";
 
+// Mantendo as tuas configurações originais
 option java_multiple_files = true;
 option java_package = "com.example.grpc";
-
 option csharp_namespace = "AMoverGRPC";
+
+// --- Definições de Tipos ---
+
+enum DrivingMode {
+  ECO = 0;
+  NORMAL = 1;
+  SPORT = 2;
+}
+
+// --- Mensagens (Dados do Documento Word) ---
 
 message MotaRequest {
   string vin = 1;
 }
 
 message MotaResponse {
-  string vin = 1; 
-  int32 battery = 2;
-  int32 kilometers = 3;
-  double latitude = 4;
-  double longitude = 5; 
+  // 1.1 Identificação e Estado Geral
+  string vin = 1;
+  string name = 2;
+  bool is_connected = 3;
+  bool is_locked = 4;
+  DrivingMode driving_mode = 5;
+
+  // 1.2 Gestão de Energia (Bateria)
+  int32 battery_level = 6;
+  bool is_charging = 7;
+  string battery_health = 8;
+  int32 battery_cycles = 9;
+  float battery_temperature = 10;
+  float battery_consumption = 11; // em kW/h
+  int32 battery_range = 12;      // Autonomia em km
+  string charging_time = 13;     // ex: "1h57min"
+
+  // 1.3 Estatísticas e Mecânica (Performance & Pneus)
+  float energy_consumption_avg = 14; // kWh/100km
+  int32 average_speed = 15;
+  float tyre_front = 16;
+  float tyre_back = 17;
+  int32 total_kilometers = 18;       // Odometria
+
+  // 1.4 Localização
+  double latitude = 19;
+  double longitude = 20;
 }
 
+// 3.2 Delegação de Acesso (Convidados)
+message GuestAccessRequest {
+  string vin = 1;
+  string guest_email = 2;
+}
+
+message GuestListResponse {
+  repeated string guest_emails = 1;
+}
+
+message ActionStatus {
+  bool success = 1;
+  string message = 2;
+}
+
+// --- Definição dos Serviços (Baseado no fluxo da App) ---
+
 service MotasService {
+  // Obter dados ao abrir a App (ponto 1 do documento)
   rpc GetMotaInfo (MotaRequest) returns (MotaResponse);
+
+  // Streaming para tempo real com a App aberta
+  rpc StreamMotaUpdates (MotaRequest) returns (stream MotaResponse);
+
+  // Serviços de Gestão de Convidados (ponto 3.2 do documento)
+  rpc ListGuestAccess (MotaRequest) returns (GuestListResponse);
+  rpc AssignGuestPermission (GuestAccessRequest) returns (ActionStatus);
+  rpc RevokeGuestAccess (GuestAccessRequest) returns (ActionStatus);
 }
