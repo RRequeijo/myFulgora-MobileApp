@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.protobuf")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" // Ajuda a ler o local.properties
 }
 
 android {

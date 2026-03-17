@@ -28,7 +28,7 @@ class GrpcClass {
 
                 // Faz a chamada e espera pela resposta
                 val response = stub.getMotaInfo(request)
-                Log.d("GRPC", "Sucesso! Bateria recebida: ${response.battery}")
+                Log.d("GRPC", "Sucesso! Bateria recebida: ${response.batteryLevel}")
 
                 response // Devolve a resposta
             } catch (e: Exception) {

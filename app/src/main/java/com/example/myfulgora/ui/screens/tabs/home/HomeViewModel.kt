@@ -100,8 +100,8 @@ class HomeViewModel : ViewModel() {
                 if (resposta != null) {
                     _uiState.update { currentState ->
                         currentState.copy(
-                            batteryPercentage = resposta.battery,
-                            totalKilometers = resposta.kilometers,
+                            batteryPercentage = resposta.batteryLevel,
+                            totalKilometers = resposta.totalKilometers,
                             latitude = resposta.latitude,
                             longitude = resposta.longitude
                         )
