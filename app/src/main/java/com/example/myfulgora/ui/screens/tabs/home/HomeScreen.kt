@@ -1,14 +1,14 @@
 package com.example.myfulgora.ui.screens.tabs.home
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +27,11 @@ import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,8 +60,12 @@ fun HomeScreen(
 
     val currentUser = UserManager.currentUser
 
-    // Estado local para o modo de condução
+    // Estado local para o modo de condução e motor
     var selectedMode by remember { mutableStateOf("Normal") }
+    var isBikeOn by remember { mutableStateOf(false) }
+    var showModeMenu by remember { mutableStateOf(false) }
+    var showPowerDialog by remember { mutableStateOf(false) }
+
 
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -188,37 +196,108 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // 4. MODOS DE CONDUÇÃO (Eco, Normal, Sport)
+                // 4. LIGAR MOTA (40%) & MODO DE CONDUÇÃO (60%)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .wrapContentHeight(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top // Alinhado ao topo para a expansão crescer para baixo
                 ) {
-                    val modes = listOf("Eco", "Normal", "Sport")
-
-                    modes.forEach { mode ->
-                        val isSelected = selectedMode == mode
-
-                        Surface(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
-                            shape = RoundedCornerShape(28.dp),
-                            color = if (isSelected) GreenFresh else Color(0xFF1E1E1E),
-                            onClick = { selectedMode = mode }
+                    // --- 40%: BOTÃO DE LIGAR / DESLIGAR COM CONFIRMAÇÃO ---
+                    Surface(
+                        modifier = Modifier
+                            .weight(0.4f)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        color = if (isBikeOn) Color(0xFFE53935) else GreenFresh, 
+                        onClick = { showPowerDialog = true }
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = mode,
-                                    color = if (isSelected) Color.Black else Color.White,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    fontSize = 16.sp
-                                )
+                            Icon(
+                                painter = painterResource(id = AppIcons.Dashboard.Power),
+                                contentDescription = "Power",
+                                tint = if (isBikeOn) Color.White else Color.Black,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (isBikeOn) "STOP" else "START",
+                                color = if (isBikeOn) Color.White else Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
+
+                    // --- 60%: SELETOR DE MODO DE CONDUÇÃO (ESTILO EXPANDABLE) ---
+                    val rotationState by animateFloatAsState(
+                        targetValue = if (showModeMenu) 180f else 0f,
+                        label = "ArrowRotation"
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .weight(0.6f)
+                            .animateContentSize()
+                            .clip(RoundedCornerShape(28.dp))
+                            .background(Color(0xFF1E1E1E))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .clickable { showModeMenu = !showModeMenu }
+                                .padding(horizontal = 20.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = selectedMode,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                tint = GreenFresh,
+                                modifier = Modifier.rotate(rotationState)
+                            )
+                        }
+
+                        if (showModeMenu) {
+                            val modes = listOf("Eco", "Normal", "Sport")
+                            modes.forEach { mode ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            selectedMode = mode
+                                            showModeMenu = false
+                                        }
+                                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = mode,
+                                        color = if (selectedMode == mode) GreenFresh else Color.White,
+                                        fontSize = 14.sp
+                                    )
+                                    if (selectedMode == mode) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = GreenFresh,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -270,6 +349,47 @@ fun HomeScreen(
                 }
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
+            }
+
+            // --- POPUP DE CONFIRMAÇÃO (Segurança) ---
+            if (showPowerDialog) {
+                AlertDialog(
+                    onDismissRequest = { showPowerDialog = false },
+                    containerColor = Color(0xFF1E1E1E),
+                    title = {
+                        Text(
+                            text = if (isBikeOn) "Desligar Motor?" else "Ligar Motor?",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = if (isBikeOn) 
+                                "Tens a certeza que queres desligar o motor da tua Fulgora?" 
+                                else "Tens a certeza que queres ligar o motor? Certifica-te que estás em segurança e com o descanso recolhido.",
+                            color = Color.Gray
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                isBikeOn = !isBikeOn
+                                showPowerDialog = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isBikeOn) Color(0xFFE53935) else GreenFresh
+                            )
+                        ) {
+                            Text(text = "Confirmar", color = if (isBikeOn) Color.White else Color.Black)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showPowerDialog = false }) {
+                            Text("Cancelar", color = Color.Gray)
+                        }
+                    }
+                )
             }
         }
     }
