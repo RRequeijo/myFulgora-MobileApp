@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.example.myfulgora.data.helpers.NotificationManager // Importa o teu Cérebro!
 
 sealed class HomeUiState {
     object Loading : HomeUiState()
@@ -19,6 +20,7 @@ class MotaViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState = _uiState.asStateFlow()
+    private var alreadyNotifiedBattery = false
 
     init {
         conectarMqtt()
@@ -89,6 +91,18 @@ class MotaViewModel : ViewModel() {
         }
 
         _uiState.value = HomeUiState.Success(newState)
+
+        // --- GATILHO DAS NOTIFICAÇÕES (Bateria) ---
+        val bateriaAtual = mqttState.batteryPercentage
+        if (bateriaAtual <= 20 && !alreadyNotifiedBattery) {
+            NotificationManager.addNotification(
+                title = "Bateria Fraca",
+                message = "A bateria desceu para ${bateriaAtual}%. Planeia o carregamento."
+            )
+            alreadyNotifiedBattery = true
+        } else if (bateriaAtual > 20) {
+            alreadyNotifiedBattery = false // Faz reset se a mota for carregada
+        }
     }
 
     private fun conectarMqtt() {

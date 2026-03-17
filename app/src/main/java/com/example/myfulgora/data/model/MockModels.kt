@@ -45,4 +45,14 @@ data class MockBike(
     @SerializedName("averageSpeed") val averageSpeed: Int,
     // A nossa "gaveta" dos documentos que não vem no JSON (tem de ter o '?')
     var documents: MutableMap<String, String> = mutableMapOf()
+
+)
+
+// 5. Notificações
+data class FulgoraNotification(
+    val id: Int,
+    val title: String,
+    val message: String,
+    val time: String,
+    val isRead: Boolean
 )

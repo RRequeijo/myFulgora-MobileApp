@@ -9,7 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -25,7 +25,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myfulgora.R
+import com.example.myfulgora.data.model.FulgoraNotification
 import com.example.myfulgora.ui.theme.*
+import androidx.compose.ui.platform.LocalConfiguration // 👈 Adiciona este import
+import androidx.compose.ui.window.Popup // 👈 Adiciona este import
+import androidx.compose.ui.window.PopupProperties // 👈 Adiciona este import
+import androidx.compose.ui.unit.IntOffset // 👈 Adiciona este import
+import com.example.myfulgora.data.helpers.NotificationManager
 
 @Composable
 fun FulgoraBackground(
@@ -60,12 +66,14 @@ fun FulgoraBackground(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FulgoraTopBar(
     greeting: String = "Hi", // O cumprimento inicial
     userName: String = "Rider", // O nome que vai vir do teu UserManager
     subtitle: String = stringResource(id = R.string.topbar_subtitle),
     iconSize: Dp = 24.dp,
+    unreadNotifications: Int = 0,
     onNotificationClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {} // 👈 NOVO: Ação quando clica no nome
@@ -86,10 +94,10 @@ fun FulgoraTopBar(
                 )
                 Text(
                     text = userName,
-                    color = GreenFresh, // 👈 Destaca o nome a verde (importa a cor se necessário)
+                    color = GreenFresh,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { onUserClick() } // 👈 Torna só o nome clicável
+                    modifier = Modifier.clickable { onUserClick() }
                 )
             }
             Text(
@@ -99,18 +107,108 @@ fun FulgoraTopBar(
             )
         }
 
-        Row {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = "Notifications",
-                tint = Color.White,
+        // Bloco dos Ícones (Direita)
+        // Descobrimos a largura do ecrã do telemóvel
+        val configuration = LocalConfiguration.current
+        val screenWidth = configuration.screenWidthDp.dp
+        // 1. Fica a ouvir a lista real de notificações
+        val notificationsList by NotificationManager.notifications.collectAsState()
+
+        // 2. Conta matematicamente quantas não estão lidas
+        val unreadNotifications = notificationsList.count { !it.isRead }
+
+        // Bloco dos Ícones (Direita)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            var showNotifications by remember { mutableStateOf(false) }
+
+            // 1. O Sino com as Notificações
+            BadgedBox(
+                badge = {
+                    if (unreadNotifications > 0) {
+                        Badge(containerColor = Color.Red, contentColor = Color.White) {
+                            Text(text = unreadNotifications.toString())
+                        }
+                    }
+                },
                 modifier = Modifier
-                    .size(iconSize)
-                    .clickable { onNotificationClick() }
-            )
+                    .padding(end = 20.dp)
+                    .clickable { showNotifications = !showNotifications }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Notifications",
+                    tint = Color.White,
+                    modifier = Modifier.size(iconSize)
+                )
+            }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            // 👇 2. O NOVO POPUP MODERNO E LARGO 👇
+            if (showNotifications) {
+                Popup(
+                    alignment = Alignment.TopEnd,
+                    offset = IntOffset(0, 100), // Empurra o cartão para baixo do sino
+                    onDismissRequest = { showNotifications = false },
+                    properties = PopupProperties(focusable = true) // Permite clicar fora para fechar
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .width(screenWidth - 32.dp) // Largura do ecrã menos 16dp de margem de cada lado
+                            .padding(end = 16.dp), // Margem direita para não colar ao limite
+                        shape = RoundedCornerShape(16.dp), // Cantos bem arredondados!
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)), // Fundo escuro premium
+                        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp) // Sombra flutuante
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            // Cabeçalho do Cartão
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Notificações", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                Text(
+                                    "Fechar",
+                                    color = GreenFresh,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .clickable {
+                                            showNotifications = !showNotifications
+                                            if (showNotifications) {
+                                                // Se abriu o popup, avisa o cérebro que o utilizador já viu!
+                                                NotificationManager.markAllAsRead()
+                                            }
+                                            onNotificationClick()
+                                        }
+                                )
+                            }
 
+                            Spacer(modifier = Modifier.height(12.dp))
+                            HorizontalDivider(color = Color.Gray.copy(alpha = 0.2f))
+                            Spacer(modifier = Modifier.height(8.dp))
+
+
+                            // Se a lista estiver vazia, mostramos uma mensagem simpática
+                            if (notificationsList.isEmpty()) {
+                                Text(
+                                    text = "Não tens notificações recentes.",
+                                    color = Color.Gray,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.padding(vertical = 16.dp)
+                                )
+                            } else {
+                                // Desenha as notificações reais!
+                                notificationsList.forEach { notif ->
+                                    // ... (o teu código do cartão da notificação fica exatamente igual aqui dentro)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // O teu Menu Hambúrguer (exatamente como estava)
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
