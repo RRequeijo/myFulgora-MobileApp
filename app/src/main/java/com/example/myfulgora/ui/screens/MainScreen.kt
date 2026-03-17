@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -39,6 +40,7 @@ import com.example.myfulgora.ui.screens.tabs.home.HomeScreen
 import com.example.myfulgora.ui.screens.tabs.map.MapScreen
 import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
 import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
+import com.example.myfulgora.ui.screens.tabs.DelegationScreen
 
 // Classe auxiliar atualizada para aceitar Painter ou ImageVector
 data class DrawerItemData(
@@ -63,6 +65,7 @@ fun MainScreen() {
         DrawerItemData(R.string.navbar_battery, AppIcons.Navbar.Battery, "battery"),
         DrawerItemData(R.string.navbar_social, AppIcons.Navbar.Social, "social"),
         DrawerItemData(R.string.navbar_performance, AppIcons.Navbar.Performance, "performance"),
+        DrawerItemData(R.string.navbar_delegation, Icons.Default.Key, "delegation"),
         DrawerItemData(R.string.navbar_settings, AppIcons.Menu.Settings, "settings")
     )
 
@@ -263,6 +266,12 @@ fun MainScreen() {
                         }
                         composable("performance") { 
                             PerformanceScreen(
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() }
+                            ) 
+                        }
+                        composable("delegation") { 
+                            DelegationScreen(
                                 onMenuClick = { scope.launch { drawerState.open() } },
                                 onUserClick = { navigateToProfile() }
                             ) 

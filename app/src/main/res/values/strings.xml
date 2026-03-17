@@ -23,6 +23,7 @@
     <string name="navbar_profile">Profile</string>
     <string name="navbar_help">Help</string>
     <string name="navbar_logout" translatable="false">Logout</string>
+    <string name="navbar_delegation">Digital Keys</string>
 
 
     //HOME
@@ -95,7 +96,7 @@
     <string name="settings_low_battery">Low Battery Alert</string>
     <string name="settings_style">Style</string>
     <string name="settings_language">Language</string>
-    <string name="settings_theme">Theme(White/Dark)</string>"
+    <string name="settings_theme">Theme(White/Dark)</string>
 
 
 

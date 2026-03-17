@@ -80,7 +80,6 @@ fun HomeScreen(
                 FulgoraTopBar(
                     userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
-                    unreadNotifications = 3,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick
                 )

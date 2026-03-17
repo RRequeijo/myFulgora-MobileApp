@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.sp
 import com.example.myfulgora.R
 import com.example.myfulgora.data.model.FulgoraNotification
 import com.example.myfulgora.ui.theme.*
-import androidx.compose.ui.platform.LocalConfiguration // 👈 Adiciona este import
-import androidx.compose.ui.window.Popup // 👈 Adiciona este import
-import androidx.compose.ui.window.PopupProperties // 👈 Adiciona este import
-import androidx.compose.ui.unit.IntOffset // 👈 Adiciona este import
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.unit.IntOffset
 import com.example.myfulgora.data.helpers.NotificationManager
 
 @Composable
@@ -73,7 +73,6 @@ fun FulgoraTopBar(
     userName: String = "Rider", // O nome que vai vir do teu UserManager
     subtitle: String = stringResource(id = R.string.topbar_subtitle),
     iconSize: Dp = 24.dp,
-    unreadNotifications: Int = 0,
     onNotificationClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {} // 👈 NOVO: Ação quando clica no nome
@@ -107,27 +106,20 @@ fun FulgoraTopBar(
             )
         }
 
-        // Bloco dos Ícones (Direita)
-        // Descobrimos a largura do ecrã do telemóvel
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp.dp
-        // 1. Fica a ouvir a lista real de notificações
         val notificationsList by NotificationManager.notifications.collectAsState()
+        val unreadCount = notificationsList.count { !it.isRead }
 
-        // 2. Conta matematicamente quantas não estão lidas
-        val unreadNotifications = notificationsList.count { !it.isRead }
-
-        // Bloco dos Ícones (Direita)
         Row(verticalAlignment = Alignment.CenterVertically) {
 
             var showNotifications by remember { mutableStateOf(false) }
 
-            // 1. O Sino com as Notificações
             BadgedBox(
                 badge = {
-                    if (unreadNotifications > 0) {
+                    if (unreadCount > 0) {
                         Badge(containerColor = Color.Red, contentColor = Color.White) {
-                            Text(text = unreadNotifications.toString())
+                            Text(text = unreadCount.toString())
                         }
                     }
                 },
@@ -147,20 +139,19 @@ fun FulgoraTopBar(
             if (showNotifications) {
                 Popup(
                     alignment = Alignment.TopEnd,
-                    offset = IntOffset(0, 100), // Empurra o cartão para baixo do sino
+                    offset = IntOffset(0, 120),
                     onDismissRequest = { showNotifications = false },
-                    properties = PopupProperties(focusable = true) // Permite clicar fora para fechar
+                    properties = PopupProperties(focusable = true)
                 ) {
                     Card(
                         modifier = Modifier
-                            .width(screenWidth - 32.dp) // Largura do ecrã menos 16dp de margem de cada lado
-                            .padding(end = 16.dp), // Margem direita para não colar ao limite
-                        shape = RoundedCornerShape(16.dp), // Cantos bem arredondados!
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)), // Fundo escuro premium
-                        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp) // Sombra flutuante
+                            .width(screenWidth - 32.dp)
+                            .padding(end = 16.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            // Cabeçalho do Cartão
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -168,19 +159,13 @@ fun FulgoraTopBar(
                             ) {
                                 Text("Notificações", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                 Text(
-                                    "Fechar",
+                                    "Marcar como lidas",
                                     color = GreenFresh,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .clickable {
-                                            showNotifications = !showNotifications
-                                            if (showNotifications) {
-                                                // Se abriu o popup, avisa o cérebro que o utilizador já viu!
-                                                NotificationManager.markAllAsRead()
-                                            }
-                                            onNotificationClick()
-                                        }
+                                    modifier = Modifier.clickable {
+                                        NotificationManager.markAllAsRead()
+                                    }
                                 )
                             }
 
@@ -188,8 +173,6 @@ fun FulgoraTopBar(
                             HorizontalDivider(color = Color.Gray.copy(alpha = 0.2f))
                             Spacer(modifier = Modifier.height(8.dp))
 
-
-                            // Se a lista estiver vazia, mostramos uma mensagem simpática
                             if (notificationsList.isEmpty()) {
                                 Text(
                                     text = "Não tens notificações recentes.",
@@ -198,9 +181,30 @@ fun FulgoraTopBar(
                                     modifier = Modifier.padding(vertical = 16.dp)
                                 )
                             } else {
-                                // Desenha as notificações reais!
-                                notificationsList.forEach { notif ->
-                                    // ... (o teu código do cartão da notificação fica exatamente igual aqui dentro)
+                                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    notificationsList.take(5).forEach { notif ->
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            // Ponto indicador de "não lida"
+                                            if (!notif.isRead) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(8.dp)
+                                                        .background(GreenFresh, RoundedCornerShape(50))
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                            }
+
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(notif.title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                                Text(notif.message, color = Color.Gray, fontSize = 12.sp)
+                                                Text(notif.time, color = GreenFresh.copy(alpha = 0.7f), fontSize = 10.sp)
+                                            }
+                                        }
+                                        HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+                                    }
                                 }
                             }
                         }
@@ -208,7 +212,6 @@ fun FulgoraTopBar(
                 }
             }
 
-            // O teu Menu Hambúrguer (exatamente como estava)
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
