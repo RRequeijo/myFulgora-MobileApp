@@ -160,7 +160,7 @@ fun MapScreen(
                 contentColor = Color.White,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 16.dp, bottom = 80.dp) // Mantém o padding para não bater na gaveta
+                    .padding(end = 16.dp, bottom = 40.dp) // Mantém o padding para não bater na gaveta
             ) {
                 // Mudei o ícone para Navigation (uma setinha de GPS)
                 Icon(Icons.Filled.Navigation, contentDescription = "Navegar para a mota")
