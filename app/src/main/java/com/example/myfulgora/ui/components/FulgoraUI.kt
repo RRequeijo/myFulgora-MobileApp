@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
@@ -75,7 +76,8 @@ fun FulgoraTopBar(
     iconSize: Dp = 24.dp,
     onNotificationClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
-    onUserClick: () -> Unit = {} // 👈 NOVO: Ação quando clica no nome
+    onUserClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -112,6 +114,17 @@ fun FulgoraTopBar(
         val unreadCount = notificationsList.count { !it.isRead }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
+
+            Icon(
+                imageVector = androidx.compose.material.icons.Icons.Default.DateRange,
+                contentDescription = "Agenda de Manutenção",
+                tint = Color.White,
+                modifier = Modifier
+                    .size(iconSize)
+                    .clickable { onCalendarClick() }
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
 
             var showNotifications by remember { mutableStateOf(false) }
 

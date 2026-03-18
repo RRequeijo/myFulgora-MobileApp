@@ -41,6 +41,12 @@ import com.example.myfulgora.ui.screens.tabs.map.MapScreen
 import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
 import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
 import com.example.myfulgora.ui.screens.tabs.DelegationScreen
+import com.example.myfulgora.ui.screens.tabs.MaintenanceScreen
+import com.example.myfulgora.ui.screens.tabs.TripHistoryScreen
+import com.example.myfulgora.ui.screens.tabs.BatteryScreen
+import com.example.myfulgora.ui.screens.tabs.SocialScreen
+import com.example.myfulgora.ui.screens.tabs.PerformanceScreen
+import com.example.myfulgora.ui.screens.tabs.SettingsScreen
 
 // Classe auxiliar atualizada para aceitar Painter ou ImageVector
 data class DrawerItemData(
@@ -255,7 +261,19 @@ fun MainScreen() {
                             HomeScreen(
                                 state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() }
+                                onUserClick = { navigateToProfile() },
+                                onCalendarClick = {
+                                    // 👇 AQUI É QUE DIZES À APP PARA MUDAR DE ECRÃ 👇
+                                    navController.navigate("maintenance_screen")
+                                    // (Ou a forma como estiveres a fazer a navegação no teu projeto)
+                                }
+                            )
+                        }
+                        composable("maintenance_screen") {
+                            MaintenanceScreen(
+                                onBackClick = {
+                                    navController.popBackStack()
+                                }
                             )
                         }
                         composable("social") { 

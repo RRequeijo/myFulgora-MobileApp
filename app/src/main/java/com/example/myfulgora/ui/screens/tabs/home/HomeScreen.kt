@@ -50,7 +50,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     state: BikeState,
     onMenuClick: () -> Unit = {},
-    onUserClick: () -> Unit = {}
+    onUserClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ) {
     // Isto obriga o ViewModel a buscar os dados frescos sempre que entras na Home
     LaunchedEffect(Unit) {
@@ -104,7 +105,8 @@ fun HomeScreen(
                     userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
-                    onUserClick = onUserClick
+                    onUserClick = onUserClick,
+                    onCalendarClick = onCalendarClick
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
