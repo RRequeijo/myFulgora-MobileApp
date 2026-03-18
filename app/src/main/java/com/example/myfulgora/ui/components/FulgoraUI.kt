@@ -352,3 +352,38 @@ fun RecentTripRow(
         }
     }
 }
+
+@Composable
+fun TripFilterBar(
+    selectedFilter: String,
+    onFilterSelected: (String) -> Unit
+) {
+    val filters = listOf("Hoje", "Semana", "Mês", "Tudo")
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        filters.forEach { filter ->
+            val isSelected = selectedFilter == filter
+
+            Surface(
+                modifier = Modifier.weight(1f).height(32.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = if (isSelected) GreenFresh else Color(0xFF2C2C2C),
+                onClick = { onFilterSelected(filter) }
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = filter,
+                        color = if (isSelected) Color.Black else Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+    }
+}
