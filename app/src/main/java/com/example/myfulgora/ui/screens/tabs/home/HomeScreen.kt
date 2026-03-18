@@ -41,6 +41,9 @@ import com.example.myfulgora.data.auth.UserManager
 import androidx.compose.ui.platform.LocalContext
 import com.example.myfulgora.data.helpers.SettingsManager
 import kotlin.math.roundToInt
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.animation.core.animateDpAsState
 
 @Composable
 fun HomeScreen(
@@ -65,6 +68,18 @@ fun HomeScreen(
     var isBikeOn by remember { mutableStateOf(false) }
     var showModeMenu by remember { mutableStateOf(false) }
     var showPowerDialog by remember { mutableStateOf(false) }
+    val modes = listOf("Eco", "Normal", "Sport")
+
+    // O PagerState controla a posição do slide (Começa no 1, que é o "Normal")
+    val pagerState = rememberPagerState(
+        initialPage = 1,
+        pageCount = { modes.size }
+    )
+
+    // Sincroniza a página atual do slide com a tua variável selectedMode
+    LaunchedEffect(pagerState.currentPage) {
+        selectedMode = modes[pagerState.currentPage]
+    }
 
 
     FulgoraBackground {
@@ -234,69 +249,59 @@ fun HomeScreen(
                         }
                     }
 
-                    // --- 60%: SELETOR DE MODO DE CONDUÇÃO (ESTILO EXPANDABLE) ---
-                    val rotationState by animateFloatAsState(
-                        targetValue = if (showModeMenu) 180f else 0f,
-                        label = "ArrowRotation"
-                    )
-
-                    Column(
+                    // --- 60%: SELETOR DE MODO DE CONDUÇÃO (SLIDE) ---
+                    Surface(
                         modifier = Modifier
                             .weight(0.6f)
-                            .animateContentSize()
-                            .clip(RoundedCornerShape(28.dp))
-                            .background(Color(0xFF1E1E1E))
+                            .height(56.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        color = Color(0xFF1E1E1E)
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .clickable { showModeMenu = !showModeMenu }
-                                .padding(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Text(
-                                text = selectedMode,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
-                            )
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = null,
-                                tint = GreenFresh,
-                                modifier = Modifier.rotate(rotationState)
-                            )
-                        }
-
-                        if (showModeMenu) {
-                            val modes = listOf("Eco", "Normal", "Sport")
-                            modes.forEach { mode ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            selectedMode = mode
-                                            showModeMenu = false
-                                        }
-                                        .padding(horizontal = 20.dp, vertical = 12.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                            // 1. O Texto Deslizável (O Pager em si)
+                            HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) { page ->
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = mode,
-                                        color = if (selectedMode == mode) GreenFresh else Color.White,
-                                        fontSize = 14.sp
+                                        text = modes[page],
+                                        color = if (pagerState.currentPage == page) GreenFresh else Color.White.copy(alpha = 0.5f),
+                                        fontWeight = if (pagerState.currentPage == page) FontWeight.Bold else FontWeight.Normal,
+                                        fontSize = 16.sp
                                     )
-                                    if (selectedMode == mode) {
-                                        Icon(
-                                            imageVector = Icons.Default.Check,
-                                            contentDescription = null,
-                                            tint = GreenFresh,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
+                                }
+                            }
+
+                            // 2. As 3 Bolinhas Indicadoras (No fundo)
+                            Row(
+                                modifier = Modifier.padding(bottom = 6.dp),
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                modes.forEachIndexed { index, _ ->
+                                    val isSelected = pagerState.currentPage == index
+
+                                    // Animação suave: a bolinha cresce de 5.dp para 8.dp quando selecionada
+                                    val dotSize by animateDpAsState(
+                                        targetValue = if (isSelected) 8.dp else 5.dp,
+                                        label = "dotSizeAnim"
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .size(dotSize)
+                                            .clip(CircleShape)
+                                            .background(if (isSelected) GreenFresh else Color.Gray.copy(alpha = 0.4f))
+                                    )
                                 }
                             }
                         }
