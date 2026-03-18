@@ -8,6 +8,7 @@
     <string name="login_button">Entrar</string>
     <string name="login_error_empty">Por favor preencha tudo.</string>
 
+    <string name="navbar_delegation">Chaves Digitais</string>
     <string name="home_status_online">Ligado</string>
     <string name="home_status_offline">Desligado</string>
     <string name="home_locked">Bloqueada</string>
@@ -65,5 +66,20 @@
     <string name="performance_view_all">Ver todas</string>
     <string name="performance_sustainability">Sustentabilidade</string>
     <string name="performance_tyre_pressure_front">Frente PSI</string>
+    <string name="maintenance_schedule">Agenda de Manutenção</string>
+    <string name="expected_date">Data prevista</string>
+    <string name="scheduled">Agendado</string>
+    <string name="completed">Concluído</string>
+    <string name="delegation_title">Chaves Digitais</string>
+    <string name="delegation_subtitle">Gere acessos ou ativa uma nova chave</string>
+    <string name="delegation_active_accesses">Acessos Ativos</string>
+    <string name="delegation_share_motorcycle">Partilhar Mota</string>
+    <string name="delegation_share_motorcycle_title">Partilhar Mota</string>
+    <string name="delegation_share_motorcycle_description">Insere o email da pessoa com quem queres partilhar o acesso</string>
+    <string name="delegation_guest_email">Email do Convidado</string>
+    <string name="delegation_generate_key">Email do Convidado</string>
+    <string name="delegation_activate_key_title">Ativar Chave Digital</string>
+    <string name="delegation_activation_code">Código de Ativação</string>
+    <string name="delegation_activate_access">Ativar Acesso</string>
 
 </resources>

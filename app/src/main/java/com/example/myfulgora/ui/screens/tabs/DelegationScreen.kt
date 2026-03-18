@@ -67,13 +67,13 @@ fun DelegationScreen(
                 // 2. TÍTULO
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Chaves Digitais",
+                        text = stringResource(id = R.string.delegation_title),
                         fontSize = Dimens.TextSizeHeader,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Text(
-                        text = "Gere acessos ou ativa uma nova chave",
+                        text = stringResource(id = R.string.delegation_subtitle),
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
@@ -87,7 +87,7 @@ fun DelegationScreen(
                         Icon(Icons.Default.AddLink, contentDescription = null, tint = GreenFresh)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Partilhar Mota",
+                            text = stringResource(id = R.string.delegation_share_motorcycle_title),
                             color = GreenFresh,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium
@@ -97,7 +97,7 @@ fun DelegationScreen(
                     Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
 
                     Text(
-                        text = "Insere o email da pessoa com quem queres partilhar o acesso.",
+                        text = stringResource(id = R.string.delegation_share_motorcycle_description),
                         color = Color.Gray,
                         fontSize = 12.sp
                     )
@@ -107,7 +107,7 @@ fun DelegationScreen(
                     OutlinedTextField(
                         value = inviteEmail,
                         onValueChange = { inviteEmail = it },
-                        label = { Text("Email do Convidado", color = Color.Gray) },
+                        label = { Text(stringResource(id = R.string.delegation_guest_email), color = Color.Gray) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = GreenFresh,
@@ -126,7 +126,7 @@ fun DelegationScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = GreenFresh),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Gerar Chave Digital", color = Color.Black, fontWeight = FontWeight.Bold)
+                        Text(stringResource(id = R.string.delegation_generate_key), color = Color.Black, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -138,7 +138,7 @@ fun DelegationScreen(
                         Icon(Icons.Default.Key, contentDescription = null, tint = GreenFresh)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Ativar Chave Digital",
+                            text = stringResource(id = R.string.delegation_activate_key_title),
                             color = GreenFresh,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium
@@ -150,7 +150,7 @@ fun DelegationScreen(
                     OutlinedTextField(
                         value = activationCode,
                         onValueChange = { activationCode = it },
-                        label = { Text("Código de Ativação", color = Color.Gray) },
+                        label = { Text(stringResource(id = R.string.delegation_activation_code), color = Color.Gray) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = GreenFresh,
@@ -169,7 +169,7 @@ fun DelegationScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D2D2D)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Ativar Acesso", color = Color.White)
+                        Text(stringResource(id = R.string.delegation_activate_access), color = Color.White)
                     }
                 }
 
@@ -177,7 +177,7 @@ fun DelegationScreen(
 
                 // 5. LISTA DE ACESSOS ATIVOS (Opcional, só para o dono ver)
                 Text(
-                    text = "Acessos Ativos",
+                    text = stringResource(id = R.string.delegation_active_accesses),
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,

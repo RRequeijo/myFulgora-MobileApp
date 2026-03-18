@@ -35,6 +35,9 @@
     //PROFILE
 
     //MAP
+    <string name="performance_view_all">View All</string>
+    <string name="performance_recent_trips">Recent Trips</string>
+
 
     //BATTERY
     <string name="battery_title">Battery Info</string>
@@ -79,8 +82,6 @@
     <string name="performance_energy_consumption_last_7_days">Last 7 days</string>
     <string name="performance_average_speed">Average Speed</string>
     <string name="performance_average_speed_based_on_recent_trips">Based on recent trips</string>
-    <string name="performance_recent_trips">Recent Trips</string>
-    <string name="performance_view_all">View All</string>
     <string name="performance_sustainability">Sustainability</string>
     <string name="performance_co2_emissions">CO2 emissions avoided</string>
     <string name="performance_saved">saved</string>
@@ -99,7 +100,28 @@
     <string name="settings_theme">Theme(White/Dark)</string>
 
 
+    //AGENDA
+    <string name="maintenance_schedule">Maintenance Schedule</string>
+    <string name="expected_date">Expected date</string>
+    <string name="scheduled">Scheduled</string>
+    <string name="completed">Completed</string>
 
-    //MENU HAMBURGER
+    //DIGITAL KEYS
+    <!-- DIGITAL KEYS -->
+    <string name="delegation_title">Digital Keys</string>
+    <string name="delegation_subtitle">Manage access or activate a new key.</string>
+
+    <string name="delegation_share_motorcycle_title">Share Motorbike</string>
+    <string name="delegation_share_motorcycle_description">Enter the email address of the person you want to share access with.</string>
+    <string name="delegation_guest_email">Guest Email</string>
+    <string name="delegation_generate_key">Generate Digital Key</string>
+
+    <string name="delegation_activate_key_title">Activate Digital Key</string>
+    <string name="delegation_activation_code">Activation Code</string>
+    <string name="delegation_activate_access">Activate Access</string>
+
+    <string name="delegation_active_accesses">Active Accesses</string>
+    <string name="delegation_share_motorcycle">Share Motorbike</string>
+
 
 </resources>
