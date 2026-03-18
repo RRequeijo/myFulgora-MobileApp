@@ -24,7 +24,7 @@ message MotaResponse {
   string vin = 1;
   string name = 2;
   bool is_connected = 3;
-  bool is_locked = 4;
+  bool is_started = 4;
   DrivingMode driving_mode = 5;
 
   // 1.2 Gestão de Energia (Bateria)
