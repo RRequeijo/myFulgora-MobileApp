@@ -36,7 +36,8 @@ import kotlinx.coroutines.delay
 fun BatteryScreen(
     state: BikeState,
     onMenuClick: () -> Unit = {},
-    onUserClick: () -> Unit = {}
+    onUserClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
@@ -68,7 +69,8 @@ fun BatteryScreen(
                     userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
-                    onUserClick = onUserClick
+                    onUserClick = onUserClick,
+                    onCalendarClick = onCalendarClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))

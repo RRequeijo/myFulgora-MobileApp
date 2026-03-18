@@ -39,7 +39,8 @@ import com.example.myfulgora.data.helpers.SettingsManager
 @Composable
 fun SettingsScreen(
     onMenuClick: () -> Unit = {},
-    onUserClick: () -> Unit = {}
+    onUserClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ) {
     // 1. Pega no contexto e cria o gestor
     val context = LocalContext.current
@@ -74,7 +75,8 @@ fun SettingsScreen(
                     userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
-                    onUserClick = onUserClick
+                    onUserClick = onUserClick,
+                    onCalendarClick = onCalendarClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))

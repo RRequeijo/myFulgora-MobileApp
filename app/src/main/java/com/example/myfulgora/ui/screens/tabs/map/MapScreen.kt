@@ -1,14 +1,18 @@
 package com.example.myfulgora.ui.screens.tabs.map
 
 import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -16,54 +20,60 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myfulgora.R
+import com.example.myfulgora.data.auth.UserManager
+import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.ui.components.FulgoraInfoCard
-import com.example.myfulgora.ui.screens.tabs.map.MapStyles
+import com.example.myfulgora.ui.components.FulgoraTopBar
+import com.example.myfulgora.ui.components.RecentTripRow
+import com.example.myfulgora.ui.theme.DarkTextSecondary
 import com.example.myfulgora.ui.theme.Dimens
-import com.example.myfulgora.ui.theme.GrayLight
 import com.example.myfulgora.ui.theme.GreenFresh
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
-import com.example.myfulgora.ui.components.RecentTripRow
-import android.net.Uri
-import androidx.compose.material.icons.filled.Navigation
-import com.example.myfulgora.data.helpers.SettingsManager
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-        onViewAllClick: () -> Unit = {}
-    ) {
-        val context = LocalContext.current
-        val settingsManager = remember { SettingsManager(context) }
-        val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
-        
-        val bikeLocation = LatLng(-20.310380,-40.294931)
+    onViewAllClick: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    onUserClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
+    val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
+    val currentUser = UserManager.currentUser
 
-        val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(bikeLocation, 15f)
-        }
+    val bikeLocation = LatLng(-20.310380, -40.294931)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(bikeLocation, 15f)
+    }
 
-        val scaffoldState = rememberBottomSheetScaffoldState()
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        // Altura da gaveta quando fechada (podes ajustar para mostrar mais ou menos da borda)
-        sheetPeekHeight = 60.dp,
-        sheetContainerColor = Color(0xFF1A1A1A), // Cor de fundo da gaveta (escura)
+        sheetPeekHeight = 32.dp,
+        sheetShape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp),
+        sheetContainerColor = Color(0xFF1A1A1A).copy(alpha = 0.95f),
         sheetContentColor = Color.White,
-
-        // 1. O CONTEÚDO DA GAVETA (As tuas viagens!)
+        sheetDragHandle = {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .width(32.dp)
+                    .height(4.dp)
+                    .background(Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(2.dp))
+            )
+        },
         sheetContent = {
-            // O pequeno traço cinzento no topo (drag handle) é automático do Material3
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                // AQUI ENTRA O TEU CÓDIGO EXATO:
                 FulgoraInfoCard {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Row(
@@ -71,15 +81,13 @@ fun MapScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(stringResource(id = R.string.performance_recent_trips), color = GrayLight, fontSize = Dimens.TextSizeTitle)
+                            Text(stringResource(id = R.string.performance_recent_trips), color = DarkTextSecondary, fontSize = Dimens.TextSizeTitle)
                             Text(
                                 stringResource(id = R.string.performance_view_all),
                                 color = GreenFresh,
                                 fontSize = Dimens.TextSizeSmall,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.clickable {
-                                    onViewAllClick()
-                                }
+                                modifier = Modifier.clickable { onViewAllClick() }
                             )
                         }
 
@@ -99,34 +107,26 @@ fun MapScreen(
                             distance = if (isMetric) "5 km" else "3 mi",
                             energy = "0.1 kWh"
                         )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.Gray.copy(alpha = 0.1f))
-
-                        RecentTripRow(
-                            date = "12 Oct, 09:00",
-                            route = "Weekend Ride",
-                            distance = if (isMetric) "45 km" else "28 mi",
-                            energy = "1.2 kWh"
-                        )
                     }
                 }
-
-                // Espaço extra no fundo para não colar os cartões ao fim do ecrã
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(40.dp))
             }
         }
     ) { innerPadding ->
 
-        // 2. O MAPA E O BOTÃO FLUTUANTE
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            val screenW = this.maxWidth
+            val iconSize = screenW * Dimens.IconScaleRatio
+            val paddingSide = screenW * Dimens.SideMarginRatio
+
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
                 properties = MapProperties(
-                    // Lemos o estilo que guardámos no outro ficheiro!
                     mapStyleOptions = MapStyleOptions(MapStyles.MapStyleDark)
                 ),
                 uiSettings = MapUiSettings(
@@ -141,20 +141,40 @@ fun MapScreen(
                 )
             }
 
-            // Botão flutuante "Navegar para a mota"
+            // TOPBAR IDENTICA À BATERIA/PERFORMANCE
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF000000).copy(alpha = 0.95f),
+                                Color(0xFF000000).copy(alpha = 0.7f),
+                                Color(0xFF000000).copy(alpha = 0.0f)
+                            )
+                        )
+                    )
+                    .padding(horizontal = paddingSide)
+                    .padding(top = Dimens.TopPadding, bottom = 40.dp)
+                    .align(Alignment.TopCenter)
+            ) {
+                FulgoraTopBar(
+                    userName = currentUser?.profile?.name ?: "Rider",
+                    iconSize = iconSize, // Agora usa o tamanho dinâmico igual aos outros
+                    onMenuClick = onMenuClick,
+                    onUserClick = onUserClick,
+                    onCalendarClick = onCalendarClick
+                )
+            }
+
             FloatingActionButton(
                 onClick = {
-                    // Cria o link (URI) com as coordenadas da mota e um nome (Mota Fulgora)
                     val uri = "geo:0,0?q=${bikeLocation.latitude},${bikeLocation.longitude}(Mota+Fulgora)"
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-
-                    // Força a abrir especificamente no Google Maps
                     intent.setPackage("com.google.android.apps.maps")
-
                     try {
                         context.startActivity(intent)
                     } catch (e: Exception) {
-                        // Caso o utilizador não tenha o Google Maps instalado, tenta abrir com qualquer outro GPS (ex: Waze, Petal Maps)
                         val fallbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                         context.startActivity(fallbackIntent)
                     }
@@ -163,9 +183,8 @@ fun MapScreen(
                 contentColor = Color.White,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 16.dp, bottom = 40.dp) // Mantém o padding para não bater na gaveta
+                    .padding(end = 16.dp, bottom = 48.dp)
             ) {
-                // Mudei o ícone para Navigation (uma setinha de GPS)
                 Icon(Icons.Filled.Navigation, contentDescription = "Navegar para a mota")
             }
         }

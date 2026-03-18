@@ -14,27 +14,34 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 
-// Esquema Escuro (O oficial da myFulgora)
-private val DarkColorScheme = darkColorScheme(
-    primary = GreenFresh,        // Botões e destaques
-    onPrimary = BlackBrand,      // Texto em cima do botão verde
-    secondary = GreenDeep,       // Elementos secundários
-    background = BlackBrand,     // Fundo preto absoluto
-    surface = BlackBrand,        // Fundo de cartões (podes usar GreenDeep muito escuro se preferires)
-    onBackground = White,        // Texto branco no fundo preto
-    onSurface = White,
+// BALDE DA NOITE
+private val DarkColorPalette = darkColorScheme(
+    primary = GreenFresh,
+    secondary = GreenDeep,
+    background = DarkBackground,
+    surface = DarkSurface,
+    surfaceVariant = DarkInputBg, // Usamos para botões secundários ou inputs
+    onBackground = DarkTextPrimary,
+    onSurface = DarkTextPrimary,
+    onSurfaceVariant = DarkTextSecondary,
     error = RedError
 )
 
-// Esquema Claro (Caso um dia precises, mas a app é dark-first)
-private val LightColorScheme = lightColorScheme(
-    primary = GreenDeep,
-    onPrimary = White,
-    secondary = GreenFresh,
-    background = White,
-    surface = White
-    // ...
+// BALDE DO DIA
+private val LightColorPalette = lightColorScheme(
+    primary = GreenFresh,
+    secondary = GreenDeep,
+    background = LightBackground,
+    surface = LightSurface,
+    surfaceVariant = LightInputBg,
+    onBackground = LightTextPrimary,
+    onSurface = LightTextPrimary,
+    onSurfaceVariant = LightTextSecondary,
+    error = RedError
 )
 
 @Composable
@@ -44,23 +51,25 @@ fun MyFulgoraTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    // 1. A LÓGICA DO CAMALEÃO (Agora sim, obedece ao 'darkTheme')
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        // Forçamos sempre o Dark Scheme se quiseres que a app seja sempre escura,
-        // ou deixamos o utilizador decidir com 'darkTheme -> DarkColorScheme'
-        true -> DarkColorScheme // <--- DICA: Mudei isto para 'true' para testares sempre com as cores certas
-        else -> LightColorScheme
+        darkTheme -> DarkColorPalette // 👈 De noite, usa os baldes escuros
+        else -> LightColorPalette     // 👈 De dia, usa os baldes claros
     }
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
+            // 2. Pinta a barra do topo com a cor de fundo do tema atual
             window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !true // Ícones da barra brancos
+
+            // 3. ÍCONES INTELIGENTES: Ícones brancos no modo escuro, e pretos no modo claro!
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

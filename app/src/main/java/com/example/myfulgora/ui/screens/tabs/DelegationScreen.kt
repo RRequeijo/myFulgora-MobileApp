@@ -29,7 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 @Composable
 fun DelegationScreen(
     onMenuClick: () -> Unit = {},
-    onUserClick: () -> Unit = {}
+    onUserClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ) {
     val currentUser = UserManager.currentUser
     val scrollState = rememberScrollState()
@@ -57,7 +58,8 @@ fun DelegationScreen(
                     userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
-                    onUserClick = onUserClick
+                    onUserClick = onUserClick,
+                    onCalendarClick = onCalendarClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))

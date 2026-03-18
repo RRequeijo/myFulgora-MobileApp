@@ -28,7 +28,8 @@ import com.example.myfulgora.data.auth.UserManager
 fun DocumentationScreen(
     viewModel: DocumentationViewModel = viewModel(),
     onMenuClick: () -> Unit = {},
-    onUserClick: () -> Unit = {}
+    onUserClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ){
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -74,7 +75,8 @@ fun DocumentationScreen(
                     userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
-                    onUserClick = onUserClick
+                    onUserClick = onUserClick,
+                    onCalendarClick = onCalendarClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))

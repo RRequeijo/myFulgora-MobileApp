@@ -71,7 +71,7 @@ fun MainScreen() {
         DrawerItemData(R.string.navbar_battery, AppIcons.Navbar.Battery, "battery"),
         DrawerItemData(R.string.navbar_social, AppIcons.Navbar.Social, "social"),
         DrawerItemData(R.string.navbar_performance, AppIcons.Navbar.Performance, "performance"),
-        DrawerItemData(R.string.navbar_delegation, Icons.Default.Key, "delegation"),
+        DrawerItemData(R.string.navbar_delegation, AppIcons.Menu.Delegation , "delegation"),
         DrawerItemData(R.string.navbar_settings, AppIcons.Menu.Settings, "settings")
     )
 
@@ -230,6 +230,9 @@ fun MainScreen() {
                     NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(innerPadding)) {
                         composable("map") {
                             MapScreen(
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onUserClick = { navigateToProfile() },
+                                onCalendarClick = { navController.navigate("maintenance_screen") },
                                 onViewAllClick = {
                                     navController.navigate("history")
                                 }
@@ -254,7 +257,8 @@ fun MainScreen() {
                             BatteryScreen(
                                 state = currentBikeState, 
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() }
+                                onUserClick = { navigateToProfile() },
+                                onCalendarClick = { navController.navigate("maintenance_screen") }
                             ) 
                         }
                         composable("home") {
@@ -262,11 +266,7 @@ fun MainScreen() {
                                 state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
                                 onUserClick = { navigateToProfile() },
-                                onCalendarClick = {
-                                    // 👇 AQUI É QUE DIZES À APP PARA MUDAR DE ECRÃ 👇
-                                    navController.navigate("maintenance_screen")
-                                    // (Ou a forma como estiveres a fazer a navegação no teu projeto)
-                                }
+                                onCalendarClick = { navController.navigate("maintenance_screen") }
                             )
                         }
                         composable("maintenance_screen") {
@@ -279,7 +279,8 @@ fun MainScreen() {
                         composable("social") { 
                             SocialScreen(
                                 onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() }
+                                onUserClick = { navigateToProfile() },
+                                onCalendarClick = { navController.navigate("maintenance_screen") }
                             ) 
                         }
                         composable("performance") { 

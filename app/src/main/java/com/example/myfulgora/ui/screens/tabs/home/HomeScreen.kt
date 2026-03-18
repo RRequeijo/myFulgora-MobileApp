@@ -227,7 +227,7 @@ fun HomeScreen(
                             .weight(0.4f)
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
-                        color = if (isBikeOn) Color(0xFFE53935) else GreenFresh, 
+                        color = if (isBikeOn) MaterialTheme.colorScheme.background else GreenFresh,
                         onClick = { showPowerDialog = true }
                     ) {
                         Row(

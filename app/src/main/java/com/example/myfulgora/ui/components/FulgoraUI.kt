@@ -29,6 +29,7 @@ import com.example.myfulgora.R
 import com.example.myfulgora.data.model.FulgoraNotification
 import com.example.myfulgora.ui.theme.*
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.unit.IntOffset
@@ -116,7 +117,7 @@ fun FulgoraTopBar(
         Row(verticalAlignment = Alignment.CenterVertically) {
 
             Icon(
-                imageVector = androidx.compose.material.icons.Icons.Default.DateRange,
+                painter = painterResource(id = AppIcons.Performance.next_service),
                 contentDescription = "Agenda de Manutenção",
                 tint = Color.White,
                 modifier = Modifier

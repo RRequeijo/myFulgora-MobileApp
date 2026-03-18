@@ -20,6 +20,7 @@ object AppIcons {
         val Settings = R.drawable.settings
         val Help = R.drawable.help_ico
         val Logout = R.drawable.logout
+        val Delegation = R.drawable.key_delegation
     }
 
 
