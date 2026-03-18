@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,57 +20,62 @@ import androidx.compose.ui.unit.sp
 import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.data.helpers.UnitConverter
 import com.example.myfulgora.ui.components.RecentTripRow
-import com.example.myfulgora.ui.theme.GreenFresh // Garante que este import está correto para a tua cor
+import com.example.myfulgora.ui.theme.GreenFresh
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
-// 1. Criamos um "Molde" para a Viagem, para ser mais fácil de filtrar
+// 1. O Molde (Adicionei uma data real para conseguirmos filtrar a sério no futuro)
 data class MockTrip(
     val id: Int,
-    val date: String,
+    val dateText: String,
     val route: String,
     val distanceKm: Int,
     val energy: String,
-    val category: String // "Hoje", "Semana" ou "Mês"
+    val mockCategory: String // Apenas para simular enquanto não tens a API
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripHistoryScreen(
-    onBackClick: () -> Unit // Função para voltar ao mapa
+    onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
 
-    // 2. A variável que guarda qual o botão que está verde (O Filtro Atual)
+    // ESTADOS DO FILTRO E TEMPO
     var selectedFilter by remember { mutableStateOf("Tudo") }
+    var timeOffset by remember { mutableIntStateOf(0) } // 0 = Presente, -1 = Passado, etc.
 
-    // 3. Criamos a nossa lista "falsa" mas agora guardada na memória!
+    // A nossa lista simulada
     val allTrips = remember {
         List(15) { index ->
-            // Vamos simular que o 1º é "Hoje", os próximos 6 são "Semana" e o resto é "Mês"
             val category = when (index) {
-                0 -> "Hoje"
+                0 -> "Dia"
                 in 1..6 -> "Semana"
                 else -> "Mês"
             }
             MockTrip(
                 id = index,
-                date = "Out ${15 - index}, 14:00",
+                dateText = "Out ${15 - index}, 14:00",
                 route = if (index % 2 == 0) "Home - Office" else "Office - Gym",
                 distanceKm = 12 + index,
                 energy = "0.${4 + index} kWh",
-                category = category
+                mockCategory = category
             )
         }
     }
 
-    // 4. A MAGIA DO FILTRO! Esta lista muda automaticamente sempre que clicas num botão
-    val filteredTrips = remember(selectedFilter, allTrips) {
+    // A MÁGICA DO FILTRO (Aqui, mais tarde, ligas as datas reais da API usando o timeOffset)
+    val filteredTrips = remember(selectedFilter, timeOffset, allTrips) {
+        // Por agora, para simular, se andares para trás no tempo, mostramos a lista vazia ou misturada
         when (selectedFilter) {
-            "Hoje" -> allTrips.filter { it.category == "Hoje" }
-            "Semana" -> allTrips.filter { it.category == "Hoje" || it.category == "Semana" }
-            "Mês" -> allTrips.filter { it.category == "Hoje" || it.category == "Semana" || it.category == "Mês" }
-            else -> allTrips // "Tudo" mostra a lista completa
+            "Dia" -> allTrips.filter { it.mockCategory == "Dia" && timeOffset == 0 }
+            "Semana" -> allTrips.filter { (it.mockCategory == "Dia" || it.mockCategory == "Semana") && timeOffset == 0 }
+            "Mês" -> allTrips.filter { timeOffset == 0 } // Simula que só há viagens este mês
+            else -> allTrips
         }
     }
 
@@ -78,65 +85,133 @@ fun TripHistoryScreen(
             TopAppBar(
                 title = { Text("Histórico de Viagens", color = Color.White) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Voltar",
-                            tint = Color.White
-                        )
-                    }
+                    IconButton(onClick = onBackClick) { Icon(Icons.Default.ArrowBack, "Voltar", tint = Color.White) }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1A1A1A)
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1A1A1A))
             )
         }
     ) { paddingValues ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            // A BARRA DE FILTROS
+            // 1. A BARRA DE BOTÕES (Dia, Semana, Mês, Tudo)
             TripFilterBar(
                 selectedFilter = selectedFilter,
-                onFilterSelected = { novoFiltro -> selectedFilter = novoFiltro }
+                onFilterSelected = { novoFiltro ->
+                    selectedFilter = novoFiltro
+                    timeOffset = 0 // Faz reset ao tempo sempre que mudas de filtro!
+                }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // 2. O NAVEGADOR DE TEMPO (Só aparece se não for "Tudo")
+            if (selectedFilter != "Tudo") {
+                TimeNavigator(
+                    filterType = selectedFilter,
+                    offset = timeOffset,
+                    onOffsetChange = { timeOffset = it }
+                )
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-            // A LISTA FILTRADA
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Em vez de "items(15)", agora passamos a nossa lista inteligente!
-                items(filteredTrips) { trip ->
-                    RecentTripRow(
-                        date = trip.date,
-                        route = trip.route,
-                        distance = UnitConverter.formatDistance(trip.distanceKm, isMetric),
-                        energy = trip.energy
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(top = 8.dp),
-                        color = Color.Gray.copy(alpha = 0.1f)
-                    )
+            // 3. A LISTA FILTRADA
+            if (filteredTrips.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Sem viagens neste período.", color = Color.Gray)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredTrips) { trip ->
+                        RecentTripRow(
+                            date = trip.dateText,
+                            route = trip.route,
+                            distance = UnitConverter.formatDistance(trip.distanceKm, isMetric),
+                            energy = trip.energy
+                        )
+                        HorizontalDivider(modifier = Modifier.padding(top = 8.dp), color = Color.Gray.copy(alpha = 0.1f))
+                    }
                 }
             }
         }
     }
 }
 
-// O Componente da Barra de Filtros (Podes deixar aqui no mesmo ficheiro)
+// O NOVO COMPONENTE: AS SETINHAS DE NAVEGAÇÃO NO TEMPO ⏳
+@Composable
+fun TimeNavigator(
+    filterType: String,
+    offset: Int,
+    onOffsetChange: (Int) -> Unit
+) {
+    // Calculamos o texto com base no filtro e no offset (usando as datas reais do telemóvel!)
+    val labelText = remember(filterType, offset) {
+        val today = LocalDate.now()
+        when (filterType) {
+            "Dia" -> {
+                val targetDate = today.plusDays(offset.toLong())
+                if (offset == 0) "Hoje"
+                else if (offset == -1) "Ontem"
+                else targetDate.format(DateTimeFormatter.ofPattern("dd MMM"))
+            }
+            "Semana" -> {
+                if (offset == 0) "Esta Semana"
+                else if (offset == -1) "Semana Passada"
+                else "${Math.abs(offset)} semanas atrás"
+            }
+            "Mês" -> {
+                val targetMonth = today.plusMonths(offset.toLong())
+                if (offset == 0) "Este Mês"
+                else targetMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).replaceFirstChar { it.uppercase() } + " " + targetMonth.year
+            }
+            else -> ""
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(onClick = { onOffsetChange(offset - 1) }) {
+            Icon(Icons.Default.KeyboardArrowLeft, "Anterior", tint = GreenFresh)
+        }
+
+        Text(
+            text = labelText,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp
+        )
+
+        // Só deixa andar para a frente se não estivermos no presente (offset < 0)
+        IconButton(
+            onClick = { onOffsetChange(offset + 1) },
+            enabled = offset < 0
+        ) {
+            Icon(
+                Icons.Default.KeyboardArrowRight,
+                "Seguinte",
+                tint = if (offset < 0) GreenFresh else Color.Gray.copy(alpha = 0.3f)
+            )
+        }
+    }
+}
+
+// O Componente da Barra de Filtros (Mudámos "Hoje" para "Dia")
 @Composable
 fun TripFilterBar(
     selectedFilter: String,
     onFilterSelected: (String) -> Unit
 ) {
-    val filters = listOf("Hoje", "Semana", "Mês", "Tudo")
+    val filters = listOf("Dia", "Semana", "Mês", "Tudo")
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -144,7 +219,6 @@ fun TripFilterBar(
     ) {
         filters.forEach { filter ->
             val isSelected = selectedFilter == filter
-
             Surface(
                 modifier = Modifier.weight(1f).height(32.dp),
                 shape = RoundedCornerShape(16.dp),
