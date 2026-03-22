@@ -8,6 +8,9 @@ import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class GrpcClass {
     // Usamos o IP do teu servidor gRPC. 
@@ -37,4 +40,20 @@ class GrpcClass {
             }
         }
     }
+
+    // Esta é a função que fica com o "tubo" aberto a receber dados a cada 5 segundos!
+    fun streamMotaUpdates(vinMota: String): Flow<MotaResponse> = flow {
+        val request = MotaRequest.newBuilder().setVin(vinMota).build()
+        try {
+            Log.d("GRPC", "🔄 A abrir canal de Stream para a mota: $vinMota")
+
+            // O gRPC em Kotlin é tão inteligente que transforma o Stream automaticamente num Flow!
+            stub.streamMotaUpdates(request).collect { response ->
+                Log.d("GRPC", "⚡ Novo pacote recebido! Bateria: ${response.batteryLevel}%")
+                emit(response) // Envia o dado fresco para o ViewModel
+            }
+        } catch (e: Exception) {
+            Log.e("GRPC", "❌ ERRO no Stream gRPC: ${e.message}")
+        }
+    }.flowOn(Dispatchers.IO)
 }

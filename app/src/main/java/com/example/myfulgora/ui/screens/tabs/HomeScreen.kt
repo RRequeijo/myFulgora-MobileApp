@@ -1,7 +1,5 @@
-package com.example.myfulgora.ui.screens.tabs.home
+package com.example.myfulgora.ui.screens.tabs
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,11 +25,7 @@ import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
 import androidx.compose.foundation.clickable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,17 +41,11 @@ import androidx.compose.animation.core.animateDpAsState
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(),
     state: BikeState,
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {}
 ) {
-    // Isto obriga o ViewModel a buscar os dados frescos sempre que entras na Home
-    LaunchedEffect(Unit) {
-        viewModel.atualizarEcra()
-    }
-
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
@@ -158,7 +146,7 @@ fun HomeScreen(
                                 tint = Color.White,
                                 modifier = Modifier
                                     .size(36.dp)
-                                    .clickable { viewModel.motaAnterior() }
+                                    //.clickable { viewModel.motaAnterior() }
                                     .padding(4.dp)
                             )
                             Icon(
@@ -167,7 +155,7 @@ fun HomeScreen(
                                 tint = Color.White,
                                 modifier = Modifier
                                     .size(36.dp)
-                                    .clickable { viewModel.motaSeguinte() }
+                                    //.clickable { viewModel.motaSeguinte() }
                                     .padding(4.dp)
                             )
                         }

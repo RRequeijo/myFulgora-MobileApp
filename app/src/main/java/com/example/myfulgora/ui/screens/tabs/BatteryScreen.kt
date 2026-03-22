@@ -31,6 +31,9 @@ import com.example.myfulgora.data.auth.UserManager
 import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.data.helpers.UnitConverter
 import kotlinx.coroutines.delay
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myfulgora.ui.viewmodel.HomeUiState
+import com.example.myfulgora.ui.viewmodel.MotaViewModel
 
 @Composable
 fun BatteryScreen(
@@ -40,6 +43,8 @@ fun BatteryScreen(
     onCalendarClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val motaViewModel: MotaViewModel = viewModel()
+    val uiState by motaViewModel.uiState.collectAsState()
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
 

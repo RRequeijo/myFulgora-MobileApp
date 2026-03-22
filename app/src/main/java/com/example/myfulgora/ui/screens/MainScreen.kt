@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -36,17 +35,9 @@ import kotlinx.coroutines.launch
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.platform.LocalContext
-import com.example.myfulgora.ui.screens.tabs.home.HomeScreen
 import com.example.myfulgora.ui.screens.tabs.map.MapScreen
 import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
 import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
-import com.example.myfulgora.ui.screens.tabs.DelegationScreen
-import com.example.myfulgora.ui.screens.tabs.MaintenanceScreen
-import com.example.myfulgora.ui.screens.tabs.TripHistoryScreen
-import com.example.myfulgora.ui.screens.tabs.BatteryScreen
-import com.example.myfulgora.ui.screens.tabs.SocialScreen
-import com.example.myfulgora.ui.screens.tabs.PerformanceScreen
-import com.example.myfulgora.ui.screens.tabs.SettingsScreen
 
 // Classe auxiliar atualizada para aceitar Painter ou ImageVector
 data class DrawerItemData(
@@ -255,7 +246,7 @@ fun MainScreen() {
                         }
                         composable("battery") { 
                             BatteryScreen(
-                                state = currentBikeState, 
+                                state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
                                 onUserClick = { navigateToProfile() },
                                 onCalendarClick = { navController.navigate("maintenance_screen") }
