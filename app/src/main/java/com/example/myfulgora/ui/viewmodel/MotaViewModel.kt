@@ -23,55 +23,46 @@ class MotaViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState = _uiState.asStateFlow()
     
-    // Instância da classe gRPC que criaste
     private val grpcClient = GrpcClass()
     
     private var alreadyNotifiedBattery = false
 
     init {
-        // 1. Observar mudança de mota no UserManager
         viewModelScope.launch {
             UserManager.activeBikeIndexFlow.collectLatest {
-                fetchMotaData() // Sempre que muda a mota, pede dados novos
+                fetchMotaData()
             }
         }
 
-        // 2. Loop de atualização (opcional, para simular tempo real com gRPC)
         viewModelScope.launch {
             while (true) {
                 fetchMotaData()
-                delay(10000) // Atualiza de 10 em 10 segundos
+                delay(10000) // 10 segundos
             }
         }
     }
 
-    /**
-     * Esta função faz o pedido ao Servidor via gRPC
-     */
     private fun fetchMotaData() {
         val currentBike = UserManager.getCurrentBike() ?: return
         val vin = currentBike.vin
 
         viewModelScope.launch {
-            // Chamada ao teu método suspend no GrpcClass
+            Log.d("MotaViewModel", "🔄 A atualizar dados para o VIN: $vin")
+            
             val response = grpcClient.getMotaInfo(vin)
 
             if (response != null) {
-                // Se o servidor respondeu, atualizamos a UI com os dados REAIS do laboratório
+                Log.d("MotaViewModel", "✅ Dados gRPC recebidos com sucesso")
                 val total = UserManager.currentUser?.bikes?.size ?: 0
                 
                 val newState = BikeState(
-                    bikeName = currentBike.name, // Nome vem do nosso JSON local
+                    bikeName = currentBike.name,
                     totalBikes = total,
-                    isOnline = response.isConnected, // Usar o isConnected do proto
-                    
-                    // Dados que vêm do Servidor (ajustados conforme o teu .proto)
+                    isOnline = true, // Se recebemos resposta, o sistema está "Online"
                     batteryPercentage = response.batteryLevel,
-                    range = response.batteryRange, // O campo no proto é battery_range
+                    range = response.batteryRange,
                     isCharging = response.isCharging,
-                    drivingMode = response.drivingMode.name, // Converter Enum para String
-                    
-                    // Outros dados do gRPC
+                    drivingMode = response.drivingMode.name,
                     averageSpeed = response.averageSpeed,
                     consumption = response.batteryConsumption.toDouble(),
                     tyreFront = response.tyreFront.toInt(),
@@ -82,13 +73,10 @@ class MotaViewModel : ViewModel() {
                 )
 
                 _uiState.value = HomeUiState.Success(newState)
-                
-                // Verificar Notificações
                 checkBatteryNotifications(response.batteryLevel)
             } else {
-                // Se o gRPC falhou (timeout ou servidor desligado), mostramos os dados locais (Mock)
-                Log.w("GRPC", "Falha ao obter dados, a usar fallback local")
-                atualizarEstadoLocal()
+                Log.w("MotaViewModel", "⚠️ Falha gRPC. A usar dados locais (Offline)")
+                atualizarEstadoLocal(isActuallyOnline = false)
             }
         }
     }
@@ -105,7 +93,7 @@ class MotaViewModel : ViewModel() {
         }
     }
 
-    private fun atualizarEstadoLocal() {
+    private fun atualizarEstadoLocal(isActuallyOnline: Boolean = false) {
         val currentBike = UserManager.getCurrentBike()
         val total = UserManager.currentUser?.bikes?.size ?: 0
 
@@ -113,12 +101,12 @@ class MotaViewModel : ViewModel() {
             BikeState(
                 bikeName = currentBike.name,
                 totalBikes = total,
-                isOnline = currentBike.isConnected,
+                isOnline = isActuallyOnline, // Reflete se a ligação ao servidor funciona
                 batteryPercentage = currentBike.batteryLevel,
                 range = currentBike.batteryRange.toInt()
             )
         } else {
-            BikeState(bikeName = "No Bike", totalBikes = total)
+            BikeState(bikeName = "No Bike", totalBikes = total, isOnline = false)
         }
 
         _uiState.value = HomeUiState.Success(newState)

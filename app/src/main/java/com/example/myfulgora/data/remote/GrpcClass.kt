@@ -7,32 +7,32 @@ import com.example.grpc.MotasServiceGrpcKt
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 class GrpcClass {
-    // 1. Configura o "Tubo" para o servidor do laboratório
-    private val channel = ManagedChannelBuilder.forAddress("172.20.0.202", 5154)
-        .usePlaintext() // usePlaintext() significa que não usamos HTTPS/SSL (normal em testes locais)
+    // Usamos o IP do teu servidor gRPC. 
+    // Se estiveres no emulador e o servidor no mesmo PC, podes tentar "10.0.2.2"
+    private val channel = ManagedChannelBuilder.forAddress("192.168.1.127", 5154)
+        .usePlaintext()
+        .keepAliveTime(30, TimeUnit.SECONDS)
         .build()
 
-    // 2. Cria o "Atendente" Kotlin que sabe as regras do ficheiro .proto
     private val stub = MotasServiceGrpcKt.MotasServiceCoroutineStub(channel)
 
-    // 3. A função que pede os dados (corre fora da UI thread para não encravar o ecrã)
     suspend fun getMotaInfo(vinMota: String): MotaResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                // Prepara a pergunta (MotaRequest)
-                val request = MotaRequest.newBuilder()
-                    .setVin(vinMota)
-                    .build()
+                Log.d("GRPC", "📡 A tentar ligar ao servidor (192.168.1.127:5154)...")
+                val request = MotaRequest.newBuilder().setVin(vinMota).build()
 
-                // Faz a chamada e espera pela resposta
+                // O stub.getMotaInfo é uma suspend function gerada pelo gRPC Kotlin
                 val response = stub.getMotaInfo(request)
-                Log.d("GRPC", "Sucesso! Bateria recebida: ${response.batteryLevel}")
-
-                response // Devolve a resposta
+                
+                Log.d("GRPC", "✅ SUCESSO! Resposta recebida do servidor.")
+                response
             } catch (e: Exception) {
-                Log.e("GRPC", "Erro na chamada gRPC: ${e.message}")
+                Log.e("GRPC", "❌ ERRO na chamada gRPC: ${e.message}")
+                // e.printStackTrace() // Opcional, para ver a stack trace completa no Logcat
                 null
             }
         }

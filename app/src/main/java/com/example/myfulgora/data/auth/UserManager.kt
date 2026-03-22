@@ -1,9 +1,11 @@
 package com.example.myfulgora.data.auth
 
 import android.content.Context
+import android.util.Log
 import com.example.myfulgora.data.model.MockBike
 import com.example.myfulgora.data.model.MockDatabase
 import com.example.myfulgora.data.model.MockUser
+import com.example.myfulgora.data.model.MockProfile
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +15,6 @@ object UserManager {
     var currentUser: MockUser? = null
         private set
 
-    // 1. TORNAR O ÍNDICE REATIVO com um StateFlow
     private val _activeBikeIndex = MutableStateFlow(0)
     val activeBikeIndexFlow = _activeBikeIndex.asStateFlow()
 
@@ -22,6 +23,41 @@ object UserManager {
         private set(value) {
             _activeBikeIndex.value = value
         }
+
+    /**
+     * CONFIGURAÇÃO DE TESTE RÁPIDO PARA gRPC
+     */
+    fun setupTestUser() {
+        val testBike = MockBike(
+            vin = "MOTA-TESTE-123", // Altera se o teu script precisar de um VIN específico
+            name = "Fulgora LAB (gRPC Test)",
+            batteryLevel = 10,
+            batteryHealth = "N/A",
+            batteryTemperature = 0.0,
+            batteryConsumption = 0.0,
+            batteryCycles = 0,
+            batteryRange = 0.0,
+            chargingHours = 0,
+            chargingMinutes = 0,
+            isCharging = false,
+            isConnected = true,
+            isLocked = false,
+            drivingMode = "Normal",
+            tyreFront = 0,
+            tyreBack = 0,
+            energyConsumption = 0.0,
+            averageSpeed = 0
+        )
+
+        currentUser = MockUser(
+            username = "test",
+            pass = "test",
+            profile = MockProfile(name = "Tester gRPC", email = "test@fulgora.pt"),
+            bikes = mutableListOf(testBike)
+        )
+        _activeBikeIndex.value = 0
+        Log.d("UserManager", "🚀 Modo de Teste Ativado. Mota carregada para gRPC.")
+    }
 
     private fun loadMockUsers(context: Context): List<MockUser> {
         return try {
@@ -37,6 +73,12 @@ object UserManager {
     }
 
     fun validateMockLogin(context: Context, username: String, pass: String): Boolean {
+        // Se escreveres "test" / "test", ativa o modo gRPC direto
+        if (username == "test" && pass == "test") {
+            setupTestUser()
+            return true
+        }
+
         val users = loadMockUsers(context)
         val matchedUser = users.find { it.username == username && it.pass == pass }
 
@@ -79,16 +121,12 @@ object UserManager {
         }
     }
 
-    // 2. CORRIGIR O BUG DA SINCRONIZAÇÃO
     fun syncBikesFromDatabase(context: Context) {
         val users = loadMockUsers(context)
         val freshUser = users.find { it.username == currentUser?.username }
         if (freshUser != null) {
-            // Limpa a lista atual e adiciona a lista 'fresca' do JSON, resolvendo o bug de duplicação
             currentUser?.bikes?.clear()
             currentUser?.bikes?.addAll(freshUser.bikes)
-            
-            // Garante que o índice não fica fora dos limites após a sincronização
             if (activeBikeIndex >= (currentUser?.bikes?.size ?: 0)) {
                 _activeBikeIndex.value = 0
             }
