@@ -73,7 +73,9 @@ class MotaViewModel : ViewModel() {
                     batteryTemp = response.batteryTemperature.toDouble(),
                     batteryCycles = response.batteryCycles,
                     avgConsumption = response.energyConsumptionAvg.toDouble(),
-                    // 👇 CORREÇÃO 1: Previne crash se não houver documentos
+                    timeLeft = response.chargingTime,
+                    latitude = response.latitude,
+                    longitude = response.longitude,
                     documents = currentBike.documents?.toMap() ?: emptyMap()
                 )
 

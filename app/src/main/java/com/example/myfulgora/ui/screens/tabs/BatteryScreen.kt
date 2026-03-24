@@ -127,7 +127,7 @@ fun BatteryScreen(
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryTemperature,
                             title = stringResource(id = R.string.battery_temperature),
-                            value = "${state.batteryTemp}°C",
+                            value = "${String.format("%.1f", state.batteryTemp)}ºC",
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -139,7 +139,7 @@ fun BatteryScreen(
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryConsumption,
                             title = stringResource(id = R.string.battery_consumption),
-                            value = "${state.avgConsumption} kW/100" + if(isMetric) "km" else "mi",
+                            value = "${String.format("%.1f", state.consumption)} kW/100" + if(isMetric) "km" else "mi",
                             modifier = Modifier.weight(1f)
                         )
                         BatteryStatCard(

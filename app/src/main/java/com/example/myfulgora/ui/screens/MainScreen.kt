@@ -224,6 +224,7 @@ fun MainScreen() {
                     NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(innerPadding)) {
                         composable("map") {
                             MapScreen(
+                                state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
                                 onUserClick = { navigateToProfile() },
                                 onCalendarClick = { navController.navigate("maintenance_screen") },

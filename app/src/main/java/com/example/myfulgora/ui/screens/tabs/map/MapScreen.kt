@@ -12,16 +12,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myfulgora.R
 import com.example.myfulgora.data.auth.UserManager
 import com.example.myfulgora.data.helpers.SettingsManager
+import com.example.myfulgora.data.model.BikeState
 import com.example.myfulgora.ui.components.FulgoraInfoCard
 import com.example.myfulgora.ui.components.FulgoraTopBar
 import com.example.myfulgora.ui.components.RecentTripRow
@@ -33,9 +36,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
 
+// Aumentado para 32dp para acomodar a curva sem a cortar e dar espaço ao tracinho
+private val SheetPeekHeight = 32.dp
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
+    state: BikeState,
     onViewAllClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {},
@@ -46,7 +53,7 @@ fun MapScreen(
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
     val currentUser = UserManager.currentUser
 
-    val bikeLocation = LatLng(-20.310380, -40.294931)
+    val bikeLocation = LatLng(state.latitude, state.longitude)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(bikeLocation, 15f)
     }
@@ -55,24 +62,31 @@ fun MapScreen(
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 32.dp,
-        sheetShape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp),
+        sheetPeekHeight = SheetPeekHeight,
+        sheetShape = ArchedTopShape,
         sheetContainerColor = Color(0xFF1A1A1A).copy(alpha = 0.95f),
         sheetContentColor = Color.White,
+        containerColor = Color.Transparent, // Remove o fundo branco do scaffold
         sheetDragHandle = {
-            Box(
+            Column(
                 modifier = Modifier
-                    .padding(vertical = 12.dp)
-                    .width(32.dp)
-                    .height(4.dp)
-                    .background(Color.Gray.copy(alpha = 0.3f), RoundedCornerShape(2.dp))
-            )
+                    .fillMaxWidth()
+                    .padding(top = 20.dp), // Puxado ligeiramente para cima para não bater nos ícones
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(4.dp)
+                        .background(Color.Gray.copy(alpha = 0.5f), RoundedCornerShape(2.dp))
+                )
+            }
         },
         sheetContent = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 20.dp)
             ) {
                 FulgoraInfoCard {
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -114,12 +128,12 @@ fun MapScreen(
         }
     ) { innerPadding ->
 
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+        // Box normal em vez de BoxWithConstraints se não precisarmos das constraints, 
+        // e sem o padding(innerPadding) para o mapa ser full-screen
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            val screenW = this.maxWidth
+            val screenW = LocalContext.current.resources.displayMetrics.widthPixels.dp / LocalContext.current.resources.displayMetrics.density
             val iconSize = screenW * Dimens.IconScaleRatio
             val paddingSide = screenW * Dimens.SideMarginRatio
 
@@ -141,7 +155,6 @@ fun MapScreen(
                 )
             }
 
-            // TOPBAR IDENTICA À BATERIA/PERFORMANCE
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -160,7 +173,7 @@ fun MapScreen(
             ) {
                 FulgoraTopBar(
                     userName = currentUser?.profile?.name ?: "Rider",
-                    iconSize = iconSize, // Agora usa o tamanho dinâmico igual aos outros
+                    iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,
                     onCalendarClick = onCalendarClick
@@ -183,10 +196,36 @@ fun MapScreen(
                 contentColor = Color.White,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 16.dp, bottom = 48.dp)
+                    .padding(end = 16.dp, bottom = 80.dp) // Subido ligeiramente para não ficar debaixo da sheet/nav
             ) {
                 Icon(Icons.Filled.Navigation, contentDescription = "Navegar para a mota")
             }
         }
+    }
+}
+
+val ArchedTopShape: Shape = object : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        val yStart = with(density) { SheetPeekHeight.toPx() }
+        val curveHeight = with(density) { 32.dp.toPx() }
+
+        val path = Path().apply {
+            // Começa na base da peek height
+            moveTo(0f, yStart)
+            // Curva até ao topo (y=0) no centro
+            cubicTo(
+                size.width / 3f, yStart - curveHeight,
+                2 * size.width / 3f, yStart - curveHeight,
+                size.width, yStart
+            )
+            lineTo(size.width, size.height)
+            lineTo(0f, size.height)
+            close()
+        }
+        return Outline.Generic(path)
     }
 }

@@ -22,8 +22,6 @@ data class BikeState(
     val batteryPercentage: Int = 0,
     val isCharging: Boolean = false,
     val timeLeft: String = "0h 00m",
-
-    // --- 4. BATTERY SCREEN (DETALHES TÉCNICOS) ---
     val batteryHealth: String = "Good",
     val batteryTemp: Double = 0.0,
     val batteryCycles: Int = 0,
