@@ -23,15 +23,16 @@ import com.example.myfulgora.ui.components.FulgoraTopBar
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
 import com.example.myfulgora.data.auth.UserManager
+import com.example.myfulgora.data.model.BikeState
 
 @Composable
 fun DocumentationScreen(
-    viewModel: DocumentationViewModel = viewModel(),
+    state: BikeState,
+    onSaveDocument: (String, String) -> Unit,
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {}
 ){
-    val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val currentUser = UserManager.currentUser
 
@@ -44,7 +45,7 @@ fun DocumentationScreen(
                 context.contentResolver.takePersistableUriPermission(
                     uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
-                viewModel.guardarDocumento(docToUpload!!, uri.toString())
+                onSaveDocument(docToUpload!!, uri.toString())
                 docToUpload = null
             }
         }
@@ -82,7 +83,7 @@ fun DocumentationScreen(
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))
 
                 documentTypes.forEach { docName ->
-                    val savedUriString = state.savedDocuments[docName]
+                    val savedUriString = state.documents[docName]
                     val hasDocument = savedUriString != null
 
                     FulgoraInfoCard {

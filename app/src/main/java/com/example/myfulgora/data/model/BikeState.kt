@@ -1,5 +1,7 @@
 package com.example.myfulgora.data.model
 
+//BikeState (O Prato Feito): É a travessa de comida que sai da cozinha. Tem a bateria, o modo de condução e os documentos.
+
 data class BikeState(
     // --- 1. IDENTIFICAÇÃO E ESTADO GERAL ---
     val bikeName: String = "",
@@ -37,6 +39,9 @@ data class BikeState(
 
     // --- 6. LOCALIZAÇÃO ---
     val latitude: Double = 0.0,
-    val longitude: Double = 0.0
+    val longitude: Double = 0.0,
+
+    // DOCUMENTAÇÃO
+    val documents: Map<String, String> = emptyMap()
 
 )

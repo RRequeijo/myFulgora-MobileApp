@@ -60,7 +60,7 @@ fun ProfileScreen(
     // Valores seguros (Fallback)
     val bikeName = currentBike?.name ?: "No Motorcycle"
     val bikeVin = currentBike?.vin ?: "---"
-    val isConnected = currentBike?.isConnected ?: false
+    val isConnected = currentBike != null
 
     // Estados do Popup
     var showDialog by remember { mutableStateOf(false) }

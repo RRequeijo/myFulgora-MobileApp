@@ -71,7 +71,7 @@ fun BatteryScreen(
 
                 // 1. CABEÇALHO PARTILHADO
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
+                    userName = "${state.batteryTemp}",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,
@@ -121,7 +121,7 @@ fun BatteryScreen(
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryHealth,
                             title = stringResource(id = R.string.battery_health),
-                            value = stringResource(id = R.string.battery_health_good),
+                            value = "${state.batteryHealth}",
                             modifier = Modifier.weight(1f)
                         )
                         BatteryStatCard(
