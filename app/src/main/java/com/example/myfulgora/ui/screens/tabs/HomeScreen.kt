@@ -106,7 +106,7 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = state.bikeName,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
@@ -120,7 +120,7 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "${state.batteryPercentage}%",
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 14.sp
                         )
                     }
@@ -143,7 +143,7 @@ fun HomeScreen(
                             Icon(
                                 painter = painterResource(id = AppIcons.Dashboard.ArrowLeft0),
                                 contentDescription = "Mota Anterior",
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier
                                     .size(36.dp)
                                     //.clickable { viewModel.motaAnterior() }
@@ -152,7 +152,7 @@ fun HomeScreen(
                             Icon(
                                 painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
                                 contentDescription = "Mota Seguinte",
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier
                                     .size(36.dp)
                                     //.clickable { viewModel.motaSeguinte() }
@@ -207,15 +207,15 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .wrapContentHeight(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.Top // Alinhado ao topo para a expansão crescer para baixo
+                    verticalAlignment = Alignment.Top
                 ) {
-                    // --- 40%: BOTÃO DE LIGAR / DESLIGAR COM CONFIRMAÇÃO ---
+                    // --- 40%: BOTÃO DE LIGAR / DESLIGAR (STOP agora é vermelho) ---
                     Surface(
                         modifier = Modifier
                             .weight(0.4f)
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
-                        color = if (isBikeOn) MaterialTheme.colorScheme.background else GreenFresh,
+                        color = if (isBikeOn) Color(0xFFE53935) else GreenFresh, // 👈 STOP = Vermelho, START = Verde
                         onClick = { showPowerDialog = true }
                     ) {
                         Row(
@@ -245,14 +245,14 @@ fun HomeScreen(
                             .weight(0.6f)
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
-                        color = Color(0xFF1E1E1E)
+                        color = MaterialTheme.colorScheme.surfaceVariant // 👈 Dinâmico
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            // 1. O Texto Deslizável (O Pager em si)
+                            // 1. O Texto Deslizável
                             HorizontalPager(
                                 state = pagerState,
                                 modifier = Modifier.weight(1f),
@@ -264,14 +264,14 @@ fun HomeScreen(
                                 ) {
                                     Text(
                                         text = modes[page],
-                                        color = if (pagerState.currentPage == page) GreenFresh else Color.White.copy(alpha = 0.5f),
+                                        color = if (pagerState.currentPage == page) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = if (pagerState.currentPage == page) FontWeight.Bold else FontWeight.Normal,
                                         fontSize = 16.sp
                                     )
                                 }
                             }
 
-                            // 2. As 3 Bolinhas Indicadoras (No fundo)
+                            // 2. Bolinhas Indicadoras
                             Row(
                                 modifier = Modifier.padding(bottom = 6.dp),
                                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -279,8 +279,6 @@ fun HomeScreen(
                             ) {
                                 modes.forEachIndexed { index, _ ->
                                     val isSelected = pagerState.currentPage == index
-
-                                    // Animação suave: a bolinha cresce de 5.dp para 8.dp quando selecionada
                                     val dotSize by animateDpAsState(
                                         targetValue = if (isSelected) 8.dp else 5.dp,
                                         label = "dotSizeAnim"
@@ -290,7 +288,7 @@ fun HomeScreen(
                                         modifier = Modifier
                                             .size(dotSize)
                                             .clip(CircleShape)
-                                            .background(if (isSelected) GreenFresh else Color.Gray.copy(alpha = 0.4f))
+                                            .background(if (isSelected) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
                                     )
                                 }
                             }
@@ -300,40 +298,31 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // 5. INFOCARD DE STATUS (4 colunas conforme o mockup)
+                // 5. INFOCARD DE STATUS
                 FulgoraInfoCard(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 1. Bateria
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Battery),
-                            "${state.batteryPercentage}%",
-                            "",
+                            "${state.batteryPercentage}",
+                            "%",
                         )
-
-                        // 2. Consumo
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Power),
                             "${String.format("%.1f", state.consumption)}",
                             "kW/100"
                         )
-
-                        // 3. Autonomia (Range)
                         val displayRange = if (isMetric) state.range else (state.range * 0.621371).roundToInt()
                         val unitLabel = if (isMetric) "km" else "mi"
-                        
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Bike),
                             "$displayRange",
                             unitLabel
                         )
-
-                        // 4. Status
                         val isOnline = state.isOnline
-
                         HomeStatItem(
                             icon = painterResource(id = AppIcons.Dashboard.Status),
                             value = if (isOnline) stringResource(id = R.string.home_status_online) else stringResource(id = R.string.home_status_offline),
@@ -346,15 +335,15 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
             }
 
-            // --- POPUP DE CONFIRMAÇÃO (Segurança) ---
+            // --- POPUP DE CONFIRMAÇÃO ---
             if (showPowerDialog) {
                 AlertDialog(
                     onDismissRequest = { showPowerDialog = false },
-                    containerColor = Color(0xFF1E1E1E),
+                    containerColor = MaterialTheme.colorScheme.surface, // 👈 Dinâmico
                     title = {
                         Text(
                             text = if (isBikeOn) stringResource(id = R.string.engine_stop_title) else stringResource(id = R.string.engine_start_title),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold
                         )
                     },
@@ -363,7 +352,7 @@ fun HomeScreen(
                             text = if (isBikeOn) 
                                 stringResource(id = R.string.engine_stop_message) 
                                 else stringResource(id = R.string.engine_start_message),
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
                     confirmButton = {
@@ -381,7 +370,7 @@ fun HomeScreen(
                     },
                     dismissButton = {
                         TextButton(onClick = { showPowerDialog = false }) {
-                            Text(stringResource(id = R.string.engine_start_cancel), color = Color.Gray)
+                            Text(stringResource(id = R.string.engine_start_cancel), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 )
@@ -418,14 +407,14 @@ fun HomeStatItem(
 
             Text(
                 text = value,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface, // 👈 Dinâmico
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
 
             if (label.isNotEmpty()) {
                 Spacer(modifier = Modifier.width(2.dp))
-                Text(text = label, color = Color.Gray, fontSize = 10.sp)
+                Text(text = label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp) // 👈 Dinâmico
             }
         }
     }

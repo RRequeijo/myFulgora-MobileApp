@@ -3,6 +3,7 @@ package com.example.myfulgora.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -39,9 +40,11 @@ import com.example.myfulgora.data.helpers.NotificationManager
 fun FulgoraBackground(
     content: @Composable BoxScope.() -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+
     val bottomGlow = Brush.radialGradient(
         colors = listOf(
-            GreenDeep.copy(alpha = 0.5f),
+            if (isDark) GreenDeep.copy(alpha = 0.5f) else GreenFresh.copy(alpha = 0.15f),
             Color.Transparent
         ),
         center = Offset(x = 0f, y = Float.POSITIVE_INFINITY),
@@ -50,7 +53,7 @@ fun FulgoraBackground(
 
     val topGlow = Brush.radialGradient(
         colors = listOf(
-            Color(0xFF1E293B).copy(alpha = 0.6f),
+            if (isDark) Color(0xFF1E293B).copy(alpha = 0.6f) else Color.LightGray.copy(alpha = 0.2f),
             Color.Transparent
         ),
         center = Offset(x = Float.POSITIVE_INFINITY, y = 0f),
@@ -60,7 +63,7 @@ fun FulgoraBackground(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BlackBrand)
+            .background(MaterialTheme.colorScheme.background) // 👈 Usa a cor do tema!
             .background(bottomGlow)
             .background(topGlow)
     ) {
@@ -71,8 +74,8 @@ fun FulgoraBackground(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FulgoraTopBar(
-    greeting: String = "Hi", // O cumprimento inicial
-    userName: String = "Rider", // O nome que vai vir do teu UserManager
+    greeting: String = "Hi",
+    userName: String = "Rider",
     subtitle: String = stringResource(id = R.string.topbar_subtitle),
     iconSize: Dp = 24.dp,
     onNotificationClick: () -> Unit = {},
@@ -86,11 +89,10 @@ fun FulgoraTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-            // Colocamos o "Hi," e o "Username" lado a lado
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "$greeting, ",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -104,7 +106,7 @@ fun FulgoraTopBar(
             }
             Text(
                 text = subtitle,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, // 👈 Adaptável
                 fontSize = 14.sp
             )
         }
@@ -119,7 +121,7 @@ fun FulgoraTopBar(
             Icon(
                 painter = painterResource(id = AppIcons.Performance.next_service),
                 contentDescription = "Agenda de Manutenção",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
                 modifier = Modifier
                     .size(iconSize)
                     .clickable { onCalendarClick() }
@@ -144,12 +146,11 @@ fun FulgoraTopBar(
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifications",
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
                     modifier = Modifier.size(iconSize)
                 )
             }
 
-            // 👇 2. O NOVO POPUP MODERNO E LARGO 👇
             if (showNotifications) {
                 Popup(
                     alignment = Alignment.TopEnd,
@@ -162,7 +163,7 @@ fun FulgoraTopBar(
                             .width(screenWidth - 32.dp)
                             .padding(end = 16.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
@@ -171,7 +172,7 @@ fun FulgoraTopBar(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("Notificações", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                Text("Notificações", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                 Text(
                                     "Marcar como lidas",
                                     color = GreenFresh,
@@ -184,13 +185,13 @@ fun FulgoraTopBar(
                             }
 
                             Spacer(modifier = Modifier.height(12.dp))
-                            HorizontalDivider(color = Color.Gray.copy(alpha = 0.2f))
+                            HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
                             Spacer(modifier = Modifier.height(8.dp))
 
                             if (notificationsList.isEmpty()) {
                                 Text(
                                     text = "Não tens notificações recentes.",
-                                    color = Color.Gray,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 14.sp,
                                     modifier = Modifier.padding(vertical = 16.dp)
                                 )
@@ -201,7 +202,6 @@ fun FulgoraTopBar(
                                             modifier = Modifier.fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            // Ponto indicador de "não lida"
                                             if (!notif.isRead) {
                                                 Box(
                                                     modifier = Modifier
@@ -212,12 +212,12 @@ fun FulgoraTopBar(
                                             }
 
                                             Column(modifier = Modifier.weight(1f)) {
-                                                Text(notif.title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                                                Text(notif.message, color = Color.Gray, fontSize = 12.sp)
+                                                Text(notif.title, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                                Text(notif.message, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                                                 Text(notif.time, color = GreenFresh.copy(alpha = 0.7f), fontSize = 10.sp)
                                             }
                                         }
-                                        HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+                                        HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f))
                                     }
                                 }
                             }
@@ -229,7 +229,7 @@ fun FulgoraTopBar(
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
                 modifier = Modifier
                     .size(iconSize)
                     .clickable { onMenuClick() }
@@ -241,7 +241,7 @@ fun FulgoraTopBar(
 @Composable
 fun FulgoraInfoCard(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = CardBackgroundColor,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
@@ -283,8 +283,8 @@ fun DashboardStat(icon: ImageVector, value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(imageVector = icon, contentDescription = null, tint = GreenFresh, modifier = Modifier.size(24.dp))
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = value, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Text(text = label, color = Color.Gray, fontSize = 12.sp)
+        Text(text = value, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Text(text = label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
     }
 }
 
@@ -294,24 +294,24 @@ fun FulgoraDrawerItem(
     painter: Painter,
     onClick: () -> Unit,
     selected: Boolean = false,
-    textColor: Color = Color.White,
-    iconColor: Color = Color.White
+    textColor: Color = Color.Unspecified, // 👈 Deixa o sistema decidir se não for passado
+    iconColor: Color = Color.Unspecified
 ) {
     NavigationDrawerItem(
         icon = {
             Icon(
                 painter = painter,
                 contentDescription = null,
-                tint = iconColor,
+                tint = if (iconColor == Color.Unspecified) MaterialTheme.colorScheme.onSurface else iconColor,
                 modifier = Modifier.size(24.dp)
             )
         },
-        label = { Text(label, color = textColor, fontSize = 16.sp) },
+        label = { Text(label, color = if (textColor == Color.Unspecified) MaterialTheme.colorScheme.onSurface else textColor, fontSize = 16.sp) },
         selected = selected,
         onClick = onClick,
         colors = NavigationDrawerItemDefaults.colors(
             unselectedContainerColor = Color.Transparent,
-            selectedContainerColor = Color(0xFF2D2D2D)
+            selectedContainerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
     )
@@ -323,17 +323,17 @@ fun FulgoraDrawerItem(
     label: String,
     onClick: () -> Unit,
     selected: Boolean = false,
-    textColor: Color = Color.White,
-    iconColor: Color = Color.White
+    textColor: Color = Color.Unspecified,
+    iconColor: Color = Color.Unspecified
 ) {
     NavigationDrawerItem(
-        icon = { Icon(icon, contentDescription = null, tint = iconColor) },
-        label = { Text(label, color = textColor) },
+        icon = { Icon(icon, contentDescription = null, tint = if (iconColor == Color.Unspecified) MaterialTheme.colorScheme.onSurface else iconColor) },
+        label = { Text(label, color = if (textColor == Color.Unspecified) MaterialTheme.colorScheme.onSurface else textColor) },
         selected = selected,
         onClick = onClick,
         colors = NavigationDrawerItemDefaults.colors(
             unselectedContainerColor = Color.Transparent,
-            selectedContainerColor = Color(0xFF2D2D2D)
+            selectedContainerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = Modifier.padding(horizontal = 12.dp)
     )
@@ -353,16 +353,14 @@ fun RecentTripRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Lado Esquerdo: Rota e Data
         Column {
-            Text(text = route, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text(text = date, color = Color.Gray, fontSize = 12.sp)
+            Text(text = route, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(text = date, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
         }
 
-        // Lado Direito: Distância e Energia
         Column(horizontalAlignment = Alignment.End) {
-            Text(text = distance, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text(text = energy, color = GreenFresh, fontSize = 12.sp) // Coloquei a verde para dar destaque!
+            Text(text = distance, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(text = energy, color = GreenFresh, fontSize = 12.sp)
         }
     }
 }
@@ -386,13 +384,13 @@ fun TripFilterBar(
             Surface(
                 modifier = Modifier.weight(1f).height(32.dp),
                 shape = RoundedCornerShape(16.dp),
-                color = if (isSelected) GreenFresh else Color(0xFF2C2C2C),
+                color = if (isSelected) GreenFresh else MaterialTheme.colorScheme.surfaceVariant,
                 onClick = { onFilterSelected(filter) }
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = filter,
-                        color = if (isSelected) Color.Black else Color.White,
+                        color = if (isSelected) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                     )
