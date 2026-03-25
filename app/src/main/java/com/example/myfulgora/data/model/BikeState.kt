@@ -4,7 +4,7 @@ package com.example.myfulgora.data.model
 
 data class BikeState(
     // --- 1. IDENTIFICAÇÃO E ESTADO GERAL ---
-    val bikeName: String = "",
+    val bikeName: String = "No name",
     val totalBikes: Int = 0,
     val isOnline: Boolean = false,
     val isLocked: Boolean = true,
@@ -27,17 +27,14 @@ data class BikeState(
     val batteryCycles: Int = 0,
     val avgConsumption: Double = 0.0,
 
-    // --- 5. LUZES E SINAIS ---
-    val leftTurnSignal: Boolean = false,
-    val rightTurnSignal: Boolean = false,
-    val highBeam: Boolean = false,
-
     // --- 6. MENSAGENS E ALERTAS ---
     val warningMessage: String? = null,
 
     // --- 6. LOCALIZAÇÃO ---
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
+
+
 
     // DOCUMENTAÇÃO
     val documents: Map<String, String> = emptyMap()

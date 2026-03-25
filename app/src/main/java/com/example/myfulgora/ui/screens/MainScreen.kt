@@ -280,6 +280,7 @@ fun MainScreen() {
                         }
                         composable("performance") { 
                             PerformanceScreen(
+                                state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
                                 onUserClick = { navigateToProfile() }
                             ) 

@@ -353,7 +353,7 @@ fun HomeScreen(
                     containerColor = Color(0xFF1E1E1E),
                     title = {
                         Text(
-                            text = if (isBikeOn) "Desligar Motor?" else "Ligar Motor?",
+                            text = if (isBikeOn) stringResource(id = R.string.engine_stop_title) else stringResource(id = R.string.engine_start_title),
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
@@ -361,8 +361,8 @@ fun HomeScreen(
                     text = {
                         Text(
                             text = if (isBikeOn) 
-                                "Tens a certeza que queres desligar o motor da tua Fulgora?" 
-                                else "Tens a certeza que queres ligar o motor? Certifica-te que estás em segurança e com o descanso recolhido.",
+                                stringResource(id = R.string.engine_stop_message) 
+                                else stringResource(id = R.string.engine_start_message),
                             color = Color.Gray
                         )
                     },
@@ -376,12 +376,12 @@ fun HomeScreen(
                                 containerColor = if (isBikeOn) Color(0xFFE53935) else GreenFresh
                             )
                         ) {
-                            Text(text = "Confirmar", color = if (isBikeOn) Color.White else Color.Black)
+                            Text(text = stringResource(id = R.string.engine_start_confirm), color = if (isBikeOn) Color.White else Color.Black)
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showPowerDialog = false }) {
-                            Text("Cancelar", color = Color.Gray)
+                            Text(stringResource(id = R.string.engine_start_cancel), color = Color.Gray)
                         }
                     }
                 )

@@ -44,6 +44,7 @@
     <string name="navbar_help">Ajuda</string>
     <string name="performance_co2_emissions">Emissões de CO2 evitadas</string>
     <string name="performance_saved">salvo</string>
+    <string name="performance_odometer">KMs Totais</string>
     <string name="settings_title">Definições</string>
     <string name="settings_preferences">Preferencias</string>
     <string name="settings_units">Unidade</string>
@@ -81,5 +82,12 @@
     <string name="delegation_activate_key_title">Ativar Chave Digital</string>
     <string name="delegation_activation_code">Código de Ativação</string>
     <string name="delegation_activate_access">Ativar Acesso</string>
+    <string name="engine_power_button">Ligar</string>
+    <string name="engine_start_title">Ligar Motor?</string>
+    <string name="engine_start_message">Tens a certeza que queres ligar o motor? Certifica-te que estás em segurança e com o descanso recolhido.</string>
+    <string name="engine_start_cancel">Cancelar</string>
+    <string name="engine_start_confirm">Confirmar</string>
+    <string name="engine_stop_title">Desligar Motor?</string>
+    <string name="engine_stop_message">Tens a certeza que queres desligar o motor da tua Fulgora?</string>
 
 </resources>
