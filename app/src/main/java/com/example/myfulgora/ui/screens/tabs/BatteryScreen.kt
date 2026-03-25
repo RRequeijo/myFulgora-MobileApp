@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 import com.example.myfulgora.data.model.BikeState
 import com.example.myfulgora.ui.components.FulgoraBackground
 import com.example.myfulgora.ui.components.FulgoraTopBar
+import com.example.myfulgora.ui.components.FulgoraInfoCard
 import com.example.myfulgora.ui.theme.AppIcons
-import com.example.myfulgora.ui.theme.CardBackgroundColor
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
 import androidx.compose.ui.res.stringResource
@@ -71,7 +71,7 @@ fun BatteryScreen(
 
                 // 1. CABEÇALHO PARTILHADO
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
+                    userName = "${state.batteryTemp}",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,
@@ -121,14 +121,14 @@ fun BatteryScreen(
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryHealth,
                             title = stringResource(id = R.string.battery_health),
-                            value = stringResource(id = R.string.battery_health_good),
+                            value = "${state.batteryHealth}",
                             modifier = Modifier.weight(1f)
                         )
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryTemperature,
                             title = stringResource(id = R.string.battery_temperature),
-                            value = "${state.batteryTemp}°C",
-                            modifier = Modifier.weight(1f)
+                            value = "${String.format("%.1f", state.batteryTemp)}ºC",
+                            modifier = Modifier.weight(1f),
                         )
                     }
                     // Linha 2
@@ -139,7 +139,7 @@ fun BatteryScreen(
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryConsumption,
                             title = stringResource(id = R.string.battery_consumption),
-                            value = "${state.avgConsumption} kW/100" + if(isMetric) "km" else "mi",
+                            value = "${String.format("%.1f", state.consumption)} kW/100" + if(isMetric) "km" else "mi",
                             modifier = Modifier.weight(1f)
                         )
                         BatteryStatCard(
@@ -220,94 +220,84 @@ fun BatteryInfoCard(
     state: BikeState,
     isMetric: Boolean
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = CardBackgroundColor
-        )
-    ) {
+    FulgoraInfoCard {
         Column(
-            modifier = Modifier.padding(Dimens.SpacingSmall)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = Dimens.PaddingMedium)
+        ) {
+            Text(
+                text = if (state.isCharging) "Charging" else "Standby",
+                color = if (state.isCharging) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = stringResource(id = R.string.time_left),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = Dimens.TextSizeSmall
+            )
+
+            Text(
+                text = if (state.isCharging) state.timeLeft else "-- h -- m",
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = Dimens.PaddingMedium)
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(start = Dimens.PaddingMedium),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = if (state.isCharging) "Charging" else "Standby",
-                    color = if (state.isCharging) GreenFresh else Color.Gray,
-                    fontWeight = FontWeight.Bold
+                Icon(
+                    painter = painterResource(id = AppIcons.Battery.Battery),
+                    contentDescription = "Battery",
+                    tint = GreenFresh,
+                    modifier = Modifier.size(24.dp)
                 )
-
-                Text(
-                    text = stringResource(id = R.string.time_left),
-                    color = Color.Gray,
-                    fontSize = Dimens.TextSizeSmall
-                )
-
-                Text(
-                    text = if (state.isCharging) state.timeLeft else "-- h -- m",
-                    color = Color.White,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("${state.batteryPercentage}%", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
             }
 
-            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.weight(1f).aspectRatio(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .padding(start = Dimens.PaddingMedium),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = AppIcons.Battery.Battery),
-                        contentDescription = "Battery",
-                        tint = GreenFresh,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("${state.batteryPercentage}%", color = Color.Gray, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f).aspectRatio(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = AppIcons.Battery.Range),
-                        contentDescription = "Range",
-                        tint = GreenFresh,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(UnitConverter.formatDistance(state.range, isMetric), color = Color.Gray, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f).aspectRatio(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        painter = painterResource(id = AppIcons.Battery.Charging),
-                        contentDescription = "Charging",
-                        tint = GreenFresh,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(if(state.isCharging) "On" else "Off", color = Color.Gray, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)                }
+                Icon(
+                    painter = painterResource(id = AppIcons.Battery.Range),
+                    contentDescription = "Range",
+                    tint = GreenFresh,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(UnitConverter.formatDistance(state.range, isMetric), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)
             }
+
+            Column(
+                modifier = Modifier.weight(1f).aspectRatio(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = AppIcons.Battery.Charging),
+                    contentDescription = "Charging",
+                    tint = GreenFresh,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(if(state.isCharging) "On" else "Off", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall, fontWeight = FontWeight.Medium)                }
         }
     }
 }
@@ -319,10 +309,8 @@ fun BatteryStatCard(
     value: String,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    FulgoraInfoCard(
         modifier = modifier
-            .background(CardBackgroundColor, RoundedCornerShape(16.dp))
-            .padding(Dimens.PaddingMedium)
     ) {
         Icon(
             painter = painterResource(id = icon),
@@ -331,7 +319,7 @@ fun BatteryStatCard(
             modifier = Modifier.size(34.dp)
         )
         Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
-        Text(text = value, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-        Text(text = title, color = Color.Gray, fontSize = Dimens.TextSizeSmall)
+        Text(text = value, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+        Text(text = title, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall)
     }
 }

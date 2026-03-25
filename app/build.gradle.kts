@@ -51,7 +51,6 @@ android {
 
 dependencies {
     // --- DEPENDÊNCIAS DO ANDROID (CORE) ---
-    // 👇 MUDADO: Usei versões fixas e estáveis em vez de "libs..." para evitar o erro da API 36
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.activity:activity-compose:1.9.3")
@@ -62,6 +61,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation("androidx.compose.foundation:foundation") // Adicionado explicitamente
 
     // --- UTILITÁRIOS ---
     implementation("androidx.navigation:navigation-compose:2.8.5")

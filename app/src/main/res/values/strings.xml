@@ -49,6 +49,17 @@
     <string name="battery_health_good">good</string>
     <string name="battery_cycles">cycles</string>
 
+    //ENGINE POWER
+    <string name="engine_power_button">Start</string>
+    <string name="engine_start_title">Start Engine?</string>
+    <string name="engine_start_message">Are you sure you want to start the engine? Make sure you are safe and the kickstand is up.</string>
+    <string name="engine_start_cancel">Cancel</string>
+    <string name="engine_start_confirm">Confirm</string>
+
+    <string name="engine_power_button_stop" translatable="false">STOP</string>
+    <string name="engine_stop_title">Stop Engine?</string>
+    <string name="engine_stop_message">Are you sure you want to turn off your Fulgora\'s engine?</string>
+
 
 
 
@@ -85,6 +96,7 @@
     <string name="performance_sustainability">Sustainability</string>
     <string name="performance_co2_emissions">CO2 emissions avoided</string>
     <string name="performance_saved">saved</string>
+    <string name="performance_odometer">Total KMs</string>
 
 
 

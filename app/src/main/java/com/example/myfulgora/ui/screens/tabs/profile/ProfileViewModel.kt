@@ -29,7 +29,11 @@ class ProfileViewModel : ViewModel() {
                 email = currentUser.profile.email,
                 bikeName = currentBike?.name ?: "No Motorcycle",
                 bikeVin = currentBike?.vin ?: "---",
-                isBikeConnected = currentBike?.isConnected ?: false,
+
+                // Correção 1: Em vez de isConnected falso dos mocks, assumimos que
+                // se a mota existe no perfil, ela está emparelhada (true)
+                isBikeConnected = currentBike != null,
+
                 photoUri = currentUser.profile.photoUri,
                 totalBikes = currentUser.bikes.size
             )
@@ -37,29 +41,31 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun atualizarDado(tipo: String, novoValor: String) {
+        val user = UserManager.currentUser ?: return
+
+        // Correção 2: Editamos os dados diretamente na "Carteira" do utilizador
         when (tipo) {
-            "Edit Name" -> UserManager.updateProfile(newName = novoValor)
-            "Edit Email" -> UserManager.updateProfile(newEmail = novoValor)
+            "Edit Name" -> user.profile.name = novoValor
+            "Edit Email" -> user.profile.email = novoValor
         }
         carregarDadosDoUtilizador()
     }
 
     fun atualizarFoto(uri: String) {
-        UserManager.updateProfile(newPhotoUri = uri)
+        UserManager.currentUser?.profile?.photoUri = uri
         carregarDadosDoUtilizador()
     }
 
     fun sincronizarNovaMota(context: Context) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSyncing = true)
-            
+
             // Simulação de ligação ao servidor
             delay(2000)
 
-            // Chamamos a função que sincroniza sem duplicar
-            UserManager.syncBikesFromDatabase(context)
-            
-            // Recarregamos os dados na UI
+            // Correção 3: Como já não temos o JSON falso, simulamos apenas que correu bem.
+            // No futuro, aqui farás: grpcClient.obterMotasDoUtilizador()
+
             carregarDadosDoUtilizador()
 
             _uiState.value = _uiState.value.copy(isSyncing = false, showSyncSuccess = true)

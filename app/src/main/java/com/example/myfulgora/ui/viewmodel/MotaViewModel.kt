@@ -1,5 +1,7 @@
 package com.example.myfulgora.ui.viewmodel
 
+//MotaViewModel (O Chefe de Sala): É o cérebro. Ele vai à cozinha (gRPC/Servidor Python), pega na comida (Dados), e entrega aos clientes.
+
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.example.myfulgora.data.helpers.NotificationManager
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
 
 sealed class HomeUiState {
     object Loading : HomeUiState()
@@ -22,9 +25,9 @@ class MotaViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState = _uiState.asStateFlow()
-    
+
     private val grpcClient = GrpcClass()
-    
+
     private var alreadyNotifiedBattery = false
 
     init {
@@ -48,17 +51,17 @@ class MotaViewModel : ViewModel() {
 
         viewModelScope.launch {
             Log.d("MotaViewModel", "🔄 A atualizar dados para o VIN: $vin")
-            
+
             val response = grpcClient.getMotaInfo(vin)
 
             if (response != null) {
                 Log.d("MotaViewModel", "✅ Dados gRPC recebidos com sucesso")
                 val total = UserManager.currentUser?.bikes?.size ?: 0
-                
+
                 val newState = BikeState(
                     bikeName = currentBike.name,
                     totalBikes = total,
-                    isOnline = true, // Se recebemos resposta, o sistema está "Online"
+                    isOnline = true,
                     batteryPercentage = response.batteryLevel,
                     range = response.batteryRange,
                     isCharging = response.isCharging,
@@ -69,7 +72,11 @@ class MotaViewModel : ViewModel() {
                     tyreBack = response.tyreBack.toInt(),
                     batteryTemp = response.batteryTemperature.toDouble(),
                     batteryCycles = response.batteryCycles,
-                    avgConsumption = response.energyConsumptionAvg.toDouble()
+                    avgConsumption = response.energyConsumptionAvg.toDouble(),
+                    timeLeft = response.chargingTime,
+                    latitude = response.latitude,
+                    longitude = response.longitude,
+                    documents = currentBike.documents?.toMap() ?: emptyMap()
                 )
 
                 _uiState.value = HomeUiState.Success(newState)
@@ -101,9 +108,11 @@ class MotaViewModel : ViewModel() {
             BikeState(
                 bikeName = currentBike.name,
                 totalBikes = total,
-                isOnline = isActuallyOnline, // Reflete se a ligação ao servidor funciona
+                isOnline = isActuallyOnline,
                 batteryPercentage = currentBike.batteryLevel,
-                range = currentBike.batteryRange.toInt()
+                range = currentBike.batteryRange.toInt(),
+                // 👇 CORREÇÃO 2: Mantém os manuais no ecrã mesmo se a net for abaixo
+                documents = currentBike.documents?.toMap() ?: emptyMap()
             )
         } else {
             BikeState(bikeName = "No Bike", totalBikes = total, isOnline = false)
@@ -118,5 +127,27 @@ class MotaViewModel : ViewModel() {
 
     fun motaAnterior() {
         UserManager.previousBike()
+    }
+
+    fun guardarDocumento(nomeDocumento: String, uri: String) {
+        val currentBike = UserManager.getCurrentBike()
+        if (currentBike != null) {
+            // 👇 CORREÇÃO 3: Protege o mapa antes de adicionar
+            if (currentBike.documents == null) {
+                currentBike.documents = mutableMapOf()
+            }
+            currentBike.documents!![nomeDocumento] = uri
+
+            _uiState.update { currentState ->
+                if (currentState is HomeUiState.Success) {
+                    val updatedBikeState = currentState.bikeState.copy(
+                        documents = currentBike.documents!!.toMap()
+                    )
+                    HomeUiState.Success(updatedBikeState)
+                } else {
+                    currentState
+                }
+            }
+        }
     }
 }

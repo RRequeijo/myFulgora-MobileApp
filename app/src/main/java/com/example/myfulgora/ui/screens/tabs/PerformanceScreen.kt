@@ -1,6 +1,5 @@
 package com.example.myfulgora.ui.screens.tabs
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,22 +8,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ChevronLeft
-import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Eco
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Place
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,12 +31,12 @@ import com.example.myfulgora.ui.theme.GreenFresh
 import com.example.myfulgora.data.auth.UserManager
 import androidx.compose.ui.platform.LocalContext
 import com.example.myfulgora.data.helpers.SettingsManager
-import com.example.myfulgora.ui.theme.DarkTextPrimary
-import com.example.myfulgora.ui.theme.DarkTextSecondary
+import com.example.myfulgora.data.model.BikeState
 import kotlin.math.roundToInt
 
 @Composable
 fun PerformanceScreen(
+    state: BikeState,
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {}
@@ -59,8 +50,6 @@ fun PerformanceScreen(
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
             val screenW = this.maxWidth
-            val screenH = maxHeight
-
             val iconSize = screenW * Dimens.IconScaleRatio
             val paddingSide = screenW * Dimens.SideMarginRatio
 
@@ -94,7 +83,7 @@ fun PerformanceScreen(
                         color = Color.White
                     )
                     Text(
-                        text = "S10 Bike Name",
+                        text = state.bikeName,
                         fontSize = Dimens.TextSizeNormal,
                         color = GreenFresh
                     )
@@ -105,7 +94,6 @@ fun PerformanceScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Setas de navegação (Mockup)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -125,7 +113,6 @@ fun PerformanceScreen(
                         )
                     }
 
-                    // Mota
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
@@ -140,19 +127,51 @@ fun PerformanceScreen(
                     }
                 }
 
-
                 Spacer(modifier = Modifier.height(Dimens.PaddingLarge))
 
-                // 4. GRELHA DE CARTÕES (Tyres & Service)
+                // 4. ODOMETER CARD
+                FulgoraInfoCard {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(stringResource(id = R.string.performance_odometer), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeTitle)
+                            Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
+
+                            Row(verticalAlignment = Alignment.Bottom) {
+                                val displayOdo = if (isMetric) "${state.totalKilometers} km" else "${(state.totalKilometers * 0.621371).roundToInt()} mi"
+                                Text(
+                                    text = displayOdo,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 32.sp
+                                )
+                            }
+                        }
+
+                        Icon(
+                            painter = painterResource(id = AppIcons.Performance.odometer),
+                            contentDescription = "Odometer",
+                            tint = GreenFresh,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(Dimens.PaddingSmall))
+
+                // TYRES & SERVICE CARDS
                 Row(modifier = Modifier.fillMaxWidth()) {
                     FulgoraInfoCard(modifier = Modifier.weight(1f)) {
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(end = Dimens.PaddingMedium)) {
-                                Text(stringResource(id = R.string.performance_tyre_pressure), color = DarkTextSecondary, fontSize = Dimens.TextSizeSubTitle)
+                                Text(stringResource(id = R.string.performance_tyre_pressure), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSubTitle)
                                 Text(stringResource(id = R.string.performance_tyre_pressure_normal), color = GreenFresh, fontSize = Dimens.TextSizeSmall)
                                 Spacer(modifier = Modifier.height(Dimens.SpacingSmallPlus))
-                                Text(stringResource(id = R.string.performance_tyre_pressure_front), color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
-                                Text(stringResource(id = R.string.performance_tyre_pressure_rear), color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
+                                Text("Front: ${state.tyreFront} bar", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
+                                Text("Rear: ${state.tyreBack} bar", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
                             }
                             Icon(
                                 painter = painterResource(id = AppIcons.Performance.tyre_pressure),
@@ -166,14 +185,15 @@ fun PerformanceScreen(
                     FulgoraInfoCard(modifier = Modifier.weight(1f)) {
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(end = Dimens.PaddingMedium)) {
-                                Text(stringResource(id = R.string.performance_next_service), color = DarkTextSecondary, fontSize = Dimens.TextSizeSubTitle)
+                                Text(stringResource(id = R.string.performance_next_service), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSubTitle)
                                 Text(stringResource(id = R.string.performance_next_service_due), color = GreenFresh, fontSize = Dimens.TextSizeSmall)
                                 Spacer(modifier = Modifier.height(Dimens.SpacingSmallPlus))
-                                Text(stringResource(id = R.string.performance_next_service_in), color = Color.Gray, fontSize = Dimens.TextSizeNormal)
-                                
-                                val serviceDistance = 320
+                                Text(stringResource(id = R.string.performance_next_service_in), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeNormal)
+
+                                val serviceDistance = 5000 - (state.totalKilometers % 5000)
                                 val displayService = if (isMetric) "$serviceDistance km" else "${(serviceDistance * 0.621371).roundToInt()} mi"
-                                Text(displayService, color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
+
+                                Text(displayService, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
                             }
                             Icon(
                                 painter = painterResource(id = AppIcons.Performance.next_service),
@@ -187,28 +207,30 @@ fun PerformanceScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingSmall))
 
-                // 5. CARTÃO DE PERFORMANCE
+                // PERFORMANCE STATS CARD
                 FulgoraInfoCard {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(end = 32.dp)) {
-                                Text(stringResource(id = R.string.performance_title), color = DarkTextSecondary, fontSize = Dimens.TextSizeTitle)
+                                Text(stringResource(id = R.string.performance_title), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeTitle)
                             }
                             Spacer(modifier = Modifier.height(Dimens.SpacingSmallPlus))
                             Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min), verticalAlignment = Alignment.CenterVertically) {
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text(stringResource(id = R.string.performance_energy_consumption), color = DarkTextPrimary, fontSize = Dimens.TextSizeSubTitle)
-                                    Text(stringResource(id = R.string.performance_energy_consumption_last_7_days), color = Color.Gray, fontSize = Dimens.TextSizeNormal)
-                                    Text("0.9 kWh", color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeSubTitle)
+                                    Text(stringResource(id = R.string.performance_energy_consumption), color = MaterialTheme.colorScheme.onSurface, fontSize = Dimens.TextSizeSubTitle)
+                                    Text(stringResource(id = R.string.performance_energy_consumption_last_7_days), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeNormal)
+
+                                    val formattedConsumption = String.format("%.1f", state.avgConsumption)
+                                    Text("$formattedConsumption kWh/100", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeSubTitle)
                                 }
-                                Box(modifier = Modifier.padding(horizontal = Dimens.PaddingMedium).width(1.dp).fillMaxHeight(0.8f).background(Color.Gray.copy(alpha = 0.3f)))
+                                Box(modifier = Modifier.padding(horizontal = Dimens.PaddingMedium).width(1.dp).fillMaxHeight(0.8f).background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)))
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text(stringResource(id = R.string.performance_average_speed), color = DarkTextPrimary, fontSize = Dimens.TextSizeSubTitle)
-                                    Text(stringResource(id = R.string.performance_average_speed_based_on_recent_trips), color = Color.Gray, fontSize = Dimens.TextSizeNormal)
-                                    
-                                    val avgSpeed = 42
+                                    Text(stringResource(id = R.string.performance_average_speed), color = MaterialTheme.colorScheme.onSurface, fontSize = Dimens.TextSizeSubTitle)
+                                    Text(stringResource(id = R.string.performance_average_speed_based_on_recent_trips), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeNormal)
+
+                                    val avgSpeed = state.averageSpeed
                                     val displaySpeed = if (isMetric) "$avgSpeed km/h" else "${(avgSpeed * 0.621371).roundToInt()} mph"
-                                    Text(displaySpeed, color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeSubTitle)
+                                    Text(displaySpeed, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeSubTitle)
                                 }
                             }
                         }
@@ -218,7 +240,7 @@ fun PerformanceScreen(
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingSmall))
 
-                // 7. SUSTAINABILITY
+                // SUSTAINABILITY CARD
                 FulgoraInfoCard {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -226,16 +248,19 @@ fun PerformanceScreen(
                         verticalAlignment = Alignment.Top
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(stringResource(id = R.string.performance_sustainability), color = DarkTextSecondary, fontSize = Dimens.TextSizeTitle)
+                            Text(stringResource(id = R.string.performance_sustainability), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeTitle)
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text(stringResource(id = R.string.performance_co2_emissions), color = Color.Gray, fontSize = Dimens.TextSizeSmall)
+                            Text(stringResource(id = R.string.performance_co2_emissions), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall)
 
                             Spacer(modifier = Modifier.height(Dimens.SpacingSmall))
 
                             Row(verticalAlignment = Alignment.Bottom) {
+                                val co2Saved = (state.totalKilometers * 0.115)
+                                val displayCo2 = String.format("%.1f kg", co2Saved)
+
                                 Text(
-                                    "12.4 kg",
-                                    color = Color.White,
+                                    text = displayCo2,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 32.sp
                                 )
@@ -261,56 +286,5 @@ fun PerformanceScreen(
                 Spacer(modifier = Modifier.height(Dimens.ScrollBottomPadding))
             }
         }
-    }
-}
-
-@Composable
-fun RecentTripRow(
-    date: String,
-    route: String,
-    distance: String,
-    energy: String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Color.Gray.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Place,
-                contentDescription = null,
-                tint = GreenFresh,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.width(Dimens.SpacingSmall))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = route, color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = Dimens.TextSizeNormal)
-            Text(text = date, color = Color.Gray, fontSize = 12.sp)
-        }
-
-        Column(horizontalAlignment = Alignment.End) {
-            Text(text = distance, color = Color.White, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
-            Text(text = energy, color = GreenFresh, fontSize = 12.sp)
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Icon(
-            painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
-            contentDescription = "Details",
-            tint = Color.Gray,
-            modifier = Modifier.size(20.dp)
-        )
     }
 }

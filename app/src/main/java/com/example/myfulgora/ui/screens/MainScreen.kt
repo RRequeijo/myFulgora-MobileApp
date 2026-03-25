@@ -1,5 +1,7 @@
 package com.example.myfulgora.ui.screens.tabs
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,11 +11,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,18 +28,15 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import com.example.myfulgora.R
 import com.example.myfulgora.data.model.BikeState
+import com.example.myfulgora.ui.screens.tabs.map.MapScreen
+import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
+import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
 import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.BlackBrand
 import com.example.myfulgora.ui.theme.GreenFresh
 import com.example.myfulgora.ui.viewmodel.HomeUiState
 import com.example.myfulgora.ui.viewmodel.MotaViewModel
 import kotlinx.coroutines.launch
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.ui.platform.LocalContext
-import com.example.myfulgora.ui.screens.tabs.map.MapScreen
-import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
-import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
 
 // Classe auxiliar atualizada para aceitar Painter ou ImageVector
 data class DrawerItemData(
@@ -97,11 +96,15 @@ fun MainScreen() {
                         modifier = Modifier.width(320.dp)
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize().padding(vertical = 24.dp)
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 24.dp)
                         ) {
                             // Header: Back + Logo
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 IconButton(onClick = { scope.launch { drawerState.close() } }) {
@@ -221,6 +224,7 @@ fun MainScreen() {
                     NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(innerPadding)) {
                         composable("map") {
                             MapScreen(
+                                state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
                                 onUserClick = { navigateToProfile() },
                                 onCalendarClick = { navController.navigate("maintenance_screen") },
@@ -276,6 +280,7 @@ fun MainScreen() {
                         }
                         composable("performance") { 
                             PerformanceScreen(
+                                state = currentBikeState,
                                 onMenuClick = { scope.launch { drawerState.open() } },
                                 onUserClick = { navigateToProfile() }
                             ) 
@@ -294,8 +299,10 @@ fun MainScreen() {
                         }
                         composable("documentation") { 
                             DocumentationScreen(
-                                onMenuClick = { scope.launch { drawerState.open() } },
-                                onUserClick = { navigateToProfile() }
+                                state = currentBikeState, // Passas a bandeja de dados
+                                onSaveDocument = { nome, uri ->
+                                    viewModel.guardarDocumento(nome, uri)
+                                }
                             ) 
                         }
                     }

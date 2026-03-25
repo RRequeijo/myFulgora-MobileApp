@@ -17,7 +17,7 @@ class AuthManager(context: Context) {
     private val client = OkHttpClient()
 
     companion object {
-        private const val KEYCLOAK_URL = "http://172.20.0.201:8081/realms/Amover/protocol/openid-connect/token"
+        private const val KEYCLOAK_URL = "http://172.20.0.201:8080/realms/Amover/protocol/openid-connect/token"
         private const val CLIENT_ID = "mota-mobile"
     }
 

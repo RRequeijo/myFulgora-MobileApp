@@ -77,6 +77,8 @@ object AppIcons {
         val tyre_pressure = R.drawable.performance_tyre_pressure
         val next_service = R.drawable.performance_service_due
         val performance = R.drawable.performance_performance
+        val odometer = R.drawable.performance_odometer
+
     }
 
     object Social{
