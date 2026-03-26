@@ -51,6 +51,7 @@ fun SettingsScreen(
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
     var notificationsEnabled by remember { mutableStateOf(true) }
     var lowBatteryAlertEnabled by remember { mutableStateOf(true) }
+    val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
 
     FulgoraBackground {
@@ -87,7 +88,7 @@ fun SettingsScreen(
                         text = stringResource(id = R.string.settings_title),
                         fontSize = Dimens.TextSizeHeader,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -112,13 +113,13 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Units", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+                        Text(text = "Units", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
                         
                         // Custom Unit Switcher
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(4.dp))
-                                .background(Color(0xFF2D2D2D))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Box(
                                 modifier = Modifier
@@ -131,7 +132,7 @@ fun SettingsScreen(
                             ) {
                                 Text(
                                     text = "km",
-                                    color = if (isMetric) Color.Black else Color.Gray,
+                                    color = if (isMetric) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -147,7 +148,7 @@ fun SettingsScreen(
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.settings_units_miles),
-                                    color = if (!isMetric) Color.Black else Color.Gray,
+                                    color = if (!isMetric) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -155,7 +156,7 @@ fun SettingsScreen(
                         }
                     }
 
-                    HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
                     // Notifications Switch
                     Row(
@@ -165,7 +166,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = stringResource(id = R.string.settings_notifications), color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+                        Text(text = stringResource(id = R.string.settings_notifications), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
                         Switch(
                             modifier = Modifier.scale(0.85f),
                             checked = notificationsEnabled,
@@ -173,14 +174,14 @@ fun SettingsScreen(
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.Black,
                                 checkedTrackColor = GreenFresh,
-                                uncheckedThumbColor = Color.Gray,
-                                uncheckedTrackColor = Color(0xFF2D2D2D),
+                                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
                                 uncheckedBorderColor = Color.Transparent
                             )
                         )
                     }
 
-                    HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
                     // Low battery Alert Switch
                     Row(
@@ -190,7 +191,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = stringResource(id = R.string.settings_low_battery), color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+                        Text(text = stringResource(id = R.string.settings_low_battery), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
                         Switch(
                             modifier = Modifier.scale(0.85f),
                             checked = lowBatteryAlertEnabled,
@@ -198,8 +199,8 @@ fun SettingsScreen(
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.Black,
                                 checkedTrackColor = GreenFresh,
-                                uncheckedThumbColor = Color.Gray,
-                                uncheckedTrackColor = Color(0xFF2D2D2D),
+                                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
                                 uncheckedBorderColor = Color.Transparent
                             )
                         )
@@ -223,14 +224,14 @@ fun SettingsScreen(
                         // --- ITEM 1: LANGUAGE (COM DROPDOWN) ---
                         LanguageSelectorRow()
 
-                        HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
                         // --- ITEM 2: THEME (Ainda estático por enquanto) ---
                         ThemeSelectorRow()
                     }
                 }
 
-                Spacer(modifier = Modifier.height(Dimens.ScrollBottomPadding))
+                Spacer(modifier = Modifier.height(100.dp + bottomNavHeight))
             }
         }
     }
@@ -273,7 +274,7 @@ fun LanguageSelectorRow() {
         ) {
             Text(
                 text = stringResource(id = R.string.settings_language),
-                color = Color.White.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 fontSize = 14.sp
             )
             Text(
@@ -285,7 +286,7 @@ fun LanguageSelectorRow() {
             Icon(
                 painter = painterResource(id = AppIcons.Actions.DropDown),
                 contentDescription = null,
-                tint = if (expanded) GreenFresh else Color.Gray,
+                tint = if (expanded) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .size(24.dp)
                     .rotate(rotationState)
@@ -293,7 +294,7 @@ fun LanguageSelectorRow() {
         }
 
         if (expanded) {
-            HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
             Column(
                 modifier = Modifier
@@ -316,7 +317,7 @@ fun LanguageSelectorRow() {
                     ) {
                         Text(
                             text = name,
-                            color = if (isSelected) GreenFresh else Color.White,
+                            color = if (isSelected) GreenFresh else MaterialTheme.colorScheme.onSurface,
                             fontSize = 14.sp
                         )
 
@@ -378,7 +379,7 @@ fun ThemeSelectorRow() {
         ) {
             Text(
                 text = "Theme",
-                color = Color.White.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 fontSize = 14.sp
             )
             Text(
@@ -390,7 +391,7 @@ fun ThemeSelectorRow() {
             Icon(
                 painter = painterResource(id = AppIcons.Actions.DropDown),
                 contentDescription = null,
-                tint = if (expanded) GreenFresh else Color.Gray,
+                tint = if (expanded) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .size(24.dp)
                     .rotate(rotationState)
@@ -398,7 +399,7 @@ fun ThemeSelectorRow() {
         }
 
         if (expanded) {
-            HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
 
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
                 themeOptions.forEach { (name, mode) ->
@@ -417,7 +418,7 @@ fun ThemeSelectorRow() {
                     ) {
                         Text(
                             text = name,
-                            color = if (isSelected) GreenFresh else Color.White,
+                            color = if (isSelected) GreenFresh else MaterialTheme.colorScheme.onSurface,
                             fontSize = 14.sp
                         )
 

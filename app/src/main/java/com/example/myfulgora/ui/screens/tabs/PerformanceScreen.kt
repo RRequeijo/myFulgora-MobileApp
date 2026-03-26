@@ -81,7 +81,7 @@ fun PerformanceScreen(
                         text = stringResource(id = R.string.performance_title),
                         fontSize = Dimens.TextSizeHeader,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         text = state.bikeName,
@@ -103,13 +103,13 @@ fun PerformanceScreen(
                         Icon(
                             painter = painterResource(id = AppIcons.Dashboard.ArrowLeft0),
                             contentDescription = null,
-                            tint = Color.Gray.copy(alpha = 0.5f),
+                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                             modifier = Modifier.size(24.dp)
                         )
                         Icon(
                             painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
                             contentDescription = null,
-                            tint = Color.Gray.copy(alpha = 0.5f),
+                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                             modifier = Modifier.size(24.dp)
                         )
                     }

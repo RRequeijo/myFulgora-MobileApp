@@ -12,7 +12,7 @@ import com.example.myfulgora.ui.screens.SplashScreen
 import com.example.myfulgora.ui.screens.auth.OnboardingScreen
 import com.example.myfulgora.ui.screens.auth.LoginScreen
 import com.example.myfulgora.ui.screens.auth.ForgotPasswordScreen
-import com.example.myfulgora.ui.screens.tabs.MainScreen
+import com.example.myfulgora.ui.screens.MainScreen
 import androidx.appcompat.app.AppCompatActivity
 
 

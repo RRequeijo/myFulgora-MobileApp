@@ -1,4 +1,4 @@
-package com.example.myfulgora.ui.screens.tabs
+package com.example.myfulgora.ui.screens
 
 import android.content.Intent
 import android.net.Uri
@@ -36,6 +36,7 @@ import androidx.navigation.compose.*
 import com.example.myfulgora.R
 import com.example.myfulgora.data.model.BikeState
 import com.example.myfulgora.ui.components.FulgoraBackground
+import com.example.myfulgora.ui.screens.tabs.*
 import com.example.myfulgora.ui.screens.tabs.map.MapScreen
 import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
 import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
@@ -60,7 +61,7 @@ fun MainScreen() {
         DrawerItemData(R.string.navbar_battery, AppIcons.Navbar.Battery, "battery"),
         DrawerItemData(R.string.navbar_social, AppIcons.Navbar.Social, "social"),
         DrawerItemData(R.string.navbar_performance, AppIcons.Navbar.Performance, "performance"),
-        DrawerItemData(R.string.navbar_delegation, AppIcons.Menu.Delegation , "delegation"),
+        DrawerItemData(R.string.navbar_delegation, AppIcons.Menu.Delegation, "delegation"),
         DrawerItemData(R.string.navbar_settings, AppIcons.Menu.Settings, "settings")
     )
 
@@ -75,7 +76,7 @@ fun MainScreen() {
         }
     }
 
-    val currentBikeState = when(val state = uiState) {
+    val currentBikeState = when (val state = uiState) {
         is HomeUiState.Success -> state.bikeState
         else -> BikeState()
     }
@@ -132,19 +133,11 @@ fun MainScreen() {
                 }
             ) {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                    // 👇 1. Trocámos a Box por um Scaffold!
-                    // 👇 1. MUDANÇA ARQUITETURAL CRUCIAL 👇
-                    // Usamos uma Box para o menu flutuar livremente sobre o NavHost
                     Box(modifier = Modifier.fillMaxSize()) {
-
-                        // O NavHost ocupa tudo e ignora o padding inferior
                         NavHost(
                             navController = navController,
                             startDestination = "home",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .statusBarsPadding() // Protege apenas o topo
-                            // .navigationBarsPadding() // 🔥 REMOVIDO para content passar por trás
+                            modifier = Modifier.fillMaxSize().statusBarsPadding()
                         ) {
                             composable("map") { MapScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }, onViewAllClick = { navController.navigate("history") }) }
                             composable("history") { TripHistoryScreen(onBackClick = { navController.popBackStack() }) }
@@ -159,29 +152,26 @@ fun MainScreen() {
                             composable("documentation") { DocumentationScreen(state = currentBikeState, onSaveDocument = { nome, uri -> viewModel.guardarDocumento(nome, uri) }) }
                         }
 
-                        // 👇 2. O GRADIENTE DE DESFOQUE DO REVOLUT 👇
-                        // Esta Box fica entre o conteúdo e o menu, criando o fade para preto
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(160.dp) // A altura total do efeito
+                                .height(120.dp)
                                 .background(
                                     Brush.verticalGradient(
                                         colors = listOf(
-                                            Color(0xFF1A1A1A).copy(alpha = 0.0f), // Começa transparente
-                                            Color(0xFF1A1A1A).copy(alpha = 0.5f), // Fica foscado
-                                            Color(0xFF000000).copy(alpha = 1.0f)  // Full preto no fim
+                                            Color.Black.copy(alpha = 0.0f),
+                                            Color.Black.copy(alpha = 0.5f),
+                                            Color.Black.copy(alpha = 1.0f)
                                         )
                                     )
                                 )
-                                .align(Alignment.BottomCenter) // Cola ao fundo do ecrã
+                                .align(Alignment.BottomCenter)
                         )
 
-                        // 3. O MENU REVOLUT (Com efeito de vidro)
                         FulgoraPillBottomBar(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .navigationBarsPadding(), // Protege os gestos do telemóvel
+                                .navigationBarsPadding(),
                             currentRoute = currentRoute,
                             onNavigate = { route ->
                                 navController.navigate(route) {
@@ -220,11 +210,9 @@ fun FulgoraPillBottomBar(
         Surface(
             modifier = Modifier.fillMaxWidth().height(64.dp),
             shape = RoundedCornerShape(32.dp),
-            // 👇 4. EFEITO DE VIDRO FOSCADO (Frosted Glass) 👇
-            // Em vez de MaterialTheme.surface (que é opaco), usamos uma cor translúcida
             color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 8.dp, // Removemos tonal para não estragar a transparência
-            shadowElevation = 12.dp // Sombra mais forte para destacar o "vidro"
+            tonalElevation = 8.dp,
+            shadowElevation = 12.dp
         ) {
             Row(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
