@@ -38,6 +38,8 @@ import com.example.myfulgora.data.helpers.NotificationManager
 
 @Composable
 fun FulgoraBackground(
+    modifier: Modifier = Modifier,
+    drawBackground: Boolean = true,
     content: @Composable BoxScope.() -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
@@ -61,12 +63,18 @@ fun FulgoraBackground(
     )
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background) // 👈 Usa a cor do tema!
-            .background(bottomGlow)
-            .background(topGlow)
+            .then(
+                if (drawBackground) {
+                    Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .background(bottomGlow)
+                        .background(topGlow)
+                } else Modifier
+            )
     ) {
+        // Removido o padding de 100dp que estava a encolher o ecrã
         content()
     }
 }
@@ -92,7 +100,7 @@ fun FulgoraTopBar(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "$greeting, ",
-                    color = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -106,7 +114,7 @@ fun FulgoraTopBar(
             }
             Text(
                 text = subtitle,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, // 👈 Adaptável
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
         }
@@ -121,7 +129,7 @@ fun FulgoraTopBar(
             Icon(
                 painter = painterResource(id = AppIcons.Performance.next_service),
                 contentDescription = "Agenda de Manutenção",
-                tint = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .size(iconSize)
                     .clickable { onCalendarClick() }
@@ -146,7 +154,7 @@ fun FulgoraTopBar(
                 Icon(
                     imageVector = Icons.Default.Notifications,
                     contentDescription = "Notifications",
-                    tint = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(iconSize)
                 )
             }
@@ -229,7 +237,7 @@ fun FulgoraTopBar(
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
-                tint = MaterialTheme.colorScheme.onBackground, // 👈 Adaptável
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .size(iconSize)
                     .clickable { onMenuClick() }
@@ -294,7 +302,7 @@ fun FulgoraDrawerItem(
     painter: Painter,
     onClick: () -> Unit,
     selected: Boolean = false,
-    textColor: Color = Color.Unspecified, // 👈 Deixa o sistema decidir se não for passado
+    textColor: Color = Color.Unspecified,
     iconColor: Color = Color.Unspecified
 ) {
     NavigationDrawerItem(

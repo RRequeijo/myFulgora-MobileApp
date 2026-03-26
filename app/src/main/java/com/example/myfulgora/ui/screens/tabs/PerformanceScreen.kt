@@ -45,6 +45,7 @@ fun PerformanceScreen(
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
+    val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -283,7 +284,8 @@ fun PerformanceScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(Dimens.ScrollBottomPadding))
+                // 6. MARGEM DE SEGURANÇA PARA O MENU FLUTUANTE
+                Spacer(modifier = Modifier.height(100.dp + bottomNavHeight))
             }
         }
     }

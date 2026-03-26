@@ -58,6 +58,7 @@ fun HomeScreen(
     var showModeMenu by remember { mutableStateOf(false) }
     var showPowerDialog by remember { mutableStateOf(false) }
     val modes = listOf("Eco", "Normal", "Sport")
+    val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     // O PagerState controla a posição do slide (Começa no 1, que é o "Normal")
     val pagerState = rememberPagerState(
@@ -332,7 +333,7 @@ fun HomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
+                Spacer(modifier = Modifier.height(90.dp + bottomNavHeight))
             }
 
             // --- POPUP DE CONFIRMAÇÃO ---
