@@ -59,7 +59,7 @@ fun MainScreen() {
         DrawerItemData(R.string.navbar_profile, Icons.Outlined.Person, "profile"),
         DrawerItemData(R.string.navbar_map, AppIcons.Navbar.Map, "map"),
         DrawerItemData(R.string.navbar_battery, AppIcons.Navbar.Battery, "battery"),
-        DrawerItemData(R.string.navbar_social, AppIcons.Navbar.Social, "social"),
+        //DrawerItemData(R.string.navbar_social, AppIcons.Navbar.Social, "social"),
         DrawerItemData(R.string.navbar_performance, AppIcons.Navbar.Performance, "performance"),
         DrawerItemData(R.string.navbar_delegation, AppIcons.Menu.Delegation, "delegation"),
         DrawerItemData(R.string.navbar_settings, AppIcons.Menu.Settings, "settings")
@@ -152,16 +152,18 @@ fun MainScreen() {
                             composable("documentation") { DocumentationScreen(state = currentBikeState, onSaveDocument = { nome, uri -> viewModel.guardarDocumento(nome, uri) }) }
                         }
 
+                        // Gradiente de desfoque corrigido para usar a cor inteligente
+                        val bgColor = MaterialTheme.colorScheme.background
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(120.dp)
+                                .height(100.dp)
                                 .background(
                                     Brush.verticalGradient(
                                         colors = listOf(
-                                            Color.Black.copy(alpha = 0.0f),
-                                            Color.Black.copy(alpha = 0.5f),
-                                            Color.Black.copy(alpha = 1.0f)
+                                            bgColor.copy(alpha = 0.0f),
+                                            bgColor.copy(alpha = 0.6f),
+                                            bgColor.copy(alpha = 1.0f)
                                         )
                                     )
                                 )
@@ -195,34 +197,29 @@ fun FulgoraPillBottomBar(
     onNavigate: (String) -> Unit
 ) {
     val navItems = listOf(
-        NavItemData("map", R.string.navbar_map, AppIcons.Navbar.Map),
-        NavItemData("battery", R.string.navbar_battery, AppIcons.Navbar.Battery),
-        NavItemData("home", R.string.navbar_home, AppIcons.Navbar.Home),
-        NavItemData("performance", R.string.navbar_performance, AppIcons.Navbar.Performance)
+        NavItemData("map", R.string.navbar_map, AppIcons.Navbar.MapUnselected, AppIcons.Navbar.Map),
+        NavItemData("battery", R.string.navbar_battery, AppIcons.Navbar.BatteryUnselected, AppIcons.Navbar.Battery),
+        NavItemData("home", R.string.navbar_home, AppIcons.Navbar.HomeUnselected, AppIcons.Navbar.Home),
+        NavItemData("performance", R.string.navbar_performance, AppIcons.Navbar.PerformanceUnselected, AppIcons.Navbar.Performance)
     )
 
-    Box(
+    // Superfície principal da barra (fixa no fundo, cantos superiores arredondados)
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        contentAlignment = Alignment.BottomCenter
+            .height(64.dp),
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        color = Color(0xFF141C15), // Cor escura esverdeada igual à da imagem
+        tonalElevation = 0.dp
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth().height(64.dp),
-            shape = RoundedCornerShape(32.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 8.dp,
-            shadowElevation = 12.dp
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                navItems.forEach { item ->
-                    val isSelected = currentRoute == item.route
-                    PillNavItem(item = item, isSelected = isSelected, onClick = { onNavigate(item.route) })
-                }
+            navItems.forEach { item ->
+                val isSelected = currentRoute == item.route
+                PillNavItem(item = item, isSelected = isSelected, onClick = { onNavigate(item.route) })
             }
         }
     }
@@ -230,19 +227,55 @@ fun FulgoraPillBottomBar(
 
 @Composable
 fun PillNavItem(item: NavItemData, isSelected: Boolean, onClick: () -> Unit) {
-    val backgroundColor by animateColorAsState(targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f) else Color.Transparent, animationSpec = tween(300), label = "")
-    val contentColor by animateColorAsState(targetValue = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, label = "")
-    Column(
-        modifier = Modifier.clip(CircleShape).background(backgroundColor).clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClick).padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    // Animação do fundo do item selecionado (estilo pilar arredondado no topo)
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isSelected) Color.White.copy(alpha = 0.1f) else Color.Transparent,
+        animationSpec = tween(300),
+        label = "nav_item_bg"
+    )
+    
+    // Todos os ícones usam a cor primária (GreenFresh) como na imagem
+    val contentColor = MaterialTheme.colorScheme.primary
+    val iconToDisplay = if (isSelected) item.iconSelected else item.iconUnselected
+
+    val iconSize = if (item.route == "home") 32.dp else 24.dp
+
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(80.dp)
+            .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+            .background(backgroundColor)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(painter = painterResource(id = item.icon), contentDescription = stringResource(id = item.labelRes), tint = contentColor, modifier = Modifier.size(24.dp))
-        Text(text = stringResource(id = item.labelRes), color = contentColor, fontSize = 11.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium)
+        val iconModifier = Modifier.size(iconSize)
+        when (iconToDisplay) {
+            is ImageVector -> {
+                Icon(
+                    imageVector = iconToDisplay,
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = iconModifier
+                )
+            }
+            is Int -> {
+                Icon(
+                    painter = painterResource(id = iconToDisplay),
+                    contentDescription = null,
+                    tint = contentColor,
+                    modifier = iconModifier
+                )
+            }
+        }
     }
 }
 
-data class NavItemData(val route: String, val labelRes: Int, val icon: Int)
+data class NavItemData(val route: String, val labelRes: Int, val iconUnselected: Any, val iconSelected: Any)
 data class DrawerItemData(val title: Int, val icon: Any, val route: String)
 
 @Composable

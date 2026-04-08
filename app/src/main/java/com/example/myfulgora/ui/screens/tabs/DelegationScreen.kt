@@ -38,6 +38,7 @@ fun DelegationScreen(
     // Estados para os inputs
     var inviteEmail by remember { mutableStateOf("") }
     var activationCode by remember { mutableStateOf("") }
+    val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -201,7 +202,7 @@ fun DelegationScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(Dimens.ScrollBottomPadding))
+                Spacer(modifier = Modifier.height(100.dp + bottomNavHeight))
             }
         }
     }

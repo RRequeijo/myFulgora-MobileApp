@@ -7,11 +7,15 @@ object AppIcons {
 
     // Grupo: Navegação (Barra de Baixo)
     object Navbar {
-        val Map = R.drawable.bottom_navigation_map
-        val Battery = R.drawable.bottom_navigation_battery
-        val Home = R.drawable.bottom_navigation_home
-        val Social = R.drawable.bottom_navigation_community
-        val Performance = R.drawable.bottom_navigation_performance
+        val Map = R.drawable.ic_map_selected
+        val Battery = R.drawable.ic_battery_selected
+        val Home = R.drawable.ic_home_selected
+        val Performance = R.drawable.ic_performance_selected
+        val MapUnselected = R.drawable.ic_map_unselected
+        val BatteryUnselected = R.drawable.ic_battery_unselected
+        val HomeUnselected = R.drawable.ic_home_unselected
+        val PerformanceUnselected = R.drawable.ic_performance_unselected
+        //val Social = R.drawable.bottom_navigation_community
     }
 
     //Menu Hamburguer
