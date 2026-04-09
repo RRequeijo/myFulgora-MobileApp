@@ -169,7 +169,6 @@ fun MapScreen(
                     .align(Alignment.TopCenter)
             ) {
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,

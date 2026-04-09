@@ -1,4 +1,4 @@
-package com.example.myfulgora.ui.screens.tabs.profile
+package com.example.myfulgora.ui.screens.tabs
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Key
+import com.example.myfulgora.ui.viewmodel.ProfileViewModel
 
 private enum class SupportDialogType {
     Assistance,
@@ -109,7 +110,6 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 FulgoraTopBar(
-                    userName = state.name,
                     iconSize = iconSize,
                     onMenuClick = onMenuClick
                 )

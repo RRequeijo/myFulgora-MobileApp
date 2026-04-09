@@ -71,9 +71,7 @@ fun SettingsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // 1. TOP BAR
-                val currentUser = UserManager.currentUser
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,

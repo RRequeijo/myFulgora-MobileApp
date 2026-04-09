@@ -30,8 +30,10 @@ import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
 import com.example.myfulgora.data.auth.UserManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.data.model.BikeState
+import com.example.myfulgora.ui.viewmodel.ProfileViewModel
 import kotlin.math.roundToInt
 
 @Composable
@@ -41,7 +43,6 @@ fun PerformanceScreen(
     onUserClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {}
 ) {
-    val currentUser = UserManager.currentUser
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
@@ -66,7 +67,6 @@ fun PerformanceScreen(
 
                 // 1. HEADER
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,

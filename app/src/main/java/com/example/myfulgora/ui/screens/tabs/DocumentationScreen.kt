@@ -1,4 +1,4 @@
-package com.example.myfulgora.ui.screens.tabs.profile
+package com.example.myfulgora.ui.screens.tabs
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfulgora.ui.components.FulgoraBackground
 import com.example.myfulgora.ui.components.FulgoraInfoCard
 import com.example.myfulgora.ui.components.FulgoraTopBar

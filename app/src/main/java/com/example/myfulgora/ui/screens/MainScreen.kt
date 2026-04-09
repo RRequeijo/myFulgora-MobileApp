@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -38,8 +37,8 @@ import com.example.myfulgora.data.model.BikeState
 import com.example.myfulgora.ui.components.FulgoraBackground
 import com.example.myfulgora.ui.screens.tabs.*
 import com.example.myfulgora.ui.screens.tabs.map.MapScreen
-import com.example.myfulgora.ui.screens.tabs.profile.DocumentationScreen
-import com.example.myfulgora.ui.screens.tabs.profile.ProfileScreen
+import com.example.myfulgora.ui.screens.tabs.DocumentationScreen
+import com.example.myfulgora.ui.screens.tabs.ProfileScreen
 import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.viewmodel.HomeUiState
 import com.example.myfulgora.ui.viewmodel.MotaViewModel

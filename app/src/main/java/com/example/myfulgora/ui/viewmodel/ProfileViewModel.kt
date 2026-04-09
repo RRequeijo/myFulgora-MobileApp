@@ -1,9 +1,10 @@
-package com.example.myfulgora.ui.screens.tabs.profile
+package com.example.myfulgora.ui.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfulgora.data.auth.UserManager
+import com.example.myfulgora.data.model.ProfileState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

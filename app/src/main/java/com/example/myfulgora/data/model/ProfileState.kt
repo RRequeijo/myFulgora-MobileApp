@@ -1,12 +1,12 @@
-package com.example.myfulgora.ui.screens.tabs.profile
+package com.example.myfulgora.data.model
 
 // Estado da UI para o ecrã de perfil atualizado com sincronização
 data class ProfileState(
-    val name: String = "A carregar...",
-    val email: String = "...",
+    val name: String = "No name",
+    val email: String = "No email",
     val photoUri: String? = null,
     val bikeName: String = "Nenhuma mota associada",
-    val bikeVin: String = "---",
+    val bikeVin: String = "No vin",
     val isBikeConnected: Boolean = false,
     val totalBikes: Int = 0,             // Quantas motas tem na garagem
     val isSyncing: Boolean = false,      // Estado de carregamento da sincronização

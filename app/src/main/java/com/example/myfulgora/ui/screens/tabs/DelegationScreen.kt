@@ -32,7 +32,6 @@ fun DelegationScreen(
     onUserClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {}
 ) {
-    val currentUser = UserManager.currentUser
     val scrollState = rememberScrollState()
     
     // Estados para os inputs
@@ -56,7 +55,6 @@ fun DelegationScreen(
             ) {
                 // 1. TOP BAR
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,

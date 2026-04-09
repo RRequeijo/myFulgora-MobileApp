@@ -65,7 +65,6 @@ fun BatteryScreen(
 
                 // 1. CABEÇALHO
                 FulgoraTopBar(
-                    userName = "${state.batteryTemp}",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,

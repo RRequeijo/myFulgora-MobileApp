@@ -34,7 +34,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.unit.IntOffset
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfulgora.data.helpers.NotificationManager
+import com.example.myfulgora.ui.viewmodel.ProfileViewModel
 
 @Composable
 fun FulgoraBackground(
@@ -83,14 +85,18 @@ fun FulgoraBackground(
 @Composable
 fun FulgoraTopBar(
     greeting: String = "Hi",
-    userName: String = "Rider",
+    userName: String? = null,
     subtitle: String = stringResource(id = R.string.topbar_subtitle),
     iconSize: Dp = 24.dp,
+    viewModel: ProfileViewModel = viewModel(),
     onNotificationClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {}
 ) {
+    val profileState by viewModel.uiState.collectAsState()
+    val finalUserName = userName ?: profileState.name
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -105,7 +111,7 @@ fun FulgoraTopBar(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = userName,
+                    text = finalUserName,
                     color = GreenFresh,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,

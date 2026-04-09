@@ -50,8 +50,6 @@ fun HomeScreen(
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
 
-    val currentUser = UserManager.currentUser
-
     // Estado local para o modo de condução e motor
     var selectedMode by remember { mutableStateOf("Normal") }
     var isBikeOn by remember { mutableStateOf(false) }
@@ -91,7 +89,6 @@ fun HomeScreen(
 
                 // 1. TOP BAR
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,
