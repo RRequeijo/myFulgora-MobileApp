@@ -69,6 +69,8 @@ fun ProfileScreen(
     var showSupportDialog by remember { mutableStateOf(false) }
     var supportDialogType by remember { mutableStateOf<SupportDialogType?>(null) }
 
+    val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? ->
@@ -315,7 +317,7 @@ fun ProfileScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(Dimens.ScrollBottomPadding))
+                Spacer(modifier = Modifier.height(100.dp + bottomNavHeight))
             }
 
             // Edit Dialog

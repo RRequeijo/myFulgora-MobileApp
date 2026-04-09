@@ -128,7 +128,7 @@ fun MapScreen(
         }
     ) { innerPadding ->
 
-        // Box normal em vez de BoxWithConstraints se não precisarmos das constraints, 
+        // Box normal em vez de BoxWithConstraints se não precisarmos das constraints,
         // e sem o padding(innerPadding) para o mapa ser full-screen
         Box(
             modifier = Modifier.fillMaxSize()
@@ -193,7 +193,7 @@ fun MapScreen(
                 contentColor = Color.White,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 16.dp, bottom = 80.dp) // Subido ligeiramente para não ficar debaixo da sheet/nav
+                    .padding(end = 16.dp, bottom = 140.dp) // Subido ligeiramente para não ficar debaixo da sheet/nav
             ) {
                 Icon(Icons.Filled.Navigation, contentDescription = "Navegar para a mota")
             }

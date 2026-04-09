@@ -55,12 +55,12 @@ fun MainScreen() {
     val scope = rememberCoroutineScope()
 
     val menuItems = listOf(
-        DrawerItemData(R.string.navbar_home, AppIcons.Navbar.Home, "home"),
+        DrawerItemData(R.string.navbar_home, AppIcons.Navbar.HomeUnselected, "home"),
         DrawerItemData(R.string.navbar_profile, Icons.Outlined.Person, "profile"),
-        DrawerItemData(R.string.navbar_map, AppIcons.Navbar.Map, "map"),
-        DrawerItemData(R.string.navbar_battery, AppIcons.Navbar.Battery, "battery"),
+        DrawerItemData(R.string.navbar_map, AppIcons.Navbar.MapUnselected, "map"),
+        DrawerItemData(R.string.navbar_battery, AppIcons.Navbar.BatteryUnselected, "battery"),
         //DrawerItemData(R.string.navbar_social, AppIcons.Navbar.Social, "social"),
-        DrawerItemData(R.string.navbar_performance, AppIcons.Navbar.Performance, "performance"),
+        DrawerItemData(R.string.navbar_performance, AppIcons.Navbar.PerformanceUnselected, "performance"),
         DrawerItemData(R.string.navbar_delegation, AppIcons.Menu.Delegation, "delegation"),
         DrawerItemData(R.string.navbar_settings, AppIcons.Menu.Settings, "settings")
     )
@@ -208,7 +208,7 @@ fun FulgoraPillBottomBar(
         modifier = modifier
             .fillMaxWidth()
             .height(64.dp),
-        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         color = Color(0xFF141C15), // Cor escura esverdeada igual à da imagem
         tonalElevation = 0.dp
     ) {
@@ -244,7 +244,7 @@ fun PillNavItem(item: NavItemData, isSelected: Boolean, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxHeight()
             .width(80.dp)
-            .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             .background(backgroundColor)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
