@@ -23,6 +23,13 @@ class AuthManager(context: Context) {
 
     suspend fun loginDireto(user: String, pass: String): Boolean {
         return withContext(Dispatchers.IO) {
+            // Bypass para login local/teste sem necessidade de VPN/Rede
+            if (user == "amover" && pass == "amover") {
+                tokenRepository.saveToken("offline_test_token")
+                Log.d("AuthManager", "Login local (offline) realizado com sucesso!")
+                return@withContext true
+            }
+            //FIM DO BYPASS
             try {
                 val formBody = FormBody.Builder()
                     .add("client_id", CLIENT_ID)

@@ -246,14 +246,12 @@ fun LanguageSelectorRow() {
 
     val languages = mapOf(
         "English" to "en",
-        "Português" to "pt",
-        "Chinese" to "zh"
+        "Português" to "pt"
     )
 
     val currentLocale = AppCompatDelegate.getApplicationLocales().toLanguageTags()
     val displayLanguage = when {
         currentLocale.contains("pt") -> "Português"
-        currentLocale.contains("zh") -> "Chinese"
         else -> "English"
     }
 

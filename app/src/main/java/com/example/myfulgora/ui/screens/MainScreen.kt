@@ -140,14 +140,14 @@ fun MainScreen() {
                         ) {
                             composable("map") { MapScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }, onViewAllClick = { navController.navigate("history") }) }
                             composable("history") { TripHistoryScreen(onBackClick = { navController.popBackStack() }) }
-                            composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }) }
+                            composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("battery") { BatteryScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("home") { HomeScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("maintenance_screen") { MaintenanceScreen(onBackClick = { navController.popBackStack() }) }
                             composable("social") { SocialScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
-                            composable("performance") { PerformanceScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }) }
-                            composable("delegation") { DelegationScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }) }
-                            composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }) }
+                            composable("performance") { PerformanceScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
+                            composable("delegation") { DelegationScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
+                            composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("documentation") { DocumentationScreen(state = currentBikeState, onSaveDocument = { nome, uri -> viewModel.guardarDocumento(nome, uri) }) }
                         }
 

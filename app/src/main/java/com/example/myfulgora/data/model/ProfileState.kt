@@ -10,5 +10,5 @@ data class ProfileState(
     val isBikeConnected: Boolean = false,
     val totalBikes: Int = 0,             // Quantas motas tem na garagem
     val isSyncing: Boolean = false,      // Estado de carregamento da sincronização
-    val showSyncSuccess: Boolean = false // Mostrar mensagem de sucesso
+    val syncMessage: String? = null // Mostrar mensagem de sucesso
 )

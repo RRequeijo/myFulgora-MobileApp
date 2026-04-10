@@ -10,20 +10,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myfulgora.R
+import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.ui.components.FulgoraBackground
-import com.example.myfulgora.ui.theme.AppIcons
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.shape.RoundedCornerShape
 
@@ -62,21 +64,20 @@ fun OnboardingScreen(onFinish: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
+
     FulgoraBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()      // Protege o topo (relógio/bateria)
-                .navigationBarsPadding(), // Protege o fundo (botões do Android)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // --- TOPO: LOGO ---
-            // Adicionei um Spacer para dar "ar" no topo como no mockup
             Spacer(modifier = Modifier.height(20.dp))
 
-            // --- CENTRO: CARROSSEL (PAGER) ---
-            // O weight(1f) empurra o topo para cima e o rodapé para baixo, ocupando o meio
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
@@ -86,16 +87,14 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                 OnboardingPageContent(pages[pageIndex])
             }
 
-            // --- RODAPÉ: INDICADORES E BOTÃO ---
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .padding(bottom = 50.dp), // Espaço extra no fundo para não colar à borda
+                    .padding(bottom = 50.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // INDICATORS (Bolinhas)
                 Row(
                     modifier = Modifier.padding(bottom = 12.dp),
                     horizontalArrangement = Arrangement.Center,
@@ -106,57 +105,54 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                         Box(
                             modifier = Modifier
                                 .padding(4.dp)
-                                // 1. TAMANHO REDUZIDO:
                                 .size(if (isSelected) 8.dp else 6.dp)
                                 .clip(CircleShape)
                                 .background(
                                     if (isSelected)
-                                        Color(0xFFFFFFFF) // Cor das bolinhas
+                                        Color(0xFFFFFFFF)
                                     else
-                                        Color.White.copy(alpha = 0.2f) // 2. TRANSPARÊNCIA: Cinzento muito subtil nas outras
+                                        Color.White.copy(alpha = 0.2f)
                                 )
                         )
                     }
                 }
 
-                // BOTÃO ou TEXTO NEXT
                 if (pagerState.currentPage == pages.lastIndex) {
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(64.dp) // Ajusta a altura conforme a tua imagem
-                            // 👇 CORREÇÃO RIPPLE: Recorta a área de clique para ficar redonda
-                            // Se o botão for totalmente redondo nas pontas, usa 32.dp (metade da altura)
+                            .height(64.dp)
                             .clip(RoundedCornerShape(32.dp))
-                            .clickable(onClick = onFinish)
+                            .clickable {
+                                scope.launch {
+                                    settingsManager.guardarOnboardingCompleto(true) // Grava no disco
+                                    onFinish() // Navega para o Login
+                                }
+                            }
                     ) {
-                        // 1. A IMAGEM DE FUNDO
                         Image(
-                            painter = painterResource(id = R.drawable.button), // O teu png do botão
+                            painter = painterResource(id = R.drawable.button),
                             contentDescription = null,
-                            contentScale = ContentScale.FillBounds, // Estica a imagem para encher o botão
+                            contentScale = ContentScale.FillBounds,
                             modifier = Modifier.fillMaxSize()
                         )
 
-                        // 2. O TEXTO POR CIMA
                         Text(
                             text = "Get Started",
                             fontSize = 18.sp,
-                            // Escolhe a cor que contraste com o teu botão (Branco ou Preto?)
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
                     }
                 } else {
-                    // Botão Texto Simples "Next" (Seguinte)
                     TextButton(
                         onClick = {
                             scope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
                         },
-                        modifier = Modifier.height(50.dp) // Mantém a altura consistente com o botão
+                        modifier = Modifier.height(50.dp)
                     ) {
                         Text(
                             "Next",
@@ -172,47 +168,44 @@ fun OnboardingScreen(onFinish: () -> Unit) {
 
 @Composable
 fun OnboardingPageContent(page: OnboardingPage) {
+    // ... (Esta função mantém-se exatamente igual!)
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 48.dp), // Mantém o texto apertadinho nas laterais
+            .padding(horizontal = 48.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        // --- GAVETA 1: ÁREA DA IMAGEM (50% do ecrã) ---
         Box(
             modifier = Modifier
-                .weight(0.5f) // Ocupa metade da altura disponível
+                .weight(0.5f)
                 .fillMaxWidth(),
-            contentAlignment = Alignment.BottomCenter // Cola a imagem ao fundo desta área
+            contentAlignment = Alignment.BottomCenter
         ) {
             Image(
                 painter = painterResource(page.imageRes),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(120.dp) // Tamanho fixo para a imagem
+                    .size(120.dp)
                     .graphicsLayer {
                         scaleX = page.imageScale
                         scaleY = page.imageScale
                     },
-                contentScale = ContentScale.Fit // Garante que a imagem não é cortada
+                contentScale = ContentScale.Fit
             )
         }
 
-        // Espaço fixo entre a área da imagem e o título
         Spacer(modifier = Modifier.height(32.dp))
 
-        // --- GAVETA 2: ÁREA DO TEXTO (Resto do ecrã) ---
         Column(
             modifier = Modifier
-                .weight(0.5f) // Ocupa a outra metade
+                .weight(0.5f)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = page.title,
                 color = Color.White,
-                fontSize = 24.sp, // Tamanho fixo e legível
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 lineHeight = 32.sp
@@ -230,5 +223,3 @@ fun OnboardingPageContent(page: OnboardingPage) {
         }
     }
 }
-
-

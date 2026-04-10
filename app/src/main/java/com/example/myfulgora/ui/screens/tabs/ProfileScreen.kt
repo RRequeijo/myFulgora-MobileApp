@@ -35,12 +35,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Key
+import com.example.myfulgora.ui.theme.RedError
 import com.example.myfulgora.ui.viewmodel.ProfileViewModel
 
 private enum class SupportDialogType {
@@ -52,7 +54,8 @@ private enum class SupportDialogType {
 fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel(),
     navController: NavController,
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -111,7 +114,8 @@ fun ProfileScreen(
             ) {
                 FulgoraTopBar(
                     iconSize = iconSize,
-                    onMenuClick = onMenuClick
+                    onMenuClick = onMenuClick,
+                    onCalendarClick = onCalendarClick
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingExtraLarge))
@@ -186,18 +190,21 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // --- Add/Remove Motorcycle (GARAGEM) ---
-                FulgoraInfoCard {
+                FulgoraInfoCard(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable(enabled = !state.isSyncing) {
+                            viewModel.sincronizarNovaMota(context)
+                        }
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable(enabled = !state.isSyncing) {
-                                viewModel.sincronizarNovaMota(context)
-                            }
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "Sync New Motorcycle",
                                 color = Color.White.copy(alpha = 0.8f),
@@ -210,11 +217,12 @@ fun ProfileScreen(
                                     fontSize = 12.sp
                                 )
                             }
-                            if (state.showSyncSuccess) {
+                            state.syncMessage?.let { msg ->
                                 Text(
-                                    text = "Sync successful! New bike added.",
-                                    color = GreenFresh,
-                                    fontSize = 12.sp
+                                    text = msg,
+                                    color = if (msg.contains("Error")) Color(0xFFFF5252) else GreenFresh,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium
                                 )
                             }
                         }

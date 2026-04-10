@@ -4,17 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.myfulgora.ui.theme.MyFulgoraTheme
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myfulgora.ui.screens.SplashScreen
-import com.example.myfulgora.ui.screens.auth.OnboardingScreen
-import com.example.myfulgora.ui.screens.auth.LoginScreen
-import com.example.myfulgora.ui.screens.auth.ForgotPasswordScreen
+import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.ui.screens.MainScreen
-import androidx.appcompat.app.AppCompatActivity
-
+import com.example.myfulgora.ui.screens.SplashScreen
+import com.example.myfulgora.ui.screens.auth.ForgotPasswordScreen
+import com.example.myfulgora.ui.screens.auth.LoginScreen
+import com.example.myfulgora.ui.screens.auth.OnboardingScreen
+import com.example.myfulgora.ui.theme.MyFulgoraTheme
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,14 +29,19 @@ class MainActivity : AppCompatActivity() {
             MyFulgoraTheme {
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "home" +
-                        "") {
+                val context = LocalContext.current
+                val settingsManager = remember { SettingsManager(context) }
+                val isOnboardingCompleted by settingsManager.isOnboardingCompletedFlow.collectAsState(initial = false)
+
+                NavHost(navController = navController, startDestination = "splash") {
 
                     // 1. Splash
                     composable("splash") {
                         SplashScreen(
                             onSplashFinished = {
-                                navController.navigate("onboarding") {
+                                val destino = if (isOnboardingCompleted) "login" else "onboarding"
+
+                                navController.navigate(destino) {
                                     popUpTo("splash") { inclusive = true }
                                 }
                             }
@@ -62,10 +71,10 @@ class MainActivity : AppCompatActivity() {
                     composable("forgot_password") {
                         ForgotPasswordScreen(
                             onNavigateBack = {
-                                navController.popBackStack() // Volta para trás
+                                navController.popBackStack()
                             },
                             onLoginAfterReset = {
-                                navController.navigate("login") { // Vai para o Login
+                                navController.navigate("login") {
                                     popUpTo("forgot_password") { inclusive = true }
                                 }
                             }

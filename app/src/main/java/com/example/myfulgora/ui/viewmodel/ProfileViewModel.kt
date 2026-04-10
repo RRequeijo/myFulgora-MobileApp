@@ -30,11 +30,7 @@ class ProfileViewModel : ViewModel() {
                 email = currentUser.profile.email,
                 bikeName = currentBike?.name ?: "No Motorcycle",
                 bikeVin = currentBike?.vin ?: "---",
-
-                // Correção 1: Em vez de isConnected falso dos mocks, assumimos que
-                // se a mota existe no perfil, ela está emparelhada (true)
                 isBikeConnected = currentBike != null,
-
                 photoUri = currentUser.profile.photoUri,
                 totalBikes = currentUser.bikes.size
             )
@@ -43,8 +39,6 @@ class ProfileViewModel : ViewModel() {
 
     fun atualizarDado(tipo: String, novoValor: String) {
         val user = UserManager.currentUser ?: return
-
-        // Correção 2: Editamos os dados diretamente na "Carteira" do utilizador
         when (tipo) {
             "Edit Name" -> user.profile.name = novoValor
             "Edit Email" -> user.profile.email = novoValor
@@ -59,20 +53,42 @@ class ProfileViewModel : ViewModel() {
 
     fun sincronizarNovaMota(context: Context) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSyncing = true)
+            // 1. Iniciar feedback de progresso
+            _uiState.value = _uiState.value.copy(isSyncing = true, syncMessage = null)
 
-            // Simulação de ligação ao servidor
-            delay(2000)
+            try {
+                // Simulação de espera de rede
+                delay(1500)
 
-            // Correção 3: Como já não temos o JSON falso, simulamos apenas que correu bem.
-            // No futuro, aqui farás: grpcClient.obterMotasDoUtilizador()
+                // PARA TESTES: Forçamos erro enquanto não tens servidor gRPC ativo
+                // Se quiseres testar sucesso, comenta a linha abaixo.
+                throw Exception("Server connection failed")
 
-            carregarDadosDoUtilizador()
+                /* 
+                // Lógica Real futura:
+                val user = UserManager.currentUser ?: return@launch
+                val quantidadeLocal = user.bikes.size
+                
+                // Chamada gRPC aqui...
+                
+                carregarDadosDoUtilizador()
+                _uiState.value = _uiState.value.copy(
+                    isSyncing = false,
+                    syncMessage = "Garage updated successfully!"
+                )
+                */
 
-            _uiState.value = _uiState.value.copy(isSyncing = false, showSyncSuccess = true)
+            } catch (e: Exception) {
+                // Feedback de erro para o utilizador
+                _uiState.value = _uiState.value.copy(
+                    isSyncing = false,
+                    syncMessage = "Error: ${e.message}"
+                )
+            }
 
-            delay(3000)
-            _uiState.value = _uiState.value.copy(showSyncSuccess = false)
+            // Limpar mensagem após alguns segundos
+            delay(3500)
+            _uiState.value = _uiState.value.copy(syncMessage = null)
         }
     }
 }
