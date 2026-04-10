@@ -1,6 +1,25 @@
 <resources>
     <string name="app_name">myFulgora</string>
 
+    //ONBOARDING
+    //screen1
+    <string name="onboarding_title">Go Green, Ride Confidently</string>
+    <string name="description_1">Know your ride at a glance. Track battery, range, and key bike stats in real time so you always ride with confidence. </string>
+
+    //screen2
+    <string name="onboarding_title_2">All Bikes, One App</string>
+    <string name="description_2">Keep all your bikes connected in one place. Check status, battery, and location, anytime, anywhere.</string>
+
+    //screen3
+    <string name="onboarding_title_3">Join the Community</string>
+    <string name="description_3">Join a community built around smarter mobility. Track progress, take on challenges, and share achievements with others.</string>
+    <string name="onboarding_button_next">Next</string>
+    <string name="onboarding_button">Get Started</string>
+
+
+
+
+
     //LOGIN
     <string name="login_welcome">Welcome back, Rider</string>
     <string name="login_username_hint">Username</string>
@@ -10,7 +29,7 @@
     <string name="login_error_empty">Please fill all fields.</string>
 
     //TOPBAR
-    <string name="topbar_title">Hi, </string>
+    <string name="topbar_title">Hi</string>
     <string name="topbar_subtitle">Ready to ride?</string>
 
     //NAVBAR AND HAMBURGUER MENU

@@ -84,7 +84,7 @@ fun FulgoraBackground(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FulgoraTopBar(
-    greeting: String = "Hi",
+    greeting: String = stringResource(id = R.string.topbar_title),
     userName: String? = null,
     subtitle: String = stringResource(id = R.string.topbar_subtitle),
     iconSize: Dp = 24.dp,

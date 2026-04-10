@@ -28,6 +28,7 @@ import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.ui.components.FulgoraBackground
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.stringResource
 
 // Modelo de dados de cada página
 data class OnboardingPage(
@@ -42,20 +43,20 @@ fun OnboardingScreen(onFinish: () -> Unit) {
 
     val pages = listOf(
         OnboardingPage(
-            "Go green,\nRide Confidently",
-            "Know your ride at a glance. Track battery, range, and key bike stats in real time so you always ride with confidence.",
+            stringResource(R.string.onboarding_title),
+            stringResource(R.string.description_1),
             R.drawable.img_onboarding_1,
             imageScale = 0.9f
         ),
         OnboardingPage(
-            "All Bikes,\nOne App",
-            "Keep all your bikes connected in one place. Check status, battery, and location, anytime, anywhere.",
+            stringResource(R.string.onboarding_title_2),
+            stringResource(R.string.description_2),
             R.drawable.img_onboarding_2,
             imageScale = 1.25f
         ),
         OnboardingPage(
-            "Join the \nCommunity",
-            "Join a community built around smarter mobility. Track progress, take on challenges, and share achievements with others.",
+            stringResource(R.string.onboarding_title_3),
+            stringResource(R.string.description_3),
             R.drawable.img_onboarding_3,
             imageScale = 1.1f
         )
@@ -139,7 +140,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                         )
 
                         Text(
-                            text = "Get Started",
+                            text = stringResource(R.string.onboarding_button),
                             fontSize = 18.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Bold
@@ -155,7 +156,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                         modifier = Modifier.height(50.dp)
                     ) {
                         Text(
-                            "Next",
+                            stringResource(R.string.onboarding_button_next),
                             color = Color.White.copy(alpha = 0.9f),
                             fontSize = 16.sp
                         )

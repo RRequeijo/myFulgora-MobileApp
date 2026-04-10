@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">myFulgora</string>
 
+    <string name="description_3">Junte-se a uma comunidade voltada para a mobilidade inteligente. Acompanhe seu progresso, aceite desafios e compartilhe suas conquistas com outros membros.</string>
+    <string name="onboarding_button_next">Próximo</string>
+    <string name="onboarding_button">Começa já</string>
     <string name="login_welcome">Bem-vindo de volta, Piloto</string>
     <string name="login_username_hint">Nome de Utilizador</string>
     <string name="login_password_hint">Palavra-passe</string>
@@ -89,5 +92,10 @@
     <string name="engine_start_confirm">Confirmar</string>
     <string name="engine_stop_title">Desligar Motor?</string>
     <string name="engine_stop_message">Tens a certeza que queres desligar o motor da tua Fulgora?</string>
+    <string name="onboarding_title">Seja ecológico, pilote com confiança</string>
+    <string name="description_1">Tenha uma visão geral da sua moto. Monitore a bateria, a autonomia e as principais estatísticas da moto em tempo real para que você sempre pilote com confiança.</string>
+    <string name="onboarding_title_2">Todas as bicicletas, um só aplicativo</string>
+    <string name="description_2">Mantenha todas as suas bicicletas conectadas em um só lugar. Verifique o status, a bateria e a localização, a qualquer hora e em qualquer lugar.</string>
+    <string name="onboarding_title_3">Junte-se à comunidade</string>
 
 </resources>
