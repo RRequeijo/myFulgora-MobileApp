@@ -25,6 +25,14 @@ import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.GreenFresh
 import com.example.myfulgora.ui.viewmodel.LoginState
 import com.example.myfulgora.ui.viewmodel.LoginViewModel
+import android.content.Context
+import androidx.biometric.BiometricPrompt
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import com.example.myfulgora.data.helpers.SettingsManager
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -32,16 +40,39 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onForgotPasswordClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val settingsManager = remember { SettingsManager(context) }
+
     var usernameInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
 
     // O Estado do login (Loading, Erro, Sucesso) continua a vir do ViewModel
     val loginState by viewModel.loginState.collectAsState()
 
-    // Se o login for sucesso, navega
+    //BIOMETRIA
+    val isBiometricEnabled by settingsManager.isBiometricEnabledFlow.collectAsState(initial = false)
+    var showBiometricOfferDialog by remember { mutableStateOf(false) }
+
+    // Se o login for sucesso no servidor, decidimos se mostramos o diálogo ou entramos
     LaunchedEffect(loginState) {
         if (loginState is LoginState.Success) {
-            onLoginSuccess()
+            if (!isBiometricEnabled) {
+                showBiometricOfferDialog = true
+            } else {
+                onLoginSuccess()
+            }
+        }
+    }
+
+    // Tentar biometria logo ao abrir o ecrã se estiver ativa
+    LaunchedEffect(isBiometricEnabled) {
+        if (isBiometricEnabled) {
+            showBiometricPrompt(
+                context = context,
+                onSuccess = { onLoginSuccess() }, // Se acertar a face/dedo, entra logo!
+                onError = { /* Não fazemos nada, ele fica no ecrã para meter a password */ }
+            )
         }
     }
 
@@ -150,6 +181,65 @@ fun LoginScreen(
                     )
                 }
             }
+            if (showBiometricOfferDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showBiometricOfferDialog = false
+                        onLoginSuccess() // Entra na app na mesma, mas sem ativar
+                    },
+                    title = { Text("Enable Biometrics?") },
+                    text = { Text("Would you like to use your fingerprint or face to login faster next time?") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            scope.launch {
+                                settingsManager.setBiometricEnabled(true) // Grava o "Sim"
+                                showBiometricOfferDialog = false
+                                onLoginSuccess() // Entra na app
+                            }
+                        }) {
+                            Text("Yes, Enable", color = GreenFresh)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showBiometricOfferDialog = false
+                            onLoginSuccess() // Entra na app sem ativar
+                        }) {
+                            Text("Not Now", color = Color.Gray)
+                        }
+                    }
+                )
+            }
         }
     }
+}
+
+fun showBiometricPrompt(
+    context: Context,
+    onSuccess: () -> Unit,
+    onError: () -> Unit
+) {
+    // O Compose usa Context normal, mas a Biometria exige uma FragmentActivity
+    val activity = context as? FragmentActivity ?: return
+    val executor = ContextCompat.getMainExecutor(activity)
+
+    val biometricPrompt = BiometricPrompt(activity, executor,
+        object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                onSuccess() // A impressão digital estava certa!
+            }
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+                onError() // O utilizador cancelou ou falhou
+            }
+        })
+
+    val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        .setTitle("Biometric Login")
+        .setSubtitle("Log in using your biometric credential")
+        .setNegativeButtonText("Use Password") // Botão para cancelar e usar pass
+        .build()
+
+    biometricPrompt.authenticate(promptInfo)
 }

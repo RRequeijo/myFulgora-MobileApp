@@ -111,6 +111,9 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2") // Para ligar o ViewModel ao Compose
 
+    //Biometria
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+
 }
 
 protobuf {

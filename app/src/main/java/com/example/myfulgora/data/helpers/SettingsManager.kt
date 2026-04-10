@@ -7,15 +7,15 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-// 1. Cria a instância do DataStore associada ao Contexto (Isto fica fora da classe, está correto)
+// Cria a instância do DataStore associada ao Contexto
 val Context.dataStore by preferencesDataStore(name = "settings")
 
 class SettingsManager(private val context: Context) {
 
-    // 2. Colocamos as Chaves todas arrumadinhas aqui dentro
     companion object {
         val IS_METRIC_KEY = booleanPreferencesKey("is_metric")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
+        val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
     }
 
     // ==========================================
@@ -45,6 +45,21 @@ class SettingsManager(private val context: Context) {
     suspend fun saveIsMetric(isMetric: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[IS_METRIC_KEY] = isMetric
+        }
+    }
+
+    // ==========================================
+    // MÉTODOS DE BIOMETRIA
+    // ==========================================
+
+    val isBiometricEnabledFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[BIOMETRIC_ENABLED] ?: false
+        }
+
+    suspend fun setBiometricEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[BIOMETRIC_ENABLED] = enabled
         }
     }
 }

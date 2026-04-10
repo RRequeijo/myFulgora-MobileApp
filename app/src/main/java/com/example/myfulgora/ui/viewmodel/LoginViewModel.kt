@@ -32,8 +32,17 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
         // 2. MODO DE TESTE RÁPIDO (A "Porta das Traseiras" para testar o gRPC)
         // Como apagámos o JSON, basta escreveres test / test na app para entrar logo!
-        if (user == "test" && pass == "test") {
+        if (user == "test" && pass == "test" || (user == "amover" && pass == "amover")) {
             UserManager.setupTestUser() // Prepara a memória com os dados iniciais
+            
+            if (user == "amover") {
+                // Se for o login local especial, também chamamos o loginDireto 
+                // para que o token "offline_test_token" seja guardado.
+                viewModelScope.launch {
+                    AuthManager(getApplication()).loginDireto(user, pass)
+                }
+            }
+
             _loginState.value = LoginState.Success
             return
         }
