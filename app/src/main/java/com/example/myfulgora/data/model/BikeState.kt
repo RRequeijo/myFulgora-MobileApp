@@ -4,7 +4,7 @@ package com.example.myfulgora.data.model
 
 data class BikeState(
     // --- 1. IDENTIFICAÇÃO E ESTADO GERAL ---
-    val bikeName: String = "No name",
+    val bikeName: String = "Fulgora Motorcycle",
     val totalBikes: Int = 0,
     val isOnline: Boolean = false,
     val isLocked: Boolean = true,
@@ -31,8 +31,8 @@ data class BikeState(
     val warningMessage: String? = null,
 
     // --- 6. LOCALIZAÇÃO ---
-    val latitude: Double = 0.0,
-    val longitude: Double = 0.0,
+    val latitude: Double = 41.287611,
+    val longitude: Double = -7.739555,
 
 
 

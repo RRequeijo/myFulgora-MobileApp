@@ -38,37 +38,41 @@ import kotlin.math.roundToInt
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.animation.core.animateDpAsState
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     state: BikeState,
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {},
-    onCalendarClick: () -> Unit = {}
+    onCalendarClick: () -> Unit = {},
+    onModeChange: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
+    val scope = rememberCoroutineScope()
 
     // Estado local para o modo de condução e motor
-    var selectedMode by remember { mutableStateOf("Normal") }
     var isBikeOn by remember { mutableStateOf(false) }
-    var showModeMenu by remember { mutableStateOf(false) }
     var showPowerDialog by remember { mutableStateOf(false) }
     val modes = listOf("Eco", "Normal", "Sport")
     val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    // O PagerState controla a posição do slide (Começa no 1, que é o "Normal")
+    // O PagerState controla a posição do slide (Inicia no modo atual da mota)
+    val initialPage = remember(state.drivingMode) { modes.indexOf(state.drivingMode).coerceAtLeast(0) }
     val pagerState = rememberPagerState(
-        initialPage = 1,
+        initialPage = initialPage,
         pageCount = { modes.size }
     )
 
-    // Sincroniza a página atual do slide com a tua variável selectedMode
+    // Sincroniza a página atual do slide com a lógica de negócio
     LaunchedEffect(pagerState.currentPage) {
-        selectedMode = modes[pagerState.currentPage]
+        onModeChange(modes[pagerState.currentPage])
     }
 
+
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     FulgoraBackground {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -112,7 +116,7 @@ fun HomeScreen(
                         Icon(
                             painter = painterResource(id = AppIcons.Dashboard.BatteryTop),
                             contentDescription = null,
-                            tint = GreenFresh,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(34.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -176,9 +180,9 @@ fun HomeScreen(
                             )
                             val sweep = (state.batteryPercentage * 360f) / 100f
 
-                            // Progresso (Verde)
+                            // Progresso (Verde Dinâmico)
                             drawArc(
-                                color = GreenFresh,
+                                color = primaryColor,
                                 startAngle = -90f,
                                 sweepAngle = sweep,
                                 useCenter = false,
@@ -213,7 +217,7 @@ fun HomeScreen(
                             .weight(0.4f)
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
-                        color = if (isBikeOn) Color(0xFFE53935) else GreenFresh, // 👈 STOP = Vermelho, START = Verde
+                        color = if (isBikeOn) Color(0xFFE53935) else primaryColor, // 👈 STOP = Vermelho, START = Primária
                         onClick = { showPowerDialog = true }
                     ) {
                         Row(
@@ -257,12 +261,18 @@ fun HomeScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) { page ->
                                 Box(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clickable {
+                                            scope.launch {
+                                                pagerState.animateScrollToPage(page)
+                                            }
+                                        },
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = modes[page],
-                                        color = if (pagerState.currentPage == page) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        color = if (pagerState.currentPage == page) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = if (pagerState.currentPage == page) FontWeight.Bold else FontWeight.Normal,
                                         fontSize = 16.sp
                                     )
@@ -286,7 +296,7 @@ fun HomeScreen(
                                         modifier = Modifier
                                             .size(dotSize)
                                             .clip(CircleShape)
-                                            .background(if (isSelected) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
+                                            .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f))
                                     )
                                 }
                             }
@@ -325,7 +335,7 @@ fun HomeScreen(
                             icon = painterResource(id = AppIcons.Dashboard.Status),
                             value = if (isOnline) stringResource(id = R.string.home_status_online) else stringResource(id = R.string.home_status_offline),
                             label = "",
-                            statusColor = if (isOnline) GreenFresh else Color.Red
+                            statusColor = if (isOnline) primaryColor else Color.Red
                         )
                     }
                 }
@@ -360,7 +370,7 @@ fun HomeScreen(
                                 showPowerDialog = false
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isBikeOn) Color(0xFFE53935) else GreenFresh
+                                containerColor = if (isBikeOn) Color(0xFFE53935) else primaryColor
                             )
                         ) {
                             Text(text = stringResource(id = R.string.engine_start_confirm), color = if (isBikeOn) Color.White else Color.Black)
@@ -384,10 +394,11 @@ fun HomeStatItem(
     label: String,
     statusColor: Color? = null
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         when (icon) {
-            is ImageVector -> Icon(icon, null, tint = GreenFresh, modifier = Modifier.size(24.dp))
-            is Painter -> Icon(icon, null, tint = GreenFresh, modifier = Modifier.size(24.dp))
+            is ImageVector -> Icon(icon, null, tint = primaryColor, modifier = Modifier.size(24.dp))
+            is Painter -> Icon(icon, null, tint = primaryColor, modifier = Modifier.size(24.dp))
         }
 
         Spacer(modifier = Modifier.height(4.dp))

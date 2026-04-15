@@ -44,11 +44,9 @@ fun FulgoraBackground(
     drawBackground: Boolean = true,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val isDark = isSystemInDarkTheme()
-
     val bottomGlow = Brush.radialGradient(
         colors = listOf(
-            if (isDark) GreenDeep.copy(alpha = 0.5f) else GreenFresh.copy(alpha = 0.15f),
+            GreenDeep.copy(alpha = 0.5f),
             Color.Transparent
         ),
         center = Offset(x = 0f, y = Float.POSITIVE_INFINITY),
@@ -57,12 +55,14 @@ fun FulgoraBackground(
 
     val topGlow = Brush.radialGradient(
         colors = listOf(
-            if (isDark) Color(0xFF1E293B).copy(alpha = 0.6f) else Color.LightGray.copy(alpha = 0.2f),
+            Color(0xFF1E293B).copy(alpha = 0.6f),
             Color.Transparent
         ),
         center = Offset(x = Float.POSITIVE_INFINITY, y = 0f),
         radius = 1200f
     )
+
+    val backgroundColor = MaterialTheme.colorScheme.background
 
     Box(
         modifier = modifier
@@ -70,13 +70,12 @@ fun FulgoraBackground(
             .then(
                 if (drawBackground) {
                     Modifier
-                        .background(MaterialTheme.colorScheme.background)
+                        .background(backgroundColor)
                         .background(bottomGlow)
                         .background(topGlow)
                 } else Modifier
             )
     ) {
-        // Removido o padding de 100dp que estava a encolher o ecrã
         content()
     }
 }
@@ -112,7 +111,7 @@ fun FulgoraTopBar(
                 )
                 Text(
                     text = finalUserName,
-                    color = GreenFresh,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable { onUserClick() }
@@ -189,7 +188,7 @@ fun FulgoraTopBar(
                                 Text("Notificações", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                 Text(
                                     "Marcar como lidas",
-                                    color = GreenFresh,
+                                    color = MaterialTheme.colorScheme.primary,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.clickable {
@@ -220,7 +219,7 @@ fun FulgoraTopBar(
                                                 Box(
                                                     modifier = Modifier
                                                         .size(8.dp)
-                                                        .background(GreenFresh, RoundedCornerShape(50))
+                                                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(50))
                                                 )
                                                 Spacer(modifier = Modifier.width(8.dp))
                                             }
@@ -228,7 +227,7 @@ fun FulgoraTopBar(
                                             Column(modifier = Modifier.weight(1f)) {
                                                 Text(notif.title, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                                 Text(notif.message, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-                                                Text(notif.time, color = GreenFresh.copy(alpha = 0.7f), fontSize = 10.sp)
+                                                Text(notif.time, color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), fontSize = 10.sp)
                                             }
                                         }
                                         HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f))
@@ -274,6 +273,7 @@ fun FulgoraInfoCard(
 
 @Composable
 fun CircularBatteryArc(percentage: Float) {
+    val primaryColor = MaterialTheme.colorScheme.primary
     Canvas(modifier = Modifier.size(300.dp)) {
         drawArc(
             color = Color(0xFF1E293B),
@@ -283,7 +283,7 @@ fun CircularBatteryArc(percentage: Float) {
             style = Stroke(width = 15f, cap = StrokeCap.Round)
         )
         drawArc(
-            color = GreenFresh,
+            color = primaryColor,
             startAngle = 140f,
             sweepAngle = 260f * percentage,
             useCenter = false,
@@ -295,7 +295,7 @@ fun CircularBatteryArc(percentage: Float) {
 @Composable
 fun DashboardStat(icon: ImageVector, value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(imageVector = icon, contentDescription = null, tint = GreenFresh, modifier = Modifier.size(24.dp))
+        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
         Spacer(modifier = Modifier.height(4.dp))
         Text(text = value, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
         Text(text = label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -374,7 +374,7 @@ fun RecentTripRow(
 
         Column(horizontalAlignment = Alignment.End) {
             Text(text = distance, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text(text = energy, color = GreenFresh, fontSize = 12.sp)
+            Text(text = energy, color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
         }
     }
 }
@@ -398,13 +398,13 @@ fun TripFilterBar(
             Surface(
                 modifier = Modifier.weight(1f).height(32.dp),
                 shape = RoundedCornerShape(16.dp),
-                color = if (isSelected) GreenFresh else MaterialTheme.colorScheme.surfaceVariant,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
                 onClick = { onFilterSelected(filter) }
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = filter,
-                        color = if (isSelected) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (isSelected) (if (isSystemInDarkTheme()) Color.Black else Color.White) else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                     )

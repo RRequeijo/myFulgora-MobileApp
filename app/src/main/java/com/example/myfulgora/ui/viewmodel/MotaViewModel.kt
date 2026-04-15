@@ -129,6 +129,20 @@ class MotaViewModel : ViewModel() {
         UserManager.previousBike()
     }
 
+    fun setDrivingMode(mode: String) {
+        val currentState = _uiState.value
+        if (currentState is HomeUiState.Success) {
+            if (currentState.bikeState.drivingMode != mode) {
+                Log.d("MotaViewModel", "Changing driving mode to: $mode")
+                _uiState.value = HomeUiState.Success(
+                    currentState.bikeState.copy(drivingMode = mode)
+                )
+                // Aqui no futuro podes enviar o comando via gRPC para a mota
+                // grpcClient.setDrivingMode(vin, mode)
+            }
+        }
+    }
+
     fun guardarDocumento(nomeDocumento: String, uri: String) {
         val currentBike = UserManager.getCurrentBike()
         if (currentBike != null) {

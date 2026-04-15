@@ -20,9 +20,9 @@ val DarkInputBg = Color(0xFF222222)          // O teu DarkInputBackground
 val DarkTextPrimary = Color(0xFFFFFFFF)      // O teu White
 val DarkTextSecondary = Color(0xFFB0BEC5)    // O teu GrayLight
 
-// --- 3. PALETA DO MODO CLARO (O novo design de dia!) ---
-val LightBackground = Color(0xFFF5F6F8)      // Fundo cinza super clarinho (não cansa os olhos)
-val LightSurface = Color(0xFFFFFFFF)         // Cartões totalmente brancos (fazem contraste com o fundo)
-val LightInputBg = Color(0xFFE2E8F0)         // Fundo dos inputs cinza claro
-val LightTextPrimary = Color(0xFF1E293B)     // Texto principal (reaproveitei o teu GrayDark, fica lindo no fundo branco!)
-val LightTextSecondary = Color(0xFF64748B)   // Texto secundário (um cinza médio)
+// --- 3. PALETA DO MODO CLARO (Ajustada: Fundo original + Cards Off-white) ---
+val LightBackground = DarkBackground          // Mantemos o fundo original (preto)
+val LightSurface = Color(0xFFF9FAFB)         // Branco "sujo" (mais suave e moderno)
+val LightInputBg = Color(0xFFF9FAFB)         // Fundo dos inputs um pouco mais escuro que o card
+val LightTextPrimary = Color(0xFF0F172A)     // Texto quase preto para leitura perfeita no card
+val LightTextSecondary = Color(0xFF475569)   // Texto secundário cinza escuro

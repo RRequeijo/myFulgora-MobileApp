@@ -26,13 +26,13 @@ object UserManager {
 
     fun setupTestUser() {
         val testBike = Bike(
-            vin = "MOTA-TESTE-123",
-            name = "Fulgora LAB (gRPC Test)"
+            vin = "MOTA-TEST-123",
+            name = "Fulgora Motorcycle"
         )
 
         currentUser = User(
             username = "test",
-            profile = UserProfile(name = "Tester gRPC", email = "test@fulgora.pt"),
+            profile = UserProfile(name = "Driver", email = "driver@fulgora.pt"),
             bikes = mutableListOf(testBike)
         )
         _activeBikeIndex.value = 0

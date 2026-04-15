@@ -142,7 +142,15 @@ fun MainScreen() {
                             composable("history") { TripHistoryScreen(onBackClick = { navController.popBackStack() }) }
                             composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("battery") { BatteryScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
-                            composable("home") { HomeScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
+                            composable("home") { 
+                                HomeScreen(
+                                    state = currentBikeState, 
+                                    onMenuClick = { scope.launch { drawerState.open() } }, 
+                                    onUserClick = { navigateToProfile() }, 
+                                    onCalendarClick = { navController.navigate("maintenance_screen") },
+                                    onModeChange = { newMode -> viewModel.setDrivingMode(newMode) }
+                                ) 
+                            }
                             composable("maintenance_screen") { MaintenanceScreen(onBackClick = { navController.popBackStack() }) }
                             composable("social") { SocialScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("performance") { PerformanceScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }

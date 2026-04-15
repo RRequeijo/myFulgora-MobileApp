@@ -86,7 +86,7 @@ fun PerformanceScreen(
                     Text(
                         text = state.bikeName,
                         fontSize = Dimens.TextSizeNormal,
-                        color = GreenFresh
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -155,7 +155,7 @@ fun PerformanceScreen(
                         Icon(
                             painter = painterResource(id = AppIcons.Performance.odometer),
                             contentDescription = "Odometer",
-                            tint = GreenFresh,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -169,7 +169,7 @@ fun PerformanceScreen(
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(end = Dimens.PaddingMedium)) {
                                 Text(stringResource(id = R.string.performance_tyre_pressure), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSubTitle)
-                                Text(stringResource(id = R.string.performance_tyre_pressure_normal), color = GreenFresh, fontSize = Dimens.TextSizeSmall)
+                                Text(stringResource(id = R.string.performance_tyre_pressure_normal), color = MaterialTheme.colorScheme.primary, fontSize = Dimens.TextSizeSmall)
                                 Spacer(modifier = Modifier.height(Dimens.SpacingSmallPlus))
                                 Text("Front: ${state.tyreFront} bar", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
                                 Text("Rear: ${state.tyreBack} bar", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = Dimens.TextSizeNormal)
@@ -177,7 +177,7 @@ fun PerformanceScreen(
                             Icon(
                                 painter = painterResource(id = AppIcons.Performance.tyre_pressure),
                                 contentDescription = null,
-                                tint = GreenFresh,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(24.dp).align(Alignment.TopEnd)
                             )
                         }
@@ -187,7 +187,7 @@ fun PerformanceScreen(
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.padding(end = Dimens.PaddingMedium)) {
                                 Text(stringResource(id = R.string.performance_next_service), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSubTitle)
-                                Text(stringResource(id = R.string.performance_next_service_due), color = GreenFresh, fontSize = Dimens.TextSizeSmall)
+                                Text(stringResource(id = R.string.performance_next_service_due), color = MaterialTheme.colorScheme.primary, fontSize = Dimens.TextSizeSmall)
                                 Spacer(modifier = Modifier.height(Dimens.SpacingSmallPlus))
                                 Text(stringResource(id = R.string.performance_next_service_in), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeNormal)
 
@@ -199,7 +199,7 @@ fun PerformanceScreen(
                             Icon(
                                 painter = painterResource(id = AppIcons.Performance.next_service),
                                 contentDescription = null,
-                                tint = GreenFresh,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(24.dp).align(Alignment.TopEnd)
                             )
                         }
@@ -235,7 +235,7 @@ fun PerformanceScreen(
                                 }
                             }
                         }
-                        Icon(painter = painterResource(id = AppIcons.Performance.performance), contentDescription = null, tint = GreenFresh, modifier = Modifier.size(24.dp).align(Alignment.TopEnd))
+                        Icon(painter = painterResource(id = AppIcons.Performance.performance), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp).align(Alignment.TopEnd))
                     }
                 }
 
@@ -268,7 +268,7 @@ fun PerformanceScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     stringResource(id = R.string.performance_saved),
-                                    color = GreenFresh,
+                                    color = MaterialTheme.colorScheme.primary,
                                     fontSize = Dimens.TextSizeNormal,
                                     modifier = Modifier.padding(bottom = 6.dp)
                                 )
@@ -278,7 +278,7 @@ fun PerformanceScreen(
                         Icon(
                             imageVector = Icons.Rounded.Eco,
                             contentDescription = "Sustainability",
-                            tint = GreenFresh,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(32.dp)
                         )
                     }

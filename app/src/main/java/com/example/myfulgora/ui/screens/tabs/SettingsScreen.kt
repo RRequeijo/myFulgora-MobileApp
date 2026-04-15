@@ -52,6 +52,7 @@ fun SettingsScreen(
     var notificationsEnabled by remember { mutableStateOf(true) }
     var lowBatteryAlertEnabled by remember { mutableStateOf(true) }
     val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val primaryColor = MaterialTheme.colorScheme.primary
 
 
     FulgoraBackground {
@@ -96,7 +97,7 @@ fun SettingsScreen(
                 FulgoraInfoCard {
                     Text(
                         text = stringResource(id = R.string.settings_preferences),
-                        color = GreenFresh,
+                        color = primaryColor,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -121,7 +122,7 @@ fun SettingsScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .background(if (isMetric) GreenFresh else Color.Transparent)
+                                    .background(if (isMetric) primaryColor else Color.Transparent)
                                     .clickable {
                                         coroutineScope.launch { settingsManager.saveIsMetric(true) }
                                     }
@@ -137,7 +138,7 @@ fun SettingsScreen(
                             }
                             Box(
                                 modifier = Modifier
-                                    .background(if (!isMetric) GreenFresh else Color.Transparent)
+                                    .background(if (!isMetric) primaryColor else Color.Transparent)
                                     .clickable {
                                         coroutineScope.launch { settingsManager.saveIsMetric(false) }
                                     }
@@ -171,7 +172,7 @@ fun SettingsScreen(
                             onCheckedChange = { notificationsEnabled = it },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.Black,
-                                checkedTrackColor = GreenFresh,
+                                checkedTrackColor = primaryColor,
                                 uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
                                 uncheckedBorderColor = Color.Transparent
@@ -196,7 +197,7 @@ fun SettingsScreen(
                             onCheckedChange = { lowBatteryAlertEnabled = it },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.Black,
-                                checkedTrackColor = GreenFresh,
+                                checkedTrackColor = primaryColor,
                                 uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
                                 uncheckedBorderColor = Color.Transparent
@@ -212,7 +213,7 @@ fun SettingsScreen(
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(id = R.string.settings_style),
-                            color = GreenFresh,
+                            color = primaryColor,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -238,6 +239,7 @@ fun SettingsScreen(
 @Composable
 fun LanguageSelectorRow() {
     var expanded by remember { mutableStateOf(false) }
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
@@ -275,14 +277,14 @@ fun LanguageSelectorRow() {
             )
             Text(
                 text = displayLanguage,
-                color = GreenFresh,
+                color = primaryColor,
                 fontSize = 12.sp
             )
 
             Icon(
                 painter = painterResource(id = AppIcons.Actions.DropDown),
                 contentDescription = null,
-                tint = if (expanded) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = if (expanded) primaryColor else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .size(24.dp)
                     .rotate(rotationState)
@@ -313,7 +315,7 @@ fun LanguageSelectorRow() {
                     ) {
                         Text(
                             text = name,
-                            color = if (isSelected) GreenFresh else MaterialTheme.colorScheme.onSurface,
+                            color = if (isSelected) primaryColor else MaterialTheme.colorScheme.onSurface,
                             fontSize = 14.sp
                         )
 
@@ -321,7 +323,7 @@ fun LanguageSelectorRow() {
                             Icon(
                                 imageVector = androidx.compose.material.icons.Icons.Default.Check,
                                 contentDescription = "Selected",
-                                tint = GreenFresh,
+                                tint = primaryColor,
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -340,6 +342,7 @@ fun changeAppLanguage(languageCode: String) {
 @Composable
 fun ThemeSelectorRow() {
     var expanded by remember { mutableStateOf(false) }
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
@@ -380,14 +383,14 @@ fun ThemeSelectorRow() {
             )
             Text(
                 text = displayTheme,
-                color = GreenFresh,
+                color = primaryColor,
                 fontSize = 12.sp
             )
 
             Icon(
                 painter = painterResource(id = AppIcons.Actions.DropDown),
                 contentDescription = null,
-                tint = if (expanded) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = if (expanded) primaryColor else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .size(24.dp)
                     .rotate(rotationState)
@@ -414,7 +417,7 @@ fun ThemeSelectorRow() {
                     ) {
                         Text(
                             text = name,
-                            color = if (isSelected) GreenFresh else MaterialTheme.colorScheme.onSurface,
+                            color = if (isSelected) primaryColor else MaterialTheme.colorScheme.onSurface,
                             fontSize = 14.sp
                         )
 
@@ -422,7 +425,7 @@ fun ThemeSelectorRow() {
                             Icon(
                                 imageVector = androidx.compose.material.icons.Icons.Default.Check,
                                 contentDescription = "Selected",
-                                tint = GreenFresh,
+                                tint = primaryColor,
                                 modifier = Modifier.size(16.dp)
                             )
                         }

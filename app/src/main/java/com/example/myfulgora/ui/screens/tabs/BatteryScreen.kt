@@ -172,7 +172,7 @@ fun BigBatteryIndicator(
         AppIcons.Battery.BigBatteryCharging
     }
 
-    val mainColor = if (state.isCharging) Color(0xFFFFD700) else GreenFresh
+    val mainColor = if (state.isCharging) Color(0xFFFFD700) else MaterialTheme.colorScheme.primary
 
     Column(
         modifier = modifier,
@@ -211,7 +211,7 @@ fun BatteryInfoCard(
         ) {
             Text(
                 text = if (state.isCharging) "Charging" else "Standby",
-                color = if (state.isCharging) GreenFresh else MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (state.isCharging) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Bold
             )
             Text(
@@ -238,7 +238,7 @@ fun BatteryInfoCard(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
             ) {
-                Icon(painter = painterResource(id = AppIcons.Battery.Battery), contentDescription = null, tint = GreenFresh, modifier = Modifier.size(24.dp))
+                Icon(painter = painterResource(id = AppIcons.Battery.Battery), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("${state.batteryPercentage}%", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall)
             }
@@ -247,7 +247,7 @@ fun BatteryInfoCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Icon(painter = painterResource(id = AppIcons.Battery.Range), contentDescription = null, tint = GreenFresh, modifier = Modifier.size(24.dp))
+                Icon(painter = painterResource(id = AppIcons.Battery.Range), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(UnitConverter.formatDistance(state.range, isMetric), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall)
             }
@@ -256,7 +256,7 @@ fun BatteryInfoCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Icon(painter = painterResource(id = AppIcons.Battery.Charging), contentDescription = null, tint = GreenFresh, modifier = Modifier.size(24.dp))
+                Icon(painter = painterResource(id = AppIcons.Battery.Charging), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(if(state.isCharging) "On" else "Off", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall)
             }
@@ -272,7 +272,7 @@ fun BatteryStatCard(
     modifier: Modifier = Modifier
 ) {
     FulgoraInfoCard(modifier = modifier) {
-        Icon(painter = painterResource(id = icon), contentDescription = null, tint = GreenFresh, modifier = Modifier.size(34.dp))
+        Icon(painter = painterResource(id = icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(34.dp))
         Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
         Text(text = value, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text(text = title, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall)

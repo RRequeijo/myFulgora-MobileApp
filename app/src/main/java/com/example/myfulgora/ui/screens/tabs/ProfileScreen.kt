@@ -2,6 +2,7 @@ package com.example.myfulgora.ui.screens.tabs
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -125,7 +126,7 @@ fun ProfileScreen(
                         text = "Profile",
                         fontSize = Dimens.TextSizeHeader,
                         style = MaterialTheme.typography.headlineLarge,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -164,8 +165,8 @@ fun ProfileScreen(
                     }
                     Spacer(modifier = Modifier.width(Dimens.PaddingMedium))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = state.name, color = White, fontSize = 24.sp)
-                        Text(text = state.email, color = Color.Gray.copy(alpha = 0.7f), fontSize = 20.sp)
+                        Text(text = state.name, color = MaterialTheme.colorScheme.onBackground, fontSize = 24.sp)
+                        Text(text = state.email, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f), fontSize = 20.sp)
                     }
                 }
 
@@ -177,13 +178,13 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = bikeName, color = Color.White, fontSize = 20.sp, style = MaterialTheme.typography.titleLarge)
-                            Text(text = if (isConnected) "Connected" else "Offline", color = if (isConnected) GreenFresh else Color.Red.copy(alpha = 0.8f), fontSize = 12.sp)
-                            Text(text = "VIN: $bikeVin", color = Color.Gray.copy(alpha = 0.7f), fontSize = 12.sp)
+                            Text(text = bikeName, color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp, style = MaterialTheme.typography.titleLarge)
+                            Text(text = if (isConnected) "Connected" else "Offline", color = if (isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error.copy(alpha = 0.8f), fontSize = 12.sp)
+                            Text(text = "VIN: $bikeVin", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), fontSize = 12.sp)
                         }
                         Spacer(modifier = Modifier.width(Dimens.PaddingMedium))
                         Image(painter = painterResource(id = AppIcons.Dashboard.MainBike), contentDescription = null, modifier = Modifier.size(80.dp))
-                        Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = Color.Gray, modifier = Modifier.size(24.dp).clickable { navController.navigate("documentation") })
+                        Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(24.dp).clickable { navController.navigate("documentation") })
                     }
                 }
 
@@ -207,20 +208,20 @@ fun ProfileScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "Sync New Motorcycle",
-                                color = Color.White.copy(alpha = 0.8f),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                                 fontSize = 14.sp
                             )
                             if (state.totalBikes > 0) {
                                 Text(
                                     text = "${state.totalBikes} bikes in garage",
-                                    color = Color.Gray,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 12.sp
                                 )
                             }
                             state.syncMessage?.let { msg ->
                                 Text(
                                     text = msg,
-                                    color = if (msg.contains("Error")) Color(0xFFFF5252) else GreenFresh,
+                                    color = if (msg.contains("Error")) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -230,14 +231,14 @@ fun ProfileScreen(
                         if (state.isSyncing) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = GreenFresh,
+                                color = MaterialTheme.colorScheme.primary,
                                 strokeWidth = 2.dp
                             )
                         } else {
                             Icon(
                                 painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
                                 contentDescription = null,
-                                tint = Color.Gray,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -259,19 +260,19 @@ fun ProfileScreen(
                         Column {
                             Text(
                                 text = "Digital Keys",
-                                color = Color.White.copy(alpha = 0.8f),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                                 fontSize = 14.sp
                             )
                             Text(
                                 text = "Manage bike sharing",
-                                color = Color.Gray,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 12.sp
                             )
                         }
                         Icon(
                             imageVector = Icons.Default.Key,
                             contentDescription = null,
-                            tint = GreenFresh,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -283,15 +284,15 @@ fun ProfileScreen(
 
                 FulgoraInfoCard {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        Text("Account", color = GreenFresh, fontSize = 18.sp)
+                        Text("Account", color = MaterialTheme.colorScheme.primary, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
                         val accountItems = listOf("Edit Name", "Edit Email", "Change Password")
                         accountItems.forEachIndexed { index, item ->
                             Row(modifier = Modifier.fillMaxWidth().clickable { campoAEditar = item; valorTemporario = ""; showDialog = true }.padding(vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = item, color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                                Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                                Text(text = item, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
+                                Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
                             }
-                            if (index < accountItems.size - 1) HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+                            if (index < accountItems.size - 1) HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f))
                         }
                     }
                 }
@@ -301,7 +302,7 @@ fun ProfileScreen(
                 // --- Support Section ---
                 FulgoraInfoCard {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        Text("Support", color = GreenFresh, fontSize = 18.sp)
+                        Text("Support", color = MaterialTheme.colorScheme.primary, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(Dimens.PaddingMedium))
                         
                         // Assistance
@@ -309,18 +310,18 @@ fun ProfileScreen(
                             supportDialogType = SupportDialogType.Assistance
                             showSupportDialog = true 
                         }.padding(vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "Assistance", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                            Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                            Text(text = "Assistance", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
+                            Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
                         }
-                        HorizontalDivider(color = Color.Gray.copy(alpha = 0.1f))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f))
                         
                         // Dealership Contact
                         Row(modifier = Modifier.fillMaxWidth().clickable { 
                             supportDialogType = SupportDialogType.DealershipContact
                             showSupportDialog = true 
                         }.padding(vertical = 12.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "Dealership Contact", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                            Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+                            Text(text = "Dealership Contact", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
+                            Icon(painter = painterResource(id = AppIcons.Dashboard.ArrowRight0), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
                         }
                     }
                 }
@@ -333,20 +334,28 @@ fun ProfileScreen(
                 Dialog(onDismissRequest = { showDialog = false }) {
                     FulgoraInfoCard {
                         Column(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = campoAEditar, color = GreenFresh, fontSize = 20.sp)
+                            Text(text = campoAEditar, color = MaterialTheme.colorScheme.primary, fontSize = 20.sp)
                             Spacer(modifier = Modifier.height(16.dp))
                             TextField(
                                 value = valorTemporario,
                                 onValueChange = { valorTemporario = it },
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text(text = when(campoAEditar) { "Edit Name" -> "Enter new name..."; "Edit Email" -> "Enter new email..."; else -> "Type here..." }, color = Color.Gray) },
-                                colors = TextFieldDefaults.colors(focusedTextColor = Color.White, unfocusedTextColor = Color.White, focusedContainerColor = Color(0xFF2A2A2A), unfocusedContainerColor = Color(0xFF2A2A2A), focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent)
+                                placeholder = { Text(text = when(campoAEditar) { "Edit Name" -> "Enter new name..."; "Edit Email" -> "Enter new email..."; else -> "Type here..." }, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                                colors = TextFieldDefaults.colors(
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    cursorColor = MaterialTheme.colorScheme.primary
+                                )
                             )
                             Spacer(modifier = Modifier.height(24.dp))
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                                TextButton(onClick = { showDialog = false }) { Text("Cancel", color = Color.Gray) }
+                                TextButton(onClick = { showDialog = false }) { Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant) }
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Button(onClick = { viewModel.atualizarDado(campoAEditar, valorTemporario); showDialog = false }, colors = ButtonDefaults.buttonColors(containerColor = GreenFresh)) { Text("Save", color = Color.Black) }
+                                Button(onClick = { viewModel.atualizarDado(campoAEditar, valorTemporario); showDialog = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text("Save", color = if (isSystemInDarkTheme()) Color.Black else Color.White) }
                             }
                         }
                     }
@@ -372,25 +381,25 @@ fun ProfileScreen(
                                 SupportDialogType.Assistance -> {
                                     Text(
                                         text = "Assistance",
-                                        color = GreenFresh,
+                                        color = MaterialTheme.colorScheme.primary,
                                         fontSize = 20.sp
                                     )
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
                                         text = "Need help with your Fulgora? You can reach our assistance team through the following contacts:",
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 14.sp
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
 
                                     Text(
                                         text = "Phone:",
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 14.sp
                                     )
                                     Text(
                                         text = "+351 912 345 678",
-                                        color = White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         textDecoration = TextDecoration.Underline,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 14.sp,
@@ -404,12 +413,12 @@ fun ProfileScreen(
 
                                     Text(
                                         text = "Email:",
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 14.sp
                                     )
                                     Text(
                                         text = "dealer@fulgora.pt",
-                                        color = White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         textDecoration = TextDecoration.Underline,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 14.sp,
@@ -425,19 +434,19 @@ fun ProfileScreen(
                                 SupportDialogType.DealershipContact -> {
                                     Text(
                                         text = "Fulgora Mobility, Lda.",
-                                        color = GreenFresh,
+                                        color = MaterialTheme.colorScheme.primary,
                                         fontSize = 20.sp
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
 
                                     Text(
                                         text = "Phone:",
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 14.sp
                                     )
                                     Text(
                                         text = "+351 912 345 678",
-                                        color = White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         textDecoration = TextDecoration.Underline,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 14.sp,
@@ -451,12 +460,12 @@ fun ProfileScreen(
 
                                     Text(
                                         text = "Email:",
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 14.sp
                                     )
                                     Text(
                                         text = "dealer@fulgora.pt",
-                                        color = White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         textDecoration = TextDecoration.Underline,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 14.sp,
@@ -470,13 +479,13 @@ fun ProfileScreen(
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
                                         text = "Address:",
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontSize = 14.sp
                                     )
 
                                     Text(
                                         text = "Rua da Mobilidade 123\n4000-000 Porto, Portugal",
-                                        color = White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         textDecoration = TextDecoration.Underline,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 14.sp,
@@ -507,7 +516,7 @@ fun ProfileScreen(
                                         supportDialogType = null
                                     }
                                 ) {
-                                    Text("Close", color = Color.Gray)
+                                    Text("Close", color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                             }
                         }
