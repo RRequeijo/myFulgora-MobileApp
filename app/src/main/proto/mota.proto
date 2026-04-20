@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-// Mantendo as tuas configurações originais
 option java_multiple_files = true;
 option java_package = "com.example.grpc";
 option csharp_namespace = "AMoverGRPC";
@@ -13,10 +12,46 @@ enum DrivingMode {
   SPORT = 2;
 }
 
-// --- Mensagens (Dados do Documento Word) ---
+// --- Mensagens de Utilizador e Suporte ---
+
+message UserRequest {} // Usado para ações gerais do utilizador (identificado pelo token de autenticação)
+
+message UserProfile {
+  string name = 1;
+  string email = 2;
+  string photo_uri = 3;
+  string username = 4; // Identificador único do utilizador
+}
+
+message UpdatePhotoRequest {
+  bytes image_data = 1;      // A imagem real transformada em dados brutos
+  string file_extension = 2; // Para o servidor saber se é "jpg" ou "png"
+}
+
+message UpdateProfileInfoRequest {
+  // Podes enviar só o nome, só o email, ou ambos de uma vez
+  string name = 1;
+  string email = 2;
+}
+
+message DealershipInfo {
+  string name = 1;
+  string phone = 2;
+  string email = 3;
+  string address = 4;
+  string assistance_phone = 5; // Caso seja diferente do contacto geral da concessão
+}
+
+// --- Mensagens da Mota ---
 
 message MotaRequest {
   string vin = 1;
+}
+
+message Document {
+  string type = 1; // Ex: DUA, Seguro, Manual, etc.
+  string uri = 2;
+  int64 updated_at = 3; // Timestamp de quando o ficheiro foi alterado
 }
 
 message MotaResponse {
@@ -37,19 +72,29 @@ message MotaResponse {
   int32 battery_range = 12;      // Autonomia em km
   string charging_time = 13;     // ex: "1h57min"
 
-  // 1.3 Estatísticas e Mecânica (Performance & Pneus)
+  // 1.3 Estatísticas e Mecânica
   float energy_consumption_avg = 14; // kWh/100km
   int32 average_speed = 15;
   float tyre_front = 16;
   float tyre_back = 17;
-  int32 total_kilometers = 18;       // Odometria
+  int32 total_kilometers = 18;
+  int32 next_service_km = 19;
 
-  // 1.4 Localização
-  double latitude = 19;
-  double longitude = 20;
+  // 1.4 Localização e Documentos
+  double latitude = 20;
+  double longitude = 21;
+  repeated Document documents = 22;  // Lista de documentos associados à mota
 }
 
-// 3.2 Delegação de Acesso (Convidados)
+// Resposta agregada para o Perfil e Frota
+message UserDataResponse {
+  UserProfile profile = 1;
+  DealershipInfo dealership = 2;
+  repeated MotaResponse bikes = 3; // Lista de todas as motas do utilizador (FROTA)
+}
+
+// --- Gestão de Convidados ---
+
 message GuestAccessRequest {
   string vin = 1;
   string guest_email = 2;
@@ -64,17 +109,47 @@ message ActionStatus {
   string message = 2;
 }
 
-// --- Definição dos Serviços (Baseado no fluxo da App) ---
+message AppNotification {
+  string id = 1;
+  string title = 2;
+  string message = 3;
+  int64 timestamp = 4; // Para saberes se foi há 5 minutos ou há 2 dias
+  bool is_read = 5;    // Para mostrar a bolinha vermelha de "não lido"
+}
+
+message NotificationResponse {
+  repeated AppNotification notifications = 1;
+}
+
+// --- Serviços ---
 
 service MotasService {
-  // Obter dados ao abrir a App (ponto 1 do documento)
+  // Obter tudo o que o utilizador precisa ao fazer login (Perfil + Frota)
+  rpc GetUserData (UserRequest) returns (UserDataResponse);
+
+  // Sincronizar garagem/frota (Procurar novas motas atribuídas)
+  rpc SyncGarage (UserRequest) returns (UserDataResponse);
+
+  // Dados específicos de uma mota
   rpc GetMotaInfo (MotaRequest) returns (MotaResponse);
 
-  // Streaming para tempo real com a App aberta
+  // Streaming para telemetria em tempo real
   rpc StreamMotaUpdates (MotaRequest) returns (stream MotaResponse);
 
-  // Serviços de Gestão de Convidados (ponto 3.2 do documento)
+  // Gestão de Convidados / Chaves Digitais
   rpc ListGuestAccess (MotaRequest) returns (GuestListResponse);
   rpc AssignGuestPermission (GuestAccessRequest) returns (ActionStatus);
   rpc RevokeGuestAccess (GuestAccessRequest) returns (ActionStatus);
+
+  // Atualizar dados de texto do perfil (Nome e Email)
+    rpc UpdateProfileInfo (UpdateProfileInfoRequest) returns (ActionStatus);
+
+  //Upload foto perfil
+  rpc UpdateProfilePhoto (UpdatePhotoRequest) returns (ActionStatus);
+
+  // Obter o histórico de notificações do utilizador
+    rpc GetNotifications (UserRequest) returns (NotificationResponse);
+
+    // Marcar uma notificação como lida (para apagar a bolinha vermelha)
+    rpc MarkNotificationAsRead (MotaRequest) returns (ActionStatus); // MotaRequest ou cria um NotificationIdRequest
 }

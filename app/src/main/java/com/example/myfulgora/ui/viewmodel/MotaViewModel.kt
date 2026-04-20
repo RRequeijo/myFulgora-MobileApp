@@ -1,20 +1,23 @@
 package com.example.myfulgora.ui.viewmodel
 
-//MotaViewModel (O Chefe de Sala): É o cérebro. Ele vai à cozinha (gRPC/Servidor Python), pega na comida (Dados), e entrega aos clientes.
-
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfulgora.data.auth.UserManager
 import com.example.myfulgora.data.remote.GrpcClass
 import com.example.myfulgora.data.model.BikeState
+import com.example.myfulgora.data.helpers.NotificationManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import com.example.myfulgora.data.helpers.NotificationManager
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.net.URL
 
 sealed class HomeUiState {
     object Loading : HomeUiState()
@@ -111,7 +114,6 @@ class MotaViewModel : ViewModel() {
                 isOnline = isActuallyOnline,
                 batteryPercentage = currentBike.batteryLevel,
                 range = currentBike.batteryRange.toInt(),
-                // 👇 CORREÇÃO 2: Mantém os manuais no ecrã mesmo se a net for abaixo
                 documents = currentBike.documents?.toMap() ?: emptyMap()
             )
         } else {
@@ -146,7 +148,6 @@ class MotaViewModel : ViewModel() {
     fun guardarDocumento(nomeDocumento: String, uri: String) {
         val currentBike = UserManager.getCurrentBike()
         if (currentBike != null) {
-            // 👇 CORREÇÃO 3: Protege o mapa antes de adicionar
             if (currentBike.documents == null) {
                 currentBike.documents = mutableMapOf()
             }
@@ -161,6 +162,53 @@ class MotaViewModel : ViewModel() {
                 } else {
                     currentState
                 }
+            }
+        }
+    }
+
+    // =====================================================================
+    // GESTÃO DE DOCUMENTOS (DOWNLOAD E CACHE LOCAL)
+    // =====================================================================
+
+    /**
+     * Tenta obter o documento da cache local. Se não existir, faz o download do servidor.
+     */
+    suspend fun obterDocumento(context: Context, nomeDocumento: String, uri: String): File? {
+        return withContext(Dispatchers.IO) {
+            try {
+                // 1. Criar um nome de ficheiro seguro (sem espaços e em minúsculas)
+                val nomeSeguro = nomeDocumento.replace(" ", "_").lowercase()
+                val nomeFicheiro = "${nomeSeguro}.pdf"
+
+                // 2. Apontar para a pasta escondida da app no telemóvel
+                val pastaDocumentos = File(context.cacheDir, "fulgora_docs")
+                if (!pastaDocumentos.exists()) {
+                    pastaDocumentos.mkdirs()
+                }
+
+                val ficheiroLocal = File(pastaDocumentos, nomeFicheiro)
+
+                // 3. CACHE: Se já existe e é válido, não gastamos internet!
+                if (ficheiroLocal.exists() && ficheiroLocal.length() > 0) {
+                    Log.d("MotaViewModel", "📄 Documento aberto da memória (Cache): $nomeFicheiro")
+                    return@withContext ficheiroLocal
+                }
+
+                // 4. DOWNLOAD: Se não existe, vamos à cloud buscar
+                Log.d("MotaViewModel", "☁️ A transferir documento da Cloud: $uri")
+                URL(uri).openStream().use { input ->
+                    ficheiroLocal.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+
+                Log.d("MotaViewModel", "✅ Download concluído: $nomeFicheiro")
+                return@withContext ficheiroLocal
+
+            } catch (e: Exception) {
+                Log.e("MotaViewModel", "❌ Erro ao obter documento: ${e.message}")
+                e.printStackTrace()
+                return@withContext null
             }
         }
     }

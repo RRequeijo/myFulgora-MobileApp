@@ -86,10 +86,10 @@ fun ProfileScreen(
                         it,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION
                     )
-                    viewModel.atualizarFoto(it.toString())
+                    viewModel.atualizarFoto(it.toString(), context)
                 } catch (e: Exception) {
                     // Se falhar (ex: a galeria não suporta persistência), guardamos apenas a URI
-                    viewModel.atualizarFoto(it.toString())
+                    viewModel.atualizarFoto(it.toString(), context)
                 }
             }
         }
