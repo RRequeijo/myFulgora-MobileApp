@@ -112,7 +112,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Units", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
+                        Text(text = stringResource(id = R.string.settings_units), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
                         
                         // Custom Unit Switcher
                         Row(
@@ -130,7 +130,7 @@ fun SettingsScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "km",
+                                    text = stringResource(id = R.string.settings_units_km),
                                     color = if (isMetric) Color.Black else MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
@@ -251,10 +251,18 @@ fun LanguageSelectorRow() {
         "Português" to "pt"
     )
 
-    val currentLocale = AppCompatDelegate.getApplicationLocales().toLanguageTags()
-    val displayLanguage = when {
-        currentLocale.contains("pt") -> "Português"
-        else -> "English"
+    val currentLocaleTags = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+    
+    // BUG FIX: Se estiver vazio, significa que está a usar o idioma do sistema.
+    // Precisamos de detetar qual é o idioma atual real para mostrar o nome correto no seletor.
+    val displayLanguage = remember(currentLocaleTags) {
+        if (currentLocaleTags.isEmpty() || currentLocaleTags == "und") {
+            // Se for "und" ou vazio, vemos o que o sistema está a usar agora
+            val systemLocale = java.util.Locale.getDefault().language
+            if (systemLocale.startsWith("pt")) "Português" else "English"
+        } else {
+            if (currentLocaleTags.contains("pt")) "Português" else "English"
+        }
     }
 
     Column(
@@ -350,17 +358,17 @@ fun ThemeSelectorRow() {
     )
 
     val themeOptions = listOf(
-        "System Default" to AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-        "Light Mode" to AppCompatDelegate.MODE_NIGHT_NO,
-        "Dark Mode" to AppCompatDelegate.MODE_NIGHT_YES
+        stringResource(R.string.settings_theme_system) to AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+        stringResource(R.string.settings_theme_light) to AppCompatDelegate.MODE_NIGHT_NO,
+        stringResource(R.string.settings_theme_dark) to AppCompatDelegate.MODE_NIGHT_YES
     )
 
     val currentMode = AppCompatDelegate.getDefaultNightMode()
 
     val displayTheme = when (currentMode) {
-        AppCompatDelegate.MODE_NIGHT_NO -> "Light Mode"
-        AppCompatDelegate.MODE_NIGHT_YES -> "Dark Mode"
-        else -> "System Default"
+        AppCompatDelegate.MODE_NIGHT_NO -> stringResource(R.string.settings_theme_light)
+        AppCompatDelegate.MODE_NIGHT_YES -> stringResource(R.string.settings_theme_dark)
+        else -> stringResource(R.string.settings_theme_system)
     }
 
     Column(
@@ -377,7 +385,7 @@ fun ThemeSelectorRow() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Theme",
+                text = stringResource(id = R.string.settings_theme),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 fontSize = 14.sp
             )

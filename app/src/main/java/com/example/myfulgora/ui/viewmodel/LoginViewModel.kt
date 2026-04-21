@@ -64,12 +64,9 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     _loginState.value = LoginState.Success
                 } else {
                     _loginState.value = LoginState.Error("Login falhou. Verifica os dados.")
-                    // Volta ao estado Idle para o utilizador poder tentar novamente
-                    _loginState.value = LoginState.Idle
                 }
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error("Erro ao contactar o servidor: ${e.message}")
-                _loginState.value = LoginState.Idle
             }
         }
     }

@@ -10,6 +10,13 @@
     <string name="login_forgot_password">Esqueceste-te da pass?</string>
     <string name="login_button">Entrar</string>
     <string name="login_error_empty">Por favor preencha tudo.</string>
+    <string name="login_biometric_offer_title">Ativar Biometria?</string>
+    <string name="login_biometric_offer_desc">Gostarias de usar a tua impressão digital ou rosto para entrar mais rápido da próxima vez?</string>
+    <string name="login_biometric_yes">Sim, Ativar</string>
+    <string name="login_biometric_not_now">Agora Não</string>
+    <string name="login_biometric_prompt_title">Login Biométrico</string>
+    <string name="login_biometric_prompt_subtitle">Inicia sessão usando as tuas credenciais biométricas</string>
+    <string name="login_biometric_negative_button">Usar Palavra-passe</string>
 
     <string name="navbar_delegation">Chaves Digitais</string>
     <string name="home_status_online">Ligado</string>
@@ -20,11 +27,14 @@
     //BATERIA
     <string name="battery_title">Info Bateria</string>
     <string name="time_left">Tempo restante</string>
-    <string name="battery_health">Saude bateria</string>
+    <string name="battery_health">Saúde bateria</string>
     <string name="battery_temperature">Temperatura</string>
     <string name="battery_consumption">Méd. consumo</string>
     <string name="battery_charging_cycles">Ciclos de carga</string>
+    <string name="battery_health_excellent">excelente</string>
     <string name="battery_health_good">boa</string>
+    <string name="battery_health_fair">razoável</string>
+    <string name="battery_health_poor">fraca</string>
     <string name="battery_cycles">ciclos</string>
     <string name="social_title">Viaja eficiente</string>
     <string name="social_subtitle">Resumo semanal de eficiencia</string>
@@ -51,12 +61,16 @@
     <string name="settings_title">Definições</string>
     <string name="settings_preferences">Preferencias</string>
     <string name="settings_units">Unidade</string>
+    <string name="settings_units_km">km</string>
     <string name="settings_units_miles">milha</string>
     <string name="settings_notifications">Notificações</string>
     <string name="settings_low_battery">Alerta Bateria Baixa</string>
     <string name="settings_style">Estilos</string>
     <string name="settings_language">Idioma</string>
-    <string name="settings_theme">Tema(Claro/Escuro)</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Padrão do Sistema</string>
+    <string name="settings_theme_light">Modo Claro</string>
+    <string name="settings_theme_dark">Modo Escuro</string>
     <string name="performance_tyre_pressure">Pressão dos pneus</string>
     <string name="performance_tyre_pressure_rear">Trás PSI</string>
     <string name="performance_next_service">Próximo serviço</string>
@@ -70,7 +84,20 @@
     <string name="performance_view_all">Ver todas</string>
     <string name="performance_sustainability">Sustentabilidade</string>
     <string name="performance_tyre_pressure_front">Frente PSI</string>
-    <string name="maintenance_schedule">Agenda de Manutenção</string>
+    <string name="maintenance_schedule">Manutenção</string>
+    <string name="maintenance_due_soon">EM BREVE</string>
+    <string name="maintenance_planned">PLANEADO</string>
+    <string name="maintenance_days">DIAS</string>
+    <string name="maintenance_until_service">até este serviço</string>
+    <string name="maintenance_away">de distância</string>
+    <string name="maintenance_service_center">Centro de serviço</string>
+    <string name="maintenance_estimated_time">Tempo estimado</string>
+    <string name="maintenance_estimated_cost">Custo estimado</string>
+    <string name="maintenance_book_appointment">Marcar agendamento</string>
+    <string name="maintenance_view_report">Ver relatório de serviço</string>
+    <string name="maintenance_swipe">DESLIZE</string>
+    <string name="maintenance_done">Concluído</string>
+    <string name="maintenance_ago">atrás</string>
     <string name="expected_date">Data prevista</string>
     <string name="scheduled">Agendado</string>
     <string name="completed">Concluído</string>
@@ -85,7 +112,7 @@
     <string name="delegation_activate_key_title">Ativar Chave Digital</string>
     <string name="delegation_activation_code">Código de Ativação</string>
     <string name="delegation_activate_access">Ativar Acesso</string>
-    <string name="engine_power_button">Ligar</string>
+    <string name="engine_power_button">LIGAR</string>
     <string name="engine_start_title">Ligar Motor?</string>
     <string name="engine_start_message">Tens a certeza que queres ligar o motor? Certifica-te que estás em segurança e com o descanso recolhido.</string>
     <string name="engine_start_cancel">Cancelar</string>
@@ -98,4 +125,33 @@
     <string name="description_2">Mantenha todas as suas bicicletas conectadas em um só lugar. Verifique o status, a bateria e a localização, a qualquer hora e em qualquer lugar.</string>
     <string name="onboarding_title_3">Junte-se à comunidade</string>
 
+    //PROFILE
+    <string name="profile_title">Perfil</string>
+    <string name="profile_no_motorcycle">Sem Motociclo</string>
+    <string name="profile_connected">Ligado</string>
+    <string name="profile_offline">Desligado</string>
+    <string name="profile_sync_new_motorcycle">Sincronizar Nova Mota</string>
+    <string name="profile_bikes_in_garage">%d motas na garagem</string>
+    <string name="profile_manage_bike_sharing">Gerir partilha de mota</string>
+    <string name="profile_account">Conta</string>
+    <string name="profile_edit_name">Editar Nome</string>
+    <string name="profile_edit_email">Editar Email</string>
+    <string name="profile_change_password">Alterar Palavra-passe</string>
+    <string name="profile_support">Suporte</string>
+    <string name="profile_assistance">Assistência</string>
+    <string name="profile_dealership_contact">Contacto do Concessionário</string>
+    <string name="profile_enter_new_name">Introduza o novo nome…</string>
+    <string name="profile_enter_new_email">Introduza o novo email…</string>
+    <string name="profile_type_here">Escreva aqui…</string>
+    <string name="profile_cancel">Cancelar</string>
+    <string name="profile_save">Guardar</string>
+    <string name="profile_close">Fechar</string>
+    <string name="profile_assistance_desc">Precisa de ajuda com a sua Fulgora? Pode contactar a nossa equipa de assistência através dos seguintes contactos:</string>
+    <string name="profile_phone">Telefone:</string>
+    <string name="profile_email_label">Email:</string>
+    <string name="profile_address">Morada:</string>
+    <string name="profile_vin">VIN: %s</string>
+    <string name="delegation_active_until">Ativo até: %s</string>
+    <string name="delegation_indetermined">Indeterminado</string>
+    <string name="delegation_revoke">Revogar</string>
 </resources>

@@ -12,6 +12,13 @@ enum DrivingMode {
   SPORT = 2;
 }
 
+enum MaintenanceStatus {
+  DUE_SOON = 0;
+  SCHEDULED = 1;
+  PLANNED = 2;
+  COMPLETED = 3;
+}
+
 // --- Mensagens de Utilizador e Suporte ---
 
 message UserRequest {} // Usado para ações gerais do utilizador (identificado pelo token de autenticação)
@@ -121,6 +128,33 @@ message NotificationResponse {
   repeated AppNotification notifications = 1;
 }
 
+// --- Manutenção e Agenda ---
+
+message MaintenanceRecord {
+  int32 id = 1;
+  string title = 2;
+  string subtitle = 3;
+  string description = 4;
+  string date = 5;
+  int32 km_trigger = 6;
+  int32 days_remaining = 7;
+  int32 km_remaining = 8;
+  string service_center = 9;
+  string estimated_time = 10;
+  string estimated_cost = 11;
+  MaintenanceStatus status = 12;
+}
+
+message MaintenanceAgendaResponse {
+  repeated MaintenanceRecord items = 1;
+}
+
+message BookServiceRequest {
+  string vin = 1;
+  int32 maintenance_id = 2;
+  string preferred_date = 3;
+}
+
 // --- Serviços ---
 
 service MotasService {
@@ -152,4 +186,10 @@ service MotasService {
 
     // Marcar uma notificação como lida (para apagar a bolinha vermelha)
     rpc MarkNotificationAsRead (MotaRequest) returns (ActionStatus); // MotaRequest ou cria um NotificationIdRequest
+
+    // Obter a agenda de manutenção
+    rpc GetMaintenanceAgenda (MotaRequest) returns (MaintenanceAgendaResponse);
+
+    // Agendar um serviço
+    rpc BookMaintenanceService (BookServiceRequest) returns (ActionStatus);
 }

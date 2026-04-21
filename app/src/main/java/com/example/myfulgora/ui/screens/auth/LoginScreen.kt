@@ -108,7 +108,7 @@ fun LoginScreen(
             FulgoraTextField(
                 text = usernameInput,
                 onTextChange = { usernameInput = it }, // 👈 Isto garante que consegues escrever!
-                placeholder = "Username",
+                placeholder = stringResource(id = R.string.login_username_hint),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
@@ -120,7 +120,7 @@ fun LoginScreen(
             FulgoraPasswordField(
                 text = passwordInput,
                 onTextChange = { passwordInput = it }, // 👈 Isto garante que consegues escrever!
-                placeholder = "Password",
+                placeholder = stringResource(id = R.string.login_password_hint),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
@@ -130,7 +130,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(12.dp))
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                 Text(
-                    text = "Forgot Password?",
+                    text = stringResource(id = R.string.login_forgot_password),
                     color = GreenFresh,
                     fontSize = 12.sp,
                     modifier = Modifier
@@ -174,7 +174,7 @@ fun LoginScreen(
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                 } else {
                     Text(
-                        text = "Login",
+                        text = stringResource(id = R.string.login_button),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -187,8 +187,8 @@ fun LoginScreen(
                         showBiometricOfferDialog = false
                         onLoginSuccess() // Entra na app na mesma, mas sem ativar
                     },
-                    title = { Text("Enable Biometrics?") },
-                    text = { Text("Would you like to use your fingerprint or face to login faster next time?") },
+                    title = { Text(stringResource(id = R.string.login_biometric_offer_title)) },
+                    text = { Text(stringResource(id = R.string.login_biometric_offer_desc)) },
                     confirmButton = {
                         TextButton(onClick = {
                             scope.launch {
@@ -197,7 +197,7 @@ fun LoginScreen(
                                 onLoginSuccess() // Entra na app
                             }
                         }) {
-                            Text("Yes, Enable", color = GreenFresh)
+                            Text(stringResource(id = R.string.login_biometric_yes), color = GreenFresh)
                         }
                     },
                     dismissButton = {
@@ -205,7 +205,7 @@ fun LoginScreen(
                             showBiometricOfferDialog = false
                             onLoginSuccess() // Entra na app sem ativar
                         }) {
-                            Text("Not Now", color = Color.Gray)
+                            Text(stringResource(id = R.string.login_biometric_not_now), color = Color.Gray)
                         }
                     }
                 )
@@ -236,9 +236,9 @@ fun showBiometricPrompt(
         })
 
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
-        .setTitle("Biometric Login")
-        .setSubtitle("Log in using your biometric credential")
-        .setNegativeButtonText("Use Password") // Botão para cancelar e usar pass
+        .setTitle(activity.getString(R.string.login_biometric_prompt_title))
+        .setSubtitle(activity.getString(R.string.login_biometric_prompt_subtitle))
+        .setNegativeButtonText(activity.getString(R.string.login_biometric_negative_button)) // Botão para cancelar e usar pass
         .build()
 
     biometricPrompt.authenticate(promptInfo)

@@ -3,6 +3,7 @@ package com.example.myfulgora.ui.viewmodel
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.example.myfulgora.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfulgora.data.auth.UserManager
@@ -34,7 +35,7 @@ class ProfileViewModel : ViewModel() {
             _uiState.value = _uiState.value.copy(
                 name = currentUser.profile.name,
                 email = currentUser.profile.email,
-                bikeName = currentBike?.name ?: "No Motorcycle",
+                bikeName = currentBike?.name ?: "",
                 bikeVin = currentBike?.vin ?: "---",
                 isBikeConnected = currentBike != null,
                 photoUri = currentUser.profile.photoUri,
@@ -46,7 +47,7 @@ class ProfileViewModel : ViewModel() {
     // =====================================================================
     // ATUALIZAR NOME E EMAIL
     // =====================================================================
-    fun atualizarDado(tipo: String, novoValor: String) {
+    fun atualizarDado(tipo: String, novoValor: String, context: Context) {
         val user = UserManager.currentUser ?: return
 
         // Guardamos os valores antigos para o caso de a internet falhar (Rollback)
@@ -55,8 +56,8 @@ class ProfileViewModel : ViewModel() {
 
         // 1. Atualização Otimista: Muda na UI instantaneamente
         when (tipo) {
-            "Edit Name" -> user.profile.name = novoValor
-            "Edit Email" -> user.profile.email = novoValor
+            context.getString(R.string.profile_edit_name) -> user.profile.name = novoValor
+            context.getString(R.string.profile_edit_email) -> user.profile.email = novoValor
         }
         carregarDadosDoUtilizador()
 

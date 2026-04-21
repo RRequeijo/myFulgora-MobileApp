@@ -156,7 +156,15 @@ fun MainScreen() {
                             composable("performance") { PerformanceScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("delegation") { DelegationScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
-                            composable("documentation") { DocumentationScreen(state = currentBikeState, onSaveDocument = { nome, uri -> viewModel.guardarDocumento(nome, uri) }) }
+                            composable("documentation") { 
+                                DocumentationScreen(
+                                    state = currentBikeState, 
+                                    onSaveDocument = { nome, uri -> viewModel.guardarDocumento(nome, uri) },
+                                    onMenuClick = { scope.launch { drawerState.open() } },
+                                    onUserClick = { navigateToProfile() },
+                                    onCalendarClick = { navController.navigate("maintenance_screen") }
+                                ) 
+                            }
                         }
 
                         // Gradiente de desfoque corrigido para usar a cor inteligente

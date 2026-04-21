@@ -110,10 +110,18 @@ fun BatteryScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingMedium)
                     ) {
+                        val healthLabel = when (state.batteryHealth.lowercase()) {
+                            "excellent" -> stringResource(id = R.string.battery_health_excellent)
+                            "good" -> stringResource(id = R.string.battery_health_good)
+                            "fair" -> stringResource(id = R.string.battery_health_fair)
+                            "poor" -> stringResource(id = R.string.battery_health_poor)
+                            else -> state.batteryHealth
+                        }
+
                         BatteryStatCard(
                             icon = AppIcons.Battery.BatteryHealth,
                             title = stringResource(id = R.string.battery_health),
-                            value = "${state.batteryHealth}",
+                            value = healthLabel,
                             modifier = Modifier.weight(1f)
                         )
                         BatteryStatCard(

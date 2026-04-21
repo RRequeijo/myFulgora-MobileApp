@@ -69,12 +69,12 @@ fun DelegationScreen(
                         text = stringResource(id = R.string.delegation_title),
                         fontSize = Dimens.TextSizeHeader,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         text = stringResource(id = R.string.delegation_subtitle),
                         fontSize = 14.sp,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
                 }
 
@@ -83,11 +83,11 @@ fun DelegationScreen(
                 // 3. CARTÃO: GERAR NOVA CHAVE (Para o Dono)
                 FulgoraInfoCard {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.AddLink, contentDescription = null, tint = GreenFresh)
+                        Icon(Icons.Default.AddLink, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(id = R.string.delegation_share_motorcycle_title),
-                            color = GreenFresh,
+                            color = MaterialTheme.colorScheme.primary,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -97,7 +97,7 @@ fun DelegationScreen(
 
                     Text(
                         text = stringResource(id = R.string.delegation_share_motorcycle_description),
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )
 
@@ -106,13 +106,13 @@ fun DelegationScreen(
                     OutlinedTextField(
                         value = inviteEmail,
                         onValueChange = { inviteEmail = it },
-                        label = { Text(stringResource(id = R.string.delegation_guest_email), color = Color.Gray) },
+                        label = { Text(stringResource(id = R.string.delegation_guest_email), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = GreenFresh,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         ),
                         singleLine = true
                     )
@@ -122,10 +122,10 @@ fun DelegationScreen(
                     Button(
                         onClick = { /* Lógica gRPC: AssignGuestPermission */ },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = GreenFresh),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text(stringResource(id = R.string.delegation_generate_key), color = Color.Black, fontWeight = FontWeight.Bold)
+                        Text(stringResource(id = R.string.delegation_generate_key), color = if (androidx.compose.foundation.isSystemInDarkTheme()) Color.Black else Color.White, fontWeight = FontWeight.Bold)
                     }
                 }
 
@@ -134,11 +134,11 @@ fun DelegationScreen(
                 // 4. CARTÃO: ATIVAR CHAVE (Para o Convidado)
                 FulgoraInfoCard {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Key, contentDescription = null, tint = GreenFresh)
+                        Icon(Icons.Default.Key, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(id = R.string.delegation_activate_key_title),
-                            color = GreenFresh,
+                            color = MaterialTheme.colorScheme.primary,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -149,13 +149,13 @@ fun DelegationScreen(
                     OutlinedTextField(
                         value = activationCode,
                         onValueChange = { activationCode = it },
-                        label = { Text(stringResource(id = R.string.delegation_activation_code), color = Color.Gray) },
+                        label = { Text(stringResource(id = R.string.delegation_activation_code), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = GreenFresh,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                         ),
                         singleLine = true
                     )
@@ -165,10 +165,10 @@ fun DelegationScreen(
                     Button(
                         onClick = { /* Lógica: Validar Token no Servidor */ },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D2D2D)),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text(stringResource(id = R.string.delegation_activate_access), color = Color.White)
+                        Text(stringResource(id = R.string.delegation_activate_access), color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
 
@@ -177,7 +177,7 @@ fun DelegationScreen(
                 // 5. LISTA DE ACESSOS ATIVOS (Opcional, só para o dono ver)
                 Text(
                     text = stringResource(id = R.string.delegation_active_accesses),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
@@ -191,11 +191,11 @@ fun DelegationScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("convidado@email.com", color = Color.White, fontSize = 14.sp)
-                            Text("Ativo até: Indeterminado", color = Color.Gray, fontSize = 12.sp)
+                            Text("convidado@email.com", color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
+                            Text(stringResource(R.string.delegation_active_until, stringResource(R.string.delegation_indetermined)), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         }
                         IconButton(onClick = { /* Lógica gRPC: RevokeGuestAccess */ }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Revogar", tint = Color.Red.copy(alpha = 0.7f))
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delegation_revoke), tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f))
                         }
                     }
                 }

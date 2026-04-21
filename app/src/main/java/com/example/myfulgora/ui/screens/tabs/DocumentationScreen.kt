@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.CircularProgressIndicator // 👈 Adicionado para a rodinha de loading
 import androidx.compose.runtime.*
@@ -146,7 +147,7 @@ fun DocumentationScreen(
                         ) {
                             Text(
                                 text = docName,
-                                color = Color.White.copy(alpha = 0.8f),
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 14.sp
                             )
 
@@ -154,13 +155,13 @@ fun DocumentationScreen(
                             if (isDownloadingThis) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(16.dp),
-                                    color = GreenFresh,
+                                    color = MaterialTheme.colorScheme.primary,
                                     strokeWidth = 2.dp
                                 )
                             } else {
                                 Text(
                                     text = if (hasDocument) "Open" else "Upload",
-                                    color = if (hasDocument) GreenFresh else Color.Gray,
+                                    color = if (hasDocument) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 14.sp
                                 )
                             }
