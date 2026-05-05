@@ -31,15 +31,15 @@ private val DarkColorPalette = darkColorScheme(
     error = RedError
 )
 
-// BALDE DO DIA (Híbrido: Fundo Preto + Cards Brancos)
+// BALDE DO DIA (Modo Claro Real)
 private val LightColorPalette = lightColorScheme(
-    primary = GreenDeep,              // Verde mais escuro para melhor contraste em fundos claros
+    primary = GreenDeep,
     secondary = GreenDeep,
-    background = DarkBackground,      // Fundo mantém-se o preto original
-    surface = LightSurface,           // Cartões ficam brancos
+    background = LightBackground,     // Fundo agora é claro
+    surface = LightSurface,           // Cartões brancos
     surfaceVariant = LightInputBg,
-    onBackground = White,             // Texto sobre o fundo preto tem de ser BRANCO
-    onSurface = LightTextPrimary,     // Texto sobre os cartões brancos tem de ser ESCURO
+    onBackground = LightTextPrimary,  // Texto escuro sobre fundo claro
+    onSurface = LightTextPrimary,     // Texto escuro sobre cartões
     onSurfaceVariant = LightTextSecondary,
     error = RedError
 )

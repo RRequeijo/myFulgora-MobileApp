@@ -44,9 +44,11 @@ fun FulgoraBackground(
     drawBackground: Boolean = true,
     content: @Composable BoxScope.() -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+    
     val bottomGlow = Brush.radialGradient(
         colors = listOf(
-            GreenDeep.copy(alpha = 0.5f),
+            GreenDeep.copy(alpha = if (isDark) 0.5f else 0.2f),
             Color.Transparent
         ),
         center = Offset(x = 0f, y = Float.POSITIVE_INFINITY),
@@ -55,7 +57,7 @@ fun FulgoraBackground(
 
     val topGlow = Brush.radialGradient(
         colors = listOf(
-            Color(0xFF1E293B).copy(alpha = 0.6f),
+            (if (isDark) Color(0xFF1E293B) else Color(0xFFCBD5E1)).copy(alpha = 0.4f),
             Color.Transparent
         ),
         center = Offset(x = Float.POSITIVE_INFINITY, y = 0f),
@@ -274,9 +276,10 @@ fun FulgoraInfoCard(
 @Composable
 fun CircularBatteryArc(percentage: Float) {
     val primaryColor = MaterialTheme.colorScheme.primary
+    val trackColor = MaterialTheme.colorScheme.surfaceVariant
     Canvas(modifier = Modifier.size(300.dp)) {
         drawArc(
-            color = Color(0xFF1E293B),
+            color = trackColor,
             startAngle = 140f,
             sweepAngle = 260f,
             useCenter = false,

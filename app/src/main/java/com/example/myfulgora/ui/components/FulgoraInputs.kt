@@ -39,7 +39,7 @@ fun FulgoraTextField(
         value = text,
         onValueChange = onTextChange,
         textStyle = TextStyle(
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp
         ),
         cursorBrush = SolidColor(GreenFresh),
@@ -50,12 +50,12 @@ fun FulgoraTextField(
                 modifier = modifier
                     .fillMaxWidth()
                     .height(45.dp)
-                    .background(DarkInputBackground, RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (text.isEmpty()) {
-                    Text(text = placeholder, color = Color.Gray, fontSize = 16.sp)
+                    Text(text = placeholder, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
                 }
                 innerTextField()
             }
@@ -75,7 +75,7 @@ fun FulgoraPasswordField(
     BasicTextField(
         value = text,
         onValueChange = onTextChange,
-        textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp),
         cursorBrush = SolidColor(GreenFresh),
         singleLine = true,
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -85,14 +85,14 @@ fun FulgoraPasswordField(
                 modifier = modifier
                     .fillMaxWidth()
                     .height(45.dp)
-                    .background(DarkInputBackground, RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     if (text.isEmpty()) {
-                        Text(text = placeholder, color = Color.Gray, fontSize = 16.sp)
+                        Text(text = placeholder, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
                     }
                     innerTextField()
                 }
@@ -103,7 +103,7 @@ fun FulgoraPasswordField(
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = "Toggle Password",
-                        tint = Color.Gray
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -111,7 +111,7 @@ fun FulgoraPasswordField(
     )
 }
 
-// 1. INPUT DE TEXTO NORMAL
+// 1. INPUT DE TEXTO NORMAL (Adaptativo)
 @Composable
 fun CustomDarkInput(
     value: String,
@@ -125,23 +125,24 @@ fun CustomDarkInput(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label, color = Color.Gray) },
+        label = { Text(label) },
         leadingIcon = if (icon != null) {
             { Icon(imageVector = icon, contentDescription = null, tint = GreenFresh) }
         } else null,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            focusedContainerColor = Color(0xFF1E1E1E),
-            unfocusedContainerColor = Color(0xFF1E1E1E),
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             cursorColor = GreenFresh,
             focusedBorderColor = GreenFresh,
-            unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f)
+            unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            focusedLabelColor = GreenFresh,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
-        // 👇 CORREÇÃO AQUI: 'onAny' não existe. Mapeamos as ações mais comuns.
         keyboardActions = KeyboardActions(
             onNext = { onAction() },
             onDone = { onAction() },
@@ -152,7 +153,7 @@ fun CustomDarkInput(
     )
 }
 
-// 2. INPUT DE PASSWORD
+// 2. INPUT DE PASSWORD (Adaptativo)
 @Composable
 fun CustomDarkPasswordInput(
     value: String,
@@ -166,17 +167,19 @@ fun CustomDarkPasswordInput(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label, color = Color.Gray) },
+        label = { Text(label) },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Color.White,
-            unfocusedTextColor = Color.White,
-            focusedContainerColor = Color(0xFF1E1E1E),
-            unfocusedContainerColor = Color(0xFF1E1E1E),
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             cursorColor = GreenFresh,
             focusedBorderColor = GreenFresh,
-            unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f)
+            unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            focusedLabelColor = GreenFresh,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
@@ -184,11 +187,10 @@ fun CustomDarkPasswordInput(
             val description = if (passwordVisible) "Hide password" else "Show password"
 
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                Icon(imageVector = image, contentDescription = description, tint = Color.Gray)
+                Icon(imageVector = image, contentDescription = description, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction),
-        // 👇 CORREÇÃO AQUI TAMBÉM
         keyboardActions = KeyboardActions(
             onDone = { onAction() },
             onNext = { onAction() },
