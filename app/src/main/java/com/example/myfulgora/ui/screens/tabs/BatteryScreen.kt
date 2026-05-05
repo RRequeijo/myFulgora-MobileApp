@@ -179,10 +179,16 @@ fun BigBatteryIndicator(
     val currentIcon = if (state.isCharging) {
         if (showFrame1) AppIcons.Battery.BigBatteryCharging else AppIcons.Battery.BigBattery
     } else {
-        AppIcons.Battery.BigBatteryCharging
+        AppIcons.Battery.BigBattery
     }
 
-    val mainColor = if (state.isCharging) Color(0xFFFFD700) else MaterialTheme.colorScheme.primary
+    val batteryColor = when {
+        state.batteryPercentage < 10 -> RedError
+        state.batteryPercentage < 20 -> YellowWarning
+        else -> GreenFresh
+    }
+
+    val mainColor = if (state.isCharging) Color(0xFFFFD700) else batteryColor
 
     Column(
         modifier = modifier,
@@ -215,13 +221,6 @@ fun BatteryInfoCard(
     state: BikeState,
     isMetric: Boolean
 ) {
-    // Dynamic battery logic for the small icon
-    val batteryColor = when {
-        state.batteryPercentage < 10 -> RedError
-        state.batteryPercentage < 20 -> YellowWarning
-        else -> GreenFresh
-    }
-
     val baseIndex = remember(state.batteryPercentage) {
         when {
             state.batteryPercentage == 0 -> 0
@@ -293,7 +292,7 @@ fun BatteryInfoCard(
                 Icon(
                     painter = painterResource(id = batteryIcon), 
                     contentDescription = null, 
-                    tint = batteryColor, 
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))

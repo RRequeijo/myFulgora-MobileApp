@@ -60,8 +60,8 @@ object AppIcons {
     }
 
     object Battery {
-        val Range = R.drawable.battery_tab_icon
-        val Charging = R.drawable.battery_tab_icon_2
+        val Range = R.drawable.bike_mileage
+        val Charging = R.drawable.battery_charged
         //bateria grande
         val BigBattery = R.drawable.battery_charged_2
         val BigBatteryCharging = R.drawable.battery_charging
