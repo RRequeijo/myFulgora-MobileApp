@@ -33,6 +33,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import com.example.myfulgora.R
+import com.example.myfulgora.data.auth.AuthManager
+import com.example.myfulgora.data.auth.UserManager
 import com.example.myfulgora.data.model.BikeState
 import com.example.myfulgora.ui.components.FulgoraBackground
 import com.example.myfulgora.ui.screens.tabs.*
@@ -45,8 +47,9 @@ import com.example.myfulgora.ui.viewmodel.MotaViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainScreen() {
+fun MainScreen(onLogout: () -> Unit) {
     val context = LocalContext.current
+    val authManager = remember { AuthManager(context) }
     val viewModel: MotaViewModel = viewModel()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val uiState by viewModel.uiState.collectAsState()
@@ -124,7 +127,18 @@ fun MainScreen() {
                                 }
                                 Spacer(modifier = Modifier.weight(1f))
                                 DrawerItem(label = stringResource(R.string.navbar_help), icon = AppIcons.Menu.Help, onClick = { scope.launch { drawerState.close() }; context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://amover.utad.pt/"))) })
-                                DrawerItem(label = stringResource(R.string.navbar_logout), icon = AppIcons.Menu.Logout, onClick = { /* Logout */ })
+                                DrawerItem(
+                                    label = stringResource(R.string.navbar_logout),
+                                    icon = AppIcons.Menu.Logout,
+                                    onClick = {
+                                        scope.launch {
+                                            drawerState.close()
+                                            authManager.logout()
+                                            UserManager.logout()
+                                            onLogout()
+                                        }
+                                    }
+                                )
                                 Spacer(modifier = Modifier.height(16.dp))
                             }
                         }

@@ -1,7 +1,6 @@
 package com.example.myfulgora
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -9,9 +8,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.myfulgora.data.helpers.SettingsManager
 import com.example.myfulgora.ui.screens.MainScreen
 import com.example.myfulgora.ui.screens.SplashScreen
@@ -60,8 +61,18 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     // 3. Login
-                    composable("login") {
+                    composable(
+                        route = "login?fromLogout={fromLogout}",
+                        arguments = listOf(
+                            navArgument("fromLogout") {
+                                type = NavType.BoolType
+                                defaultValue = false
+                            }
+                        )
+                    ) { backStackEntry ->
+                        val fromLogout = backStackEntry.arguments?.getBoolean("fromLogout") ?: false
                         LoginScreen(
+                            fromLogout = fromLogout,
                             onLoginSuccess = { navController.navigate("home") },
                             onForgotPasswordClick = { navController.navigate("forgot_password") }
                         )
@@ -83,7 +94,13 @@ class MainActivity : AppCompatActivity() {
 
                     // 5. Home (Dashboard Principal)
                     composable("home") {
-                        MainScreen()
+                        MainScreen(
+                            onLogout = {
+                                navController.navigate("login?fromLogout=true") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            }
+                        )
                     }
                 }
             }

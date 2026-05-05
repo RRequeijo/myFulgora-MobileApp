@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
+    fromLogout: Boolean = false,
     onLoginSuccess: () -> Unit,
     onForgotPasswordClick: () -> Unit
 ) {
@@ -67,7 +68,7 @@ fun LoginScreen(
 
     // Tentar biometria logo ao abrir o ecrã se estiver ativa
     LaunchedEffect(isBiometricEnabled) {
-        if (isBiometricEnabled) {
+        if (isBiometricEnabled && !fromLogout) {
             showBiometricPrompt(
                 context = context,
                 onSuccess = { onLoginSuccess() }, // Se acertar a face/dedo, entra logo!
