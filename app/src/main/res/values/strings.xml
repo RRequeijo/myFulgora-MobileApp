@@ -3,16 +3,16 @@
 
     //ONBOARDING
     //screen1
-    <string name="onboarding_title">Go Green, Ride Confidently</string>
-    <string name="description_1">Know your ride at a glance. Track battery, range, and key bike stats in real time so you always ride with confidence. </string>
+    <string name="onboarding_title">Always know what’s happening with your bike</string>
+    <string name="description_1">Battery, range, and real-time stats. Everything you need to stay one step ahead.</string>
 
     //screen2
-    <string name="onboarding_title_2">All Bikes, One App</string>
-    <string name="description_2">Keep all your bikes connected in one place. Check status, battery, and location, anytime, anywhere.</string>
+    <string name="onboarding_title_2">Your garage, in your pocket</string>
+    <string name="description_2">Have more than one bike? Manage everything in one place. Status, battery, and location — always available.</string>
 
     //screen3
-    <string name="onboarding_title_3">Join the Community</string>
-    <string name="description_3">Join a community built around smarter mobility. Track progress, take on challenges, and share achievements with others.</string>
+    <string name="onboarding_title_3">Never lose track of your bike</string>
+    <string name="description_3">Know where your bike is and when it needs maintenance. No surprises, no worries.</string>
     <string name="onboarding_button_next">Next</string>
     <string name="onboarding_button">Get Started</string>
 
