@@ -155,4 +155,5 @@
     <string name="delegation_active_until">Ativo até: %s</string>
     <string name="delegation_indetermined">Indeterminado</string>
     <string name="delegation_revoke">Revogar</string>
+    <string name="exit_press_again">Pressione novamente para sair</string>
 </resources>

@@ -73,7 +73,11 @@ class MainActivity : AppCompatActivity() {
                         val fromLogout = backStackEntry.arguments?.getBoolean("fromLogout") ?: false
                         LoginScreen(
                             fromLogout = fromLogout,
-                            onLoginSuccess = { navController.navigate("home") },
+                            onLoginSuccess = {
+                                navController.navigate("home") {
+                                    popUpTo("login?fromLogout={fromLogout}") { inclusive = true }
+                                }
+                            },
                             onForgotPasswordClick = { navController.navigate("forgot_password") }
                         )
                     }

@@ -1,7 +1,10 @@
 package com.example.myfulgora.ui.screens
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -69,6 +72,17 @@ fun MainScreen(onLogout: () -> Unit) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    var backPressedTime by remember { mutableStateOf(0L) }
+
+    BackHandler(enabled = currentRoute == "home") {
+        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            (context as? Activity)?.finish()
+        } else {
+            Toast.makeText(context, context.getString(R.string.exit_press_again), Toast.LENGTH_SHORT).show()
+            backPressedTime = System.currentTimeMillis()
+        }
+    }
 
     val navigateToProfile = {
         navController.navigate("profile") {

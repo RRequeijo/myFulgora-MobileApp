@@ -211,4 +211,5 @@
     <string name="delegation_active_until">Active until: %s</string>
     <string name="delegation_indetermined">Indeterminate</string>
     <string name="delegation_revoke">Revoke</string>
+    <string name="exit_press_again">Press again to exit</string>
 </resources>
