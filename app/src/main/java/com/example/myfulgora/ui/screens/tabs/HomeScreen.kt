@@ -24,6 +24,8 @@ import com.example.myfulgora.ui.components.FulgoraTopBar
 import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
+import com.example.myfulgora.ui.theme.YellowWarning
+import com.example.myfulgora.ui.theme.RedError
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,7 +39,9 @@ import com.example.myfulgora.data.helpers.SettingsManager
 import kotlin.math.roundToInt
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,11 +55,13 @@ fun HomeScreen(
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
+    val isCooldownEnabled by settingsManager.isCooldownEnabledFlow.collectAsState(initial = true)
     val scope = rememberCoroutineScope()
 
     // Estado local para o modo de condução e motor
     var isBikeOn by remember { mutableStateOf(false) }
     var showPowerDialog by remember { mutableStateOf(false) }
+    var cooldownTimer by remember { mutableIntStateOf(0) }
     val modes = listOf("Eco", "Normal", "Sport")
     val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
@@ -66,11 +72,72 @@ fun HomeScreen(
         pageCount = { modes.size }
     )
 
-    // Sincroniza a página atual do slide com a lógica de negócio
-    LaunchedEffect(pagerState.currentPage) {
-        onModeChange(modes[pagerState.currentPage])
+    // Cooldown logic for starting the bike
+    LaunchedEffect(showPowerDialog) {
+        if (showPowerDialog && !isBikeOn && isCooldownEnabled) {
+            cooldownTimer = 3
+            while (cooldownTimer > 0) {
+                delay(1000)
+                cooldownTimer--
+            }
+        } else {
+            cooldownTimer = 0
+        }
     }
 
+    // Sincroniza a página atual do slide com a lógica de negócio
+    var isFirstLoad by remember { mutableStateOf(true) }
+    LaunchedEffect(pagerState.currentPage) {
+        val selectedMode = modes[pagerState.currentPage]
+        onModeChange(selectedMode)
+        
+        if (!isFirstLoad) {
+            Toast.makeText(context, context.getString(R.string.home_mode_activated, selectedMode), Toast.LENGTH_SHORT).show()
+        }
+        isFirstLoad = false
+    }
+
+    // Dynamic battery logic
+    val batteryColor = when {
+        state.batteryPercentage < 10 -> RedError
+        state.batteryPercentage < 20 -> YellowWarning
+        else -> GreenFresh
+    }
+
+    val baseIndex = remember(state.batteryPercentage) {
+        when {
+            state.batteryPercentage == 0 -> 0
+            state.batteryPercentage <= 20 -> 1
+            state.batteryPercentage <= 40 -> 2
+            state.batteryPercentage <= 60 -> 3
+            state.batteryPercentage <= 80 -> 4
+            else -> 5
+        }
+    }
+
+    var chargingIndex by remember { mutableStateOf(baseIndex) }
+
+    LaunchedEffect(state.isCharging, baseIndex) {
+        if (state.isCharging) {
+            while (true) {
+                for (i in baseIndex..5) {
+                    chargingIndex = i
+                    delay(700)
+                }
+            }
+        } else {
+            chargingIndex = baseIndex
+        }
+    }
+
+    val batteryIcon = when (chargingIndex) {
+        0 -> AppIcons.Battery.Battery0
+        1 -> AppIcons.Battery.Battery1
+        2 -> AppIcons.Battery.Battery2
+        3 -> AppIcons.Battery.Battery3
+        4 -> AppIcons.Battery.Battery4
+        else -> AppIcons.Battery.Battery5
+    }
 
     val primaryColor = MaterialTheme.colorScheme.primary
 
@@ -114,9 +181,9 @@ fun HomeScreen(
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            painter = painterResource(id = AppIcons.Dashboard.BatteryTop),
+                            painter = painterResource(id = batteryIcon),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = batteryColor,
                             modifier = Modifier.size(34.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -180,9 +247,9 @@ fun HomeScreen(
                             )
                             val sweep = (state.batteryPercentage * 360f) / 100f
 
-                            // Progresso (Verde Dinâmico)
+                            // Progresso (Dinâmico)
                             drawArc(
-                                color = primaryColor,
+                                color = batteryColor,
                                 startAngle = -90f,
                                 sweepAngle = sweep,
                                 useCenter = false,
@@ -314,9 +381,10 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         HomeStatItem(
-                            painterResource(id = AppIcons.Dashboard.Battery),
+                            painterResource(id = batteryIcon),
                             "${state.batteryPercentage}",
                             "%",
+                            iconTint = batteryColor
                         )
                         HomeStatItem(
                             painterResource(id = AppIcons.Dashboard.Power),
@@ -364,16 +432,31 @@ fun HomeScreen(
                         )
                     },
                     confirmButton = {
+                        val canConfirm = !isCooldownEnabled || isBikeOn || cooldownTimer <= 0
+                        
                         Button(
                             onClick = {
                                 isBikeOn = !isBikeOn
                                 showPowerDialog = false
                             },
+                            enabled = canConfirm,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isBikeOn) Color(0xFFE53935) else primaryColor
+                                containerColor = if (isBikeOn) Color(0xFFE53935) else primaryColor,
+                                disabledContainerColor = if (isBikeOn) Color(0xFFE53935).copy(alpha = 0.5f) else primaryColor.copy(alpha = 0.5f)
                             )
                         ) {
-                            Text(text = stringResource(id = R.string.engine_start_confirm), color = if (isBikeOn) Color.White else Color.Black)
+                            val buttonLabel = if (isBikeOn) {
+                                stringResource(id = R.string.engine_start_confirm)
+                            } else if (cooldownTimer > 0) {
+                                "${stringResource(id = R.string.engine_start_confirm)} ($cooldownTimer)"
+                            } else {
+                                stringResource(id = R.string.engine_start_confirm)
+                            }
+                            
+                            Text(
+                                text = buttonLabel, 
+                                color = if (isBikeOn) Color.White else Color.Black
+                            )
                         }
                     },
                     dismissButton = {
@@ -392,13 +475,13 @@ fun HomeStatItem(
     icon: Any,
     value: String,
     label: String,
-    statusColor: Color? = null
+    statusColor: Color? = null,
+    iconTint: Color = MaterialTheme.colorScheme.primary
 ) {
-    val primaryColor = MaterialTheme.colorScheme.primary
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         when (icon) {
-            is ImageVector -> Icon(icon, null, tint = primaryColor, modifier = Modifier.size(24.dp))
-            is Painter -> Icon(icon, null, tint = primaryColor, modifier = Modifier.size(24.dp))
+            is ImageVector -> Icon(icon, null, tint = iconTint, modifier = Modifier.size(24.dp))
+            is Painter -> Icon(icon, null, tint = iconTint, modifier = Modifier.size(24.dp))
         }
 
         Spacer(modifier = Modifier.height(4.dp))

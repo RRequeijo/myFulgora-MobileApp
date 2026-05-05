@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 // --- 1. CORES DA MARCA (Nunca mudam, seja dia ou noite) ---
 val GreenFresh = Color(0xFF00D84F)   // "Fresh electric green" - A cor principal vibrante
 val GreenDeep = Color(0xFF02855B)    // "Deep emerald green" - Para fundos e gradientes
+val YellowWarning = Color(0xFFFFD600) // Amarelo para avisos de bateria
 val RedError = Color(0xFFFF5252)     // Alertas e erros
 val White = Color(0xFFFFFFFF)         // Texto branco
 

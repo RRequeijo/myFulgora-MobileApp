@@ -40,7 +40,6 @@ object AppIcons {
         val ArrowRight1 = R.drawable.arrow_bike_right_color
 
         //icones infocard
-        val Battery = R.drawable.battery_bottom
         val Power = R.drawable.power_bolt
         val Bike = R.drawable.bike_mileage
         val Status = R.drawable.info_status
@@ -61,12 +60,19 @@ object AppIcons {
     }
 
     object Battery {
-        val Battery = R.drawable.battery_bottom
         val Range = R.drawable.battery_tab_icon
         val Charging = R.drawable.battery_tab_icon_2
         //bateria grande
         val BigBattery = R.drawable.battery_charged_2
         val BigBatteryCharging = R.drawable.battery_charging
+
+        // Icones de barras (20% em 20%)
+        val Battery0 = R.drawable.battery_0
+        val Battery1 = R.drawable.battery_1
+        val Battery2 = R.drawable.battery_2
+        val Battery3 = R.drawable.battery_3
+        val Battery4 = R.drawable.battery_4
+        val Battery5 = R.drawable.battery_5
 
         //infocards
         val BatteryHealth = R.drawable.battery_tab_icon_3

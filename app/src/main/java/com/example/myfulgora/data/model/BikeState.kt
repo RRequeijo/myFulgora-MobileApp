@@ -19,8 +19,8 @@ data class BikeState(
     val tyreBack: Int = 0,
 
     // --- 3. BATERIA (BÁSICO E CARREGAMENTO) ---
-    val batteryPercentage: Int = 0,
-    val isCharging: Boolean = false,
+    val batteryPercentage: Int = 59,
+    val isCharging: Boolean = true,
     val timeLeft: String = "0h 00m",
     val batteryHealth: String = "Good",
     val batteryTemp: Double = 0.0,

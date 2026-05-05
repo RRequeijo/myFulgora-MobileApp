@@ -49,6 +49,7 @@ fun SettingsScreen(
     val coroutineScope = rememberCoroutineScope()
     // 3. Lê o valor real da memória! (O collectAsState transforma o Flow num estado para o Compose ler)
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
+    val isCooldownEnabled by settingsManager.isCooldownEnabledFlow.collectAsState(initial = true)
     var notificationsEnabled by remember { mutableStateOf(true) }
     var lowBatteryAlertEnabled by remember { mutableStateOf(true) }
     val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -195,6 +196,33 @@ fun SettingsScreen(
                             modifier = Modifier.scale(0.85f),
                             checked = lowBatteryAlertEnabled,
                             onCheckedChange = { lowBatteryAlertEnabled = it },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.Black,
+                                checkedTrackColor = primaryColor,
+                                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                uncheckedBorderColor = Color.Transparent
+                            )
+                        )
+                    }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+
+                    // Start Engine Cooldown Switch
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Segurança no Arranque", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
+                        Switch(
+                            modifier = Modifier.scale(0.85f),
+                            checked = isCooldownEnabled,
+                            onCheckedChange = { 
+                                coroutineScope.launch { settingsManager.setCooldownEnabled(it) }
+                            },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.Black,
                                 checkedTrackColor = primaryColor,

@@ -21,6 +21,7 @@
     <string name="navbar_delegation">Chaves Digitais</string>
     <string name="home_status_online">Ligado</string>
     <string name="home_status_offline">Desligado</string>
+    <string name="home_mode_activated">Modo %s ativado</string>
     <string name="home_locked">Bloqueada</string>
     <string name="home_ready">Pronta</string>
 

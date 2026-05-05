@@ -25,6 +25,8 @@ import com.example.myfulgora.ui.components.FulgoraInfoCard
 import com.example.myfulgora.ui.theme.AppIcons
 import com.example.myfulgora.ui.theme.Dimens
 import com.example.myfulgora.ui.theme.GreenFresh
+import com.example.myfulgora.ui.theme.YellowWarning
+import com.example.myfulgora.ui.theme.RedError
 import androidx.compose.ui.res.stringResource
 import com.example.myfulgora.R
 import com.example.myfulgora.data.auth.UserManager
@@ -213,6 +215,48 @@ fun BatteryInfoCard(
     state: BikeState,
     isMetric: Boolean
 ) {
+    // Dynamic battery logic for the small icon
+    val batteryColor = when {
+        state.batteryPercentage < 10 -> RedError
+        state.batteryPercentage < 20 -> YellowWarning
+        else -> GreenFresh
+    }
+
+    val baseIndex = remember(state.batteryPercentage) {
+        when {
+            state.batteryPercentage == 0 -> 0
+            state.batteryPercentage <= 20 -> 1
+            state.batteryPercentage <= 40 -> 2
+            state.batteryPercentage <= 60 -> 3
+            state.batteryPercentage <= 80 -> 4
+            else -> 5
+        }
+    }
+
+    var chargingIndex by remember { mutableStateOf(baseIndex) }
+
+    LaunchedEffect(state.isCharging, baseIndex) {
+        if (state.isCharging) {
+            while (true) {
+                for (i in baseIndex..5) {
+                    chargingIndex = i
+                    delay(700)
+                }
+            }
+        } else {
+            chargingIndex = baseIndex
+        }
+    }
+
+    val batteryIcon = when (chargingIndex) {
+        0 -> AppIcons.Battery.Battery0
+        1 -> AppIcons.Battery.Battery1
+        2 -> AppIcons.Battery.Battery2
+        3 -> AppIcons.Battery.Battery3
+        4 -> AppIcons.Battery.Battery4
+        else -> AppIcons.Battery.Battery5
+    }
+
     FulgoraInfoCard {
         Column(
             modifier = Modifier.fillMaxWidth().padding(start = Dimens.PaddingMedium)
@@ -246,7 +290,12 @@ fun BatteryInfoCard(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
             ) {
-                Icon(painter = painterResource(id = AppIcons.Battery.Battery), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+                Icon(
+                    painter = painterResource(id = batteryIcon), 
+                    contentDescription = null, 
+                    tint = batteryColor, 
+                    modifier = Modifier.size(24.dp)
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("${state.batteryPercentage}%", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = Dimens.TextSizeSmall)
             }

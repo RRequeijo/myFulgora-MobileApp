@@ -16,6 +16,7 @@ class SettingsManager(private val context: Context) {
         val IS_METRIC_KEY = booleanPreferencesKey("is_metric")
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
+        val COOLDOWN_ENABLED = booleanPreferencesKey("cooldown_enabled")
     }
 
     // ==========================================
@@ -60,6 +61,21 @@ class SettingsManager(private val context: Context) {
     suspend fun setBiometricEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[BIOMETRIC_ENABLED] = enabled
+        }
+    }
+
+    // ==========================================
+    // MÉTODOS DE COOLDOWN (START ENGINE)
+    // ==========================================
+
+    val isCooldownEnabledFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[COOLDOWN_ENABLED] ?: true // Ativo por padrão
+        }
+
+    suspend fun setCooldownEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[COOLDOWN_ENABLED] = enabled
         }
     }
 }

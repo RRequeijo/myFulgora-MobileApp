@@ -54,6 +54,7 @@
     //HOME
     <string name="home_status_online">Online</string>
     <string name="home_status_offline">Offline</string>
+    <string name="home_mode_activated">Mode %s activated</string>
     <string name="home_locked">Locked</string>
     <string name="home_ready">Ready</string>
 
