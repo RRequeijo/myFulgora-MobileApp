@@ -138,7 +138,7 @@ fun MainScreen() {
                             startDestination = "home",
                             modifier = Modifier.fillMaxSize().statusBarsPadding()
                         ) {
-                            composable("map") { MapScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }, onViewAllClick = { navController.navigate("history") }) }
+                            composable("map") { MapScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("history") { TripHistoryScreen(onBackClick = { navController.popBackStack() }) }
                             composable("profile") { ProfileScreen(navController = navController, onMenuClick = { scope.launch { drawerState.open() } }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("battery") { BatteryScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
@@ -224,8 +224,8 @@ fun FulgoraPillBottomBar(
             .fillMaxWidth()
             .height(64.dp),
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-        color = Color(0xFF141C15), // Cor escura esverdeada igual à da imagem
-        tonalElevation = 0.dp
+        color = MaterialTheme.colorScheme.surface, // Agora usa a cor do tema (clara ou escura)
+        tonalElevation = 4.dp // Adiciona uma leve elevação para destacar no modo claro
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -242,9 +242,9 @@ fun FulgoraPillBottomBar(
 
 @Composable
 fun PillNavItem(item: NavItemData, isSelected: Boolean, onClick: () -> Unit) {
-    // Animação do fundo do item selecionado (estilo pilar arredondado no topo)
+    // Animação do fundo do item selecionado (adapta-se ao tema)
     val backgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Color.White.copy(alpha = 0.1f) else Color.Transparent,
+        targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f) else Color.Transparent,
         animationSpec = tween(300),
         label = "nav_item_bg"
     )
