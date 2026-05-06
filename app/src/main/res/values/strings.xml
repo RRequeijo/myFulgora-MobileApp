@@ -88,6 +88,27 @@
     //MAP
     <string name="performance_view_all">View All</string>
     <string name="performance_recent_trips">Recent Trips</string>
+    <string name="performance_trip_history">Trip History</string>
+    <string name="performance_trip_history_desc">View past routes and consumption</string>
+    <string name="trip_history_filter_day">Day</string>
+    <string name="trip_history_filter_week">Week</string>
+    <string name="trip_history_filter_month">Month</string>
+    <string name="trip_history_filter_all">All</string>
+    <string name="trip_history_no_trips">No trips in this period.</string>
+    <string name="trip_history_today">Today</string>
+    <string name="trip_history_yesterday">Yesterday</string>
+    <string name="trip_history_this_week">This Week</string>
+    <string name="trip_history_last_week">Last Week</string>
+    <string name="trip_history_weeks_ago">%d weeks ago</string>
+    <string name="trip_history_this_month">This Month</string>
+    <string name="trip_history_previous">Previous</string>
+    <string name="trip_history_next">Next</string>
+    <string name="trip_history_back">Back</string>
+    <string name="trip_history_select_date">Select Date</string>
+    <string name="trip_history_confirm">OK</string>
+    <string name="trip_history_mock_route_1">Home - Office</string>
+    <string name="trip_history_mock_route_2">Office - Gym</string>
+    <string name="unit_kwh">%s kWh</string>
 
 
     //BATTERY

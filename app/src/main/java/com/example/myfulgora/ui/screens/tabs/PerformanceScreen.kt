@@ -41,7 +41,8 @@ fun PerformanceScreen(
     state: BikeState,
     onMenuClick: () -> Unit = {},
     onUserClick: () -> Unit = {},
-    onCalendarClick: () -> Unit = {}
+    onCalendarClick: () -> Unit = {},
+    onTripHistoryClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val settingsManager = remember { SettingsManager(context) }
@@ -236,6 +237,38 @@ fun PerformanceScreen(
                             }
                         }
                         Icon(painter = painterResource(id = AppIcons.Performance.performance), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp).align(Alignment.TopEnd))
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(Dimens.PaddingSmall))
+
+
+                // TRIP HISTORY CARD (Clicável)
+                FulgoraInfoCard(
+                    modifier = Modifier.clickable { onTripHistoryClick() }
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(end = 32.dp)) {
+                            Text(
+                                text = stringResource(id = R.string.performance_trip_history),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = Dimens.TextSizeTitle
+                            )
+                            Text(
+                                text = stringResource(id = R.string.performance_trip_history_desc),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = Dimens.TextSizeNormal
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Rounded.Place,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .align(Alignment.TopEnd)
+                        )
                     }
                 }
 

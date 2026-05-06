@@ -181,7 +181,15 @@ fun MainScreen(onLogout: () -> Unit) {
                             }
                             composable("maintenance_screen") { MaintenanceScreen(onBackClick = { navController.popBackStack() }) }
                             composable("social") { SocialScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
-                            composable("performance") { PerformanceScreen(state = currentBikeState, onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
+                            composable("performance") { 
+                                PerformanceScreen(
+                                    state = currentBikeState, 
+                                    onMenuClick = { scope.launch { drawerState.open() } }, 
+                                    onUserClick = { navigateToProfile() }, 
+                                    onCalendarClick = { navController.navigate("maintenance_screen") },
+                                    onTripHistoryClick = { navController.navigate("history") }
+                                ) 
+                            }
                             composable("delegation") { DelegationScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("documentation") { 
