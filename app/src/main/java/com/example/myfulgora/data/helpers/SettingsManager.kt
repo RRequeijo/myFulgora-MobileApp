@@ -17,6 +17,8 @@ class SettingsManager(private val context: Context) {
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         val COOLDOWN_ENABLED = booleanPreferencesKey("cooldown_enabled")
+        val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
+        val LOW_BATTERY_ALERT_ENABLED = booleanPreferencesKey("low_battery_alert_enabled")
     }
 
     // ==========================================
@@ -76,6 +78,32 @@ class SettingsManager(private val context: Context) {
     suspend fun setCooldownEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[COOLDOWN_ENABLED] = enabled
+        }
+    }
+
+    // ==========================================
+    // MÉTODOS DE NOTIFICAÇÕES
+    // ==========================================
+
+    val areNotificationsEnabledFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[NOTIFICATIONS_ENABLED] ?: true
+        }
+
+    suspend fun setNotificationsEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[NOTIFICATIONS_ENABLED] = enabled
+        }
+    }
+
+    val isLowBatteryAlertEnabledFlow: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[LOW_BATTERY_ALERT_ENABLED] ?: true
+        }
+
+    suspend fun setLowBatteryAlertEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[LOW_BATTERY_ALERT_ENABLED] = enabled
         }
     }
 }

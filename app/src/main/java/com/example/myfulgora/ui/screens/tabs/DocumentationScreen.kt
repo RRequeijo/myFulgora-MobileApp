@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch // 👈 Adicionado para as coroutines
 
 @Composable
 fun DocumentationScreen(
-    viewModel: MotaViewModel = viewModel(), // 👈 O ViewModel foi injetado aqui
+    viewModel: MotaViewModel, // 👈 Removido o default viewModel()
     state: BikeState,
     onSaveDocument: (String, String) -> Unit,
     onMenuClick: () -> Unit = {},

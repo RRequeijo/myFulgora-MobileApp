@@ -1,13 +1,15 @@
 package com.example.myfulgora.ui.viewmodel
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfulgora.data.auth.UserManager
 import com.example.myfulgora.data.remote.GrpcClass
 import com.example.myfulgora.data.model.BikeState
 import com.example.myfulgora.data.helpers.NotificationManager
+import com.example.myfulgora.data.helpers.SettingsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,16 +26,31 @@ sealed class HomeUiState {
     data class Success(val bikeState: BikeState) : HomeUiState()
 }
 
-class MotaViewModel : ViewModel() {
+class MotaViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     private val grpcClient = GrpcClass()
+    private val settingsManager = SettingsManager(application)
 
     private var alreadyNotifiedBattery = false
+    private var areNotificationsEnabled = true
+    private var isLowBatteryAlertEnabled = true
 
     init {
+        viewModelScope.launch {
+            settingsManager.areNotificationsEnabledFlow.collect {
+                areNotificationsEnabled = it
+            }
+        }
+
+        viewModelScope.launch {
+            settingsManager.isLowBatteryAlertEnabledFlow.collect {
+                isLowBatteryAlertEnabled = it
+            }
+        }
+
         viewModelScope.launch {
             UserManager.activeBikeIndexFlow.collectLatest {
                 fetchMotaData()
@@ -92,7 +109,7 @@ class MotaViewModel : ViewModel() {
     }
 
     private fun checkBatteryNotifications(batteryLevel: Int) {
-        if (batteryLevel <= 20 && !alreadyNotifiedBattery) {
+        if (areNotificationsEnabled && isLowBatteryAlertEnabled && batteryLevel <= 20 && !alreadyNotifiedBattery) {
             NotificationManager.addNotification(
                 title = "Bateria Fraca",
                 message = "A bateria desceu para ${batteryLevel}%. Planeia o carregamento."

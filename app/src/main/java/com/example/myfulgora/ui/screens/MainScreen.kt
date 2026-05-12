@@ -193,6 +193,7 @@ fun MainScreen(onLogout: () -> Unit) {
                             composable("settings") { SettingsScreen(onMenuClick = { scope.launch { drawerState.open() } }, onUserClick = { navigateToProfile() }, onCalendarClick = { navController.navigate("maintenance_screen") }) }
                             composable("documentation") { 
                                 DocumentationScreen(
+                                    viewModel = viewModel,
                                     state = currentBikeState, 
                                     onSaveDocument = { nome, uri -> viewModel.guardarDocumento(nome, uri) },
                                     onMenuClick = { scope.launch { drawerState.open() } },

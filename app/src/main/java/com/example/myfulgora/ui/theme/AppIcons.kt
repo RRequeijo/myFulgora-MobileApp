@@ -21,10 +21,11 @@ object AppIcons {
     //Menu Hamburguer
     object Menu {
         val Profile = R.drawable.profile_hamburguer
-        val Settings = R.drawable.settings
-        val Help = R.drawable.help_ico
+        val Settings = R.drawable.bottom_navigation_settings
+        val Help = R.drawable.help
         val Logout = R.drawable.logout
-        val Delegation = R.drawable.key_delegation
+        val Delegation = R.drawable.digital_key
+
     }
 
 

@@ -50,10 +50,34 @@ fun SettingsScreen(
     // 3. Lê o valor real da memória! (O collectAsState transforma o Flow num estado para o Compose ler)
     val isMetric by settingsManager.isMetricFlow.collectAsState(initial = true)
     val isCooldownEnabled by settingsManager.isCooldownEnabledFlow.collectAsState(initial = true)
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var lowBatteryAlertEnabled by remember { mutableStateOf(true) }
+    val areNotificationsEnabled by settingsManager.areNotificationsEnabledFlow.collectAsState(initial = true)
+    val isLowBatteryAlertEnabled by settingsManager.isLowBatteryAlertEnabledFlow.collectAsState(initial = true)
+
     val bottomNavHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val primaryColor = MaterialTheme.colorScheme.primary
+
+    // Funções para mostrar Toast e salvar
+    fun updateNotifications(enabled: Boolean) {
+        coroutineScope.launch {
+            settingsManager.setNotificationsEnabled(enabled)
+            android.widget.Toast.makeText(
+                context,
+                if (enabled) "Notificações ativadas" else "Notificações desativadas",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    fun updateLowBatteryAlert(enabled: Boolean) {
+        coroutineScope.launch {
+            settingsManager.setLowBatteryAlertEnabled(enabled)
+            android.widget.Toast.makeText(
+                context,
+                if (enabled) "Alerta de bateria baixa ativado" else "Alerta de bateria baixa desativado",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
 
     FulgoraBackground {
@@ -169,8 +193,8 @@ fun SettingsScreen(
                         Text(text = stringResource(id = R.string.settings_notifications), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
                         Switch(
                             modifier = Modifier.scale(0.85f),
-                            checked = notificationsEnabled,
-                            onCheckedChange = { notificationsEnabled = it },
+                            checked = areNotificationsEnabled,
+                            onCheckedChange = { updateNotifications(it) },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.Black,
                                 checkedTrackColor = primaryColor,
@@ -194,8 +218,8 @@ fun SettingsScreen(
                         Text(text = stringResource(id = R.string.settings_low_battery), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f), fontSize = 14.sp)
                         Switch(
                             modifier = Modifier.scale(0.85f),
-                            checked = lowBatteryAlertEnabled,
-                            onCheckedChange = { lowBatteryAlertEnabled = it },
+                            checked = isLowBatteryAlertEnabled,
+                            onCheckedChange = { updateLowBatteryAlert(it) },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.Black,
                                 checkedTrackColor = primaryColor,
