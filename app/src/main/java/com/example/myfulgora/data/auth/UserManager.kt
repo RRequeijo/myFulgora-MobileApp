@@ -32,7 +32,7 @@ object UserManager {
 
         currentUser = User(
             username = "test",
-            profile = UserProfile(name = "Driver", email = "driver@fulgora.pt"),
+            profile = UserProfile(name = "Rider", email = "rider@fulgora.pt"),
             bikes = mutableListOf(testBike)
         )
         _activeBikeIndex.value = 0

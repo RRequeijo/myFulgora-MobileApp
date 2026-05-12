@@ -35,7 +35,6 @@ fun MapScreen(
     onCalendarClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val currentUser = UserManager.currentUser
 
     val bikeLocation = LatLng(state.latitude, state.longitude)
     val cameraPositionState = rememberCameraPositionState {
@@ -97,7 +96,6 @@ fun MapScreen(
                 .align(Alignment.TopCenter)
         ) {
             FulgoraTopBar(
-                userName = currentUser?.profile?.name ?: "Rider",
                 iconSize = iconSize,
                 onMenuClick = onMenuClick,
                 onUserClick = onUserClick,

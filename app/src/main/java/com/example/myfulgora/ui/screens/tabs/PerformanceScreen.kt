@@ -91,28 +91,32 @@ fun PerformanceScreen(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(Dimens.PaddingLarge))
+
                 // 3. ZONA DA MOTO
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = AppIcons.Dashboard.ArrowLeft0),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            modifier = Modifier.size(24.dp)
-                        )
+                    if (state.totalBikes > 1) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = AppIcons.Dashboard.ArrowLeft0),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Icon(
+                                painter = painterResource(id = AppIcons.Dashboard.ArrowRight0),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
 
                     Box(

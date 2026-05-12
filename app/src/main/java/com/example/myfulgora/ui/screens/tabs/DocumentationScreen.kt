@@ -83,7 +83,6 @@ fun DocumentationScreen(
                     .padding(top = Dimens.TopPadding)
             ){
                 FulgoraTopBar(
-                    userName = currentUser?.profile?.name ?: "Rider",
                     iconSize = iconSize,
                     onMenuClick = onMenuClick,
                     onUserClick = onUserClick,
