@@ -130,9 +130,9 @@ fun MainScreen(onLogout: () -> Unit) {
                                             selected = currentRoute == item.route,
                                             onClick = {
                                                 navController.navigate(item.route) {
-                                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                                    popUpTo(navController.graph.findStartDestination().id) { saveState = false }
                                                     launchSingleTop = true
-                                                    restoreState = true
+                                                    restoreState = false
                                                 }
                                                 scope.launch { drawerState.close() }
                                             }
@@ -228,9 +228,9 @@ fun MainScreen(onLogout: () -> Unit) {
                             currentRoute = currentRoute,
                             onNavigate = { route ->
                                 navController.navigate(route) {
-                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = false }
                                     launchSingleTop = true
-                                    restoreState = true
+                                    restoreState = false
                                 }
                             }
                         )

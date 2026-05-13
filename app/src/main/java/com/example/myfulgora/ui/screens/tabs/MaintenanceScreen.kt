@@ -286,6 +286,13 @@ fun MaintenanceStoryPage(
                     }
                 } else {
                     Column {
+                        Text(
+                            text = "Faltam:",
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 2.dp)
+                        )
                         Row(verticalAlignment = Alignment.Bottom) {
                             Text(
                                 text = (item.kmRemaining ?: 0).toString(),
@@ -296,7 +303,7 @@ fun MaintenanceStoryPage(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = stringResource(R.string.settings_units_km).uppercase(Locale.getDefault()),
+                                text = "Km",
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
@@ -614,7 +621,7 @@ fun StatusChip(status: MaintenanceStatus, accentColor: Color) {
         MaintenanceStatus.SCHEDULED -> stringResource(R.string.scheduled)
         MaintenanceStatus.PLANNED -> stringResource(R.string.maintenance_planned)
         MaintenanceStatus.COMPLETED -> stringResource(R.string.completed)
-    }
+    }.uppercase(Locale.getDefault())
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
