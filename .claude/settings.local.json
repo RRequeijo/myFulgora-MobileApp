@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\cesar\\\\Documents\\\\GitHub\\\\myFulgora-MobileApp\\\\app\\\\src\" -Recurse | Where-Object {$_.Extension -eq \".kt\"} | Select-Object -ExpandProperty FullName | Sort-Object)",
+      "PowerShell(tree \"C:\\\\Users\\\\cesar\\\\Documents\\\\GitHub\\\\myFulgora-MobileApp\\\\app\\\\src\\\\main\\\\java\\\\com\\\\example\\\\myfulgora\" -L 3)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}

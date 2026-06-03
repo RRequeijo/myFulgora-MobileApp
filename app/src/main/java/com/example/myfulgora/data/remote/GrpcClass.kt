@@ -13,10 +13,32 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class GrpcClass {
+<<<<<<< Updated upstream
     // Usamos o IP do teu servidor gRPC. 
     // Se estiveres no emulador e o servidor no mesmo PC, podes tentar "10.0.2.2"
     private val channel = ManagedChannelBuilder.forAddress("192.168.1.127", 5154)
         .usePlaintext()
+=======
+
+    companion object {
+        private const val TAG = "GrpcClass"
+
+        // TODO: Move HOST and PORT to BuildConfig fields so they can be set per
+        //   build variant (debug = local LAN, release = production server).
+        //   Example in build.gradle defaultConfig:
+        //     buildConfigField("String", "GRPC_HOST", "\"your.production.server\"")
+        //     buildConfigField("int",    "GRPC_PORT",  "5154")
+        //
+        // SECURITY: Switch usePlaintext() → useTransportSecurity() (TLS) in production.
+        //   Plaintext gRPC exposes all bike telemetry on the network.
+        private const val GRPC_HOST = "85.234.145.56"
+        private const val GRPC_PORT = 50052
+    }
+
+    private val channel = ManagedChannelBuilder
+        .forAddress(GRPC_HOST, GRPC_PORT)
+        .usePlaintext() // TODO: Replace with .useTransportSecurity() for production
+>>>>>>> Stashed changes
         .keepAliveTime(30, TimeUnit.SECONDS)
         .build()
 
