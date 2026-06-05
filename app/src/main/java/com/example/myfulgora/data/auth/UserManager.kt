@@ -26,7 +26,7 @@ object UserManager {
 
     fun setupTestUser() {
         val testBike = Bike(
-            vin = "MOTA-TEST-123",
+            vin = "AJP1RB5SXLB123456",
             name = "Fulgora Motorcycle"
         )
 

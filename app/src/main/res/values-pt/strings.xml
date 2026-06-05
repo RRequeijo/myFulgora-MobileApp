@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">myFulgora</string>
 
-    <string name="description_3">"Sabe onde está a tua moto e quando precisa de manutenção. Sem surpresas, sem preocupações.  "</string>
+    <string name="description_3">"Sabe onde está a tua mota e quando precisa de manutenção. Sem surpresas, sem preocupações.  "</string>
     <string name="onboarding_button_next">Próximo</string>
     <string name="onboarding_button">Começa já</string>
     <string name="login_welcome">Bem-vindo de volta, Piloto</string>
@@ -141,10 +141,10 @@
     <string name="engine_start_confirm">Confirmar</string>
     <string name="engine_stop_title">Desligar Motor?</string>
     <string name="engine_stop_message">Tens a certeza que queres desligar o motor da tua Fulgora?</string>
-    <string name="onboarding_title">Sabe sempre o que se passa com a tua mota</string>
+    <string name="onboarding_title">Saiba sempre o que se passa com a sua mota</string>
     <string name="description_1">"Bateria, autonomia e estatísticas em tempo real. Tudo o que precisas para andar sempre um passo à frente.  "</string>
-    <string name="onboarding_title_2">A tua garagem, no bolso</string>
-    <string name="description_2">Tens mais do que uma moto?\nGere tudo num só lugar. Estado, bateria e localização — sempre disponíveis.</string>
+    <string name="onboarding_title_2">A sua garagem, no bolso</string>
+    <string name="description_2">Tens mais do que uma mota?\nGere tudo num só lugar. Estado, bateria e localização — sempre disponíveis.</string>
     <string name="onboarding_title_3">Nunca percas o rasto à tua mota</string>
 
     //PROFILE

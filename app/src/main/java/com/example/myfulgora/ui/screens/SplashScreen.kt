@@ -3,12 +3,13 @@ package com.example.myfulgora.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -27,16 +28,18 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black), // Fundo Preto
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            val logoRes = if (isSystemInDarkTheme()) R.drawable.logo_crop else R.drawable.logo_crop_2
+
             // O Logótipo
             Image(
-                painter = painterResource(id = R.drawable.logo_app),
+                painter = painterResource(id = logoRes),
                 contentDescription = "Logo",
                 modifier = Modifier.size(200.dp) // Ajusta o tamanho se necessário
             )

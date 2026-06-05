@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfulgora.data.helpers.NotificationManager
 import com.example.myfulgora.ui.viewmodel.ProfileViewModel
+import androidx.compose.ui.draw.drawBehind
 
 @Composable
 fun FulgoraBackground(
@@ -45,25 +46,6 @@ fun FulgoraBackground(
     content: @Composable BoxScope.() -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
-    
-    val bottomGlow = Brush.radialGradient(
-        colors = listOf(
-            GreenDeep.copy(alpha = if (isDark) 0.5f else 0.2f),
-            Color.Transparent
-        ),
-        center = Offset(x = 0f, y = Float.POSITIVE_INFINITY),
-        radius = 1500f
-    )
-
-    val topGlow = Brush.radialGradient(
-        colors = listOf(
-            (if (isDark) Color(0xFF1E293B) else Color(0xFFCBD5E1)).copy(alpha = 0.4f),
-            Color.Transparent
-        ),
-        center = Offset(x = Float.POSITIVE_INFINITY, y = 0f),
-        radius = 1200f
-    )
-
     val backgroundColor = MaterialTheme.colorScheme.background
 
     Box(
@@ -73,8 +55,26 @@ fun FulgoraBackground(
                 if (drawBackground) {
                     Modifier
                         .background(backgroundColor)
-                        .background(bottomGlow)
-                        .background(topGlow)
+                        .drawBehind {
+                            val bottomGlowBrush = Brush.radialGradient(
+                                colors = listOf(
+                                    GreenDeep.copy(alpha = if (isDark) 0.5f else 0.2f),
+                                    Color.Transparent
+                                ),
+                                center = Offset(x = 0f, y = size.height),
+                                radius = 1500f
+                            )
+                            val topGlowBrush = Brush.radialGradient(
+                                colors = listOf(
+                                    (if (isDark) Color(0xFF1E293B) else Color(0xFFCBD5E1)).copy(alpha = 0.4f),
+                                    Color.Transparent
+                                ),
+                                center = Offset(x = size.width, y = 0f),
+                                radius = 1200f
+                            )
+                            drawRect(brush = bottomGlowBrush)
+                            drawRect(brush = topGlowBrush)
+                        }
                 } else Modifier
             )
     ) {

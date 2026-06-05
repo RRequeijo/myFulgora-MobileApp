@@ -110,9 +110,9 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                                 .clip(CircleShape)
                                 .background(
                                     if (isSelected)
-                                        Color(0xFFFFFFFF)
+                                        MaterialTheme.colorScheme.primary
                                     else
-                                        Color.White.copy(alpha = 0.2f)
+                                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
                                 )
                         )
                     }
@@ -157,7 +157,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                     ) {
                         Text(
                             stringResource(R.string.onboarding_button_next),
-                            color = Color.White.copy(alpha = 0.9f),
+                            color = MaterialTheme.colorScheme.primary,
                             fontSize = 16.sp
                         )
                     }
@@ -205,7 +205,7 @@ fun OnboardingPageContent(page: OnboardingPage) {
         ) {
             Text(
                 text = page.title,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -216,7 +216,7 @@ fun OnboardingPageContent(page: OnboardingPage) {
 
             Text(
                 text = page.description,
-                color = Color(0xFFB0BEC5),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp

@@ -361,9 +361,11 @@ fun StepSuccess(onDone: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
+        val logoRes = if (androidx.compose.foundation.isSystemInDarkTheme()) R.drawable.logo_crop else R.drawable.logo_crop_2
+
         // 1. Marca (Topo)
         Image(
-            painter = painterResource(id = R.drawable.logo_crop),
+            painter = painterResource(id = logoRes),
             contentDescription = "Logo",
             modifier = Modifier.width(180.dp) // Ajusta o tamanho se necessário
         )

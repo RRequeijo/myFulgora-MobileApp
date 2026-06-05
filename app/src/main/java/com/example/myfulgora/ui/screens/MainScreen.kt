@@ -118,7 +118,8 @@ fun MainScreen(onLogout: () -> Unit) {
                                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                     Spacer(modifier = Modifier.weight(1f))
-                                    Image(painter = painterResource(id = R.drawable.logo_app), contentDescription = "myFULGORA", modifier = Modifier.height(100.dp))
+                                    val logoRes = if (androidx.compose.foundation.isSystemInDarkTheme()) R.drawable.logo_crop else R.drawable.logo_crop_2
+                                    Image(painter = painterResource(id = logoRes), contentDescription = "myFULGORA", modifier = Modifier.height(100.dp))
                                     Spacer(modifier = Modifier.weight(1.2f))
                                 }
                                 Spacer(modifier = Modifier.height(32.dp))

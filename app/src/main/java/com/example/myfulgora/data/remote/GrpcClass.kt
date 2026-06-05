@@ -13,13 +13,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class GrpcClass {
-<<<<<<< Updated upstream
-    // Usamos o IP do teu servidor gRPC. 
-    // Se estiveres no emulador e o servidor no mesmo PC, podes tentar "10.0.2.2"
-    private val channel = ManagedChannelBuilder.forAddress("192.168.1.127", 5154)
-        .usePlaintext()
-=======
-
     companion object {
         private const val TAG = "GrpcClass"
 
@@ -38,16 +31,15 @@ class GrpcClass {
     private val channel = ManagedChannelBuilder
         .forAddress(GRPC_HOST, GRPC_PORT)
         .usePlaintext() // TODO: Replace with .useTransportSecurity() for production
->>>>>>> Stashed changes
         .keepAliveTime(30, TimeUnit.SECONDS)
         .build()
 
-    private val stub = MotasServiceGrpcKt.MotasServiceCoroutineStub(channel)
+    private val stub by lazy { MotasServiceGrpcKt.MotasServiceCoroutineStub(channel) }
 
     suspend fun getMotaInfo(vinMota: String): MotaResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("GRPC", "📡 A tentar ligar ao servidor (192.168.1.127:5154)...")
+                Log.d("GRPC", "📡 A tentar ligar ao servidor ($GRPC_HOST:$GRPC_PORT)...")
                 val request = MotaRequest.newBuilder().setVin(vinMota).build()
 
                 // O stub.getMotaInfo é uma suspend function gerada pelo gRPC Kotlin

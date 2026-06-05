@@ -22,7 +22,6 @@ import com.example.myfulgora.ui.components.FulgoraTextField
 import com.example.myfulgora.ui.components.FulgoraPasswordField
 import com.example.myfulgora.ui.components.FulgoraBackground
 import com.example.myfulgora.ui.theme.AppIcons
-import com.example.myfulgora.ui.theme.GreenFresh
 import com.example.myfulgora.ui.viewmodel.LoginState
 import com.example.myfulgora.ui.viewmodel.LoginViewModel
 import android.content.Context
@@ -86,12 +85,13 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            val logoRes = if (androidx.compose.foundation.isSystemInDarkTheme()) R.drawable.logo_crop else R.drawable.logo_crop_2
 
             // 1. LOGÓTIPO
             Image(
-                painter = painterResource(id = R.drawable.logo_app),
+                painter = painterResource(id = logoRes),
                 contentDescription = "Logo",
-                modifier = Modifier.width(120.dp),
+                modifier = Modifier.width(160.dp),
                 contentScale = ContentScale.Fit
             )
 
@@ -100,7 +100,7 @@ fun LoginScreen(
             Text(
                 text = stringResource(id = R.string.login_welcome),
                 fontSize = 20.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -132,7 +132,7 @@ fun LoginScreen(
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                 Text(
                     text = stringResource(id = R.string.login_forgot_password),
-                    color = GreenFresh,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 12.sp,
                     modifier = Modifier
                         .padding(end = 24.dp)
@@ -146,7 +146,7 @@ fun LoginScreen(
             if (loginState is LoginState.Error) {
                 Text(
                     text = (loginState as LoginState.Error).message,
-                    color = Color(0xFFFF5252),
+                    color = MaterialTheme.colorScheme.error,
                     fontSize = 14.sp,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -198,7 +198,7 @@ fun LoginScreen(
                                 onLoginSuccess() // Entra na app
                             }
                         }) {
-                            Text(stringResource(id = R.string.login_biometric_yes), color = GreenFresh)
+                            Text(stringResource(id = R.string.login_biometric_yes), color = MaterialTheme.colorScheme.primary)
                         }
                     },
                     dismissButton = {
@@ -206,7 +206,7 @@ fun LoginScreen(
                             showBiometricOfferDialog = false
                             onLoginSuccess() // Entra na app sem ativar
                         }) {
-                            Text(stringResource(id = R.string.login_biometric_not_now), color = Color.Gray)
+                            Text(stringResource(id = R.string.login_biometric_not_now), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 )
